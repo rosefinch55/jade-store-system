@@ -1,0 +1,25 @@
+# LaTeX 编译中间文件
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+
+# 编辑器与 IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# 系统文件
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# 改文件前的备份目录（含本地绝对路径，不上传）
+docs/_backup-*/
