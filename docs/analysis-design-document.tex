@@ -30,7 +30,6 @@
 \newlength{\figw}
 \newcommand{\fig}[3][1.0]{%
   \setlength{\figw}{#1\textwidth}%
-  \needspace{10\baselineskip}
   \clearpage
   \begin{figure}[H]
     \centering
@@ -56,7 +55,6 @@
 
 \newcommand{\figtwo}[5][1.0]{%
   \setlength{\figw}{#1\textwidth}%
-  \needspace{14\baselineskip}
   \clearpage
   \begin{figure}[H]
     \centering
@@ -71,7 +69,6 @@
 
 % 同页两图、各自独立宽度：#1=宽1 #2=图题1 #3=图名1 #4=宽2 #5=图题2 #6=图名2
 \newcommand{\figtwoW}[6]{%
-  \needspace{14\baselineskip}
   \clearpage
   \begin{figure}[H]
     \centering
@@ -196,7 +193,7 @@
 系统名称 & 玉器门店顾客服务与经营管理系统 \\
 目标组织 & 玉器销售门店柜台（档口老板 + 销售） \\
 负责人 & 门店老板（柜台） \\
-业务目标 & 提高门店销售额，降低货品周转周期，实现精准营销 \\
+业务目标 & 提高门店销售额，降低货品周转周期 \\
 度量指标 & ① 月度销售客户数；② 货品加权周转周期（统计口径：从货品进货入库开始，至货品销售完成并收回货款为止，按货品总金额加权平均） \\
 对比时间 & 2025 年全年业务月均值（引入系统前，沿用纸质台账的做法） \\
 改进值 & 销售额提升 10\%；货品周转周期下降 20\% \\
@@ -223,6 +220,10 @@
 \figab[0.86]{业务用例图（手绘稿）}{01a-business-usecase-hand.jpg}
 
 \figab[0.9]{业务用例图（PlantUML 绘制）}{01-business-usecase.png}
+
+引入目标系统后，新增了面向客户的线上服务用例（预定商品、预约看货）、面向合作商户的查看调货价目、面向供应商的提交出让申请与面向加工师傅的查看加工任务，改进业务用例图见图 \ref{fig:02-business-usecase-to-be.png}。
+
+\figab[0.9]{改进业务用例图：新增的线上服务用例}{02-business-usecase-to-be.png}
 
 \noindent
 图中组织边界内共有 11 个业务用例，名称按业务执行者提出请求的口径命名：
@@ -276,6 +277,9 @@
 六个现状场景的改进版逐一如下：线上预定后到店成交、退货登记与货品状态回柜、
 成品进货（供应商在线提交出让申请并预约上门）、同行调货（调入、调出）、
 玉料采购与加工（加工师傅在线查看任务与提交完工交付）。
+六个现状场景之外补一个新增业务场景——供应商寄售（改进场景图~\ref{fig:15-to-be-consignment.png}），
+该场景原来不存在，没有现状图，直接给出改进版：
+寄售货品凭合同建档入库，售出后按寄售价结算，到期未售出货品退回。
 
 \figab[0.9]{改进场景：议价成交（线上预定 + 成交当场登记）}{09-to-be-sale.png}
 \figab[0.9]{改进场景：退货}{10-to-be-return.png}
@@ -283,6 +287,7 @@
 \figab[0.9]{改进场景：同行调货（合作商户调货给我们）}{12-to-be-transfer-in.png}
 \figab[0.9]{改进场景：同行调货（调出货品给合作商户）}{13-to-be-transfer-out.png}
 \figab[0.9]{改进场景：玉料采购与加工（在线查看任务与交付）}{14-to-be-material.png}
+\figab[0.9]{改进场景：供应商寄售（合同入库与寄售结算）}{15-to-be-consignment.png}
 
 \subsection{业务改进对照}
 
@@ -317,16 +322,18 @@
 系统执行者 = 与目标系统实例有实线相连的实例所代表的系统，没有辅执行者。
 其中登记成交、登记退货、登记货品入库、预定商品、预约查看货品、查看调货价格、
 提交货品出让申请、审核出让申请、预约上门时间、查看加工任务、提交完工交付申请、
-登记货款记录与维护调货记录 13 个用例直接来自改进业务序列图的消息映射（见 A 部分改进业务序列图一节）；
+登记货款记录与维护调货记录 13 个用例直接来自六个改进业务场景的消息映射（见 A 部分改进业务序列图一节）；
+登记寄售合同、结算寄售货款、结算调货台账、登记分期计划、记录分期还款与查看库存流水 6 个用例
+来自新增的供应商寄售场景（图~\ref{fig:15-to-be-consignment.png}）与台账、分期、流水三项扩展；
 维护客户信息、登记送检与证书、查看销售与周转统计、维护基础数据、登录、浏览货品、
 开通外部账户 7 个用例是支撑上述用例与愿景指标所必需的补充。
 系统的执行者分为老板、销售、客户、合作商户、供应商与加工师傅六类，
 故按执行者端进行用例分析。总体用例图见图 \ref{fig:08-system-usecase.png}，
-共 6 个执行者、20 个用例；
+共 6 个执行者、26 个用例；
 系统负责货品档案、成交记录、统计，面向客户的货品展示、预约与预定，
 以及供应商与加工师傅的在线协同，不接入在线支付接口，不参与鉴定和物流。
 
-\figab[0.78]{系统用例图：系统边界、执行者与用例}{08-system-usecase.png}
+\figab[0.60]{系统用例图：系统边界、执行者与用例}{08-system-usecase.png}
 
 账号角色设老板、销售、合作商户、供应商与加工师傅五种，
 合作商户、供应商与加工师傅的账号都由老板逐个开通（UC-12），不开放自助注册；
@@ -348,7 +355,8 @@
 
 管理端由老板使用。老板在系统中承担经营决策者的角色，拥有登录、登记货品入库、
 查看销售与周转统计、维护基础数据、开通外部账户、审核出让申请、登记货款记录、
-维护调货记录等用例，具体用例图如图所示。
+维护调货记录、登记寄售合同、结算寄售货款、结算调货台账与查看库存流水等用例，
+具体用例图如图所示。
 
 \figab[0.88]{管理端用例}{uc-boss.png}
 
@@ -356,13 +364,13 @@
 
 \noindent（1）登录：老板使用由自己开通或设置的账号登录，验证通过后进入管理端功能。
 
-\noindent（2）登记货品入库：对采购、回收、调货调入与加工完工的货品逐件建档，
+\noindent（2）登记货品入库：对采购、回收、调货调入、加工完工与寄售的货品逐件建档，
 录入来源、成本与最低售价，货品状态置为“在柜”，周转周期从这里开始计时。
 
 \noindent（3）查看销售与周转统计：系统按成交记录自动累计月度销售额、销售客户数
 与货品加权周转周期，老板随时查看，是愿景指标的读数入口。
 
-\noindent（4）维护基础数据：维护供应商、加工师傅、鉴定机构、同行商户与货品类别，
+\noindent（4）维护基础数据：维护来源方（供应商/加工师傅/同行商户）、鉴定机构与货品类别，
 支撑其余用例的参照数据。
 
 \noindent（5）开通外部账户：为合作商户、供应商与加工师傅逐个开通账号与权限，
@@ -371,16 +379,29 @@
 \noindent（6）审核出让申请：审核供应商在线提交的货品出让申请，
 通过的转入入库流程，驳回的填写原因并留痕。
 
-\noindent（7）登记货款记录：登记采购货款、调货货款与加工工费的新增与收付，
+\noindent（7）登记货款记录：登记采购货款、调货货款、加工工费与寄售货款的新增与收付，
 每笔货款可追溯到来源单据与经手人。
 
 \noindent（8）维护调货记录：维护调货往来记录与调货库存记录，
 调货货品去向可追溯，结算不扯皮。
 
+\noindent（9）登记寄售合同：供应商寄存货品凭合同建档入库，
+寄售价记为成本作为结算依据，合同与明细一次登记。
+
+\noindent（10）结算寄售货款：已售出的寄售货品按寄售价与供应商结算，
+明细置为已结算，回款有结算单为据。
+
+\noindent（11）结算调货台账：按商户汇总未结算调货记录一次对账，
+结算后单据置为已结算，鉴赏期届满即结清。
+
+\noindent（12）查看库存流水：任一货品的每次状态变更都留有流水，
+进出有账可查，是调货库存一本账的追溯底账。
+
 \subsubsection{柜台端用例（销售）}
 
 柜台端由销售使用。销售在系统中承担柜台经手的角色，拥有登录、登记成交、
-登记退货、维护客户信息、登记送检与证书等用例，具体用例图如图所示。
+登记退货、维护客户信息、登记送检与证书、登记分期计划与记录分期还款等用例，
+具体用例图如图所示。
 
 \figab[0.88]{柜台端用例}{uc-sale.png}
 
@@ -399,6 +420,12 @@
 
 \noindent（5）登记送检与证书：登记送检记录与鉴定证书信息并挂到对应货品，
 客户索证时随时可调，是高价货品销售的依据。
+
+\noindent（6）登记分期计划：大额成交当场谈定分期，系统按成交价生成分期计划，
+总额与期数一次确定。
+
+\noindent（7）记录分期还款：录入每期还款并推进到期日，
+结清自动归档，逾期计划随时可查。
 
 \subsubsection{顾客端用例（客户）}
 
@@ -463,6 +490,8 @@
 \noindent（3）提交完工交付申请：完工后在线报备，等待老板确认并安排交接入库，
 完工信息第一时间可见。
 
+\noindent（4）预约上门时间：在线预约上门交接时段，出让交货与完工交付都不用电话约定。
+
 \subsection{用例清单}
 
 \needspace{8\baselineskip}
@@ -475,13 +504,13 @@
 编号 & 用例 & 说明 & 排序 \\
 \midrule
 UC-01 & 登记成交 & 成交（全款或定金）当场登记到货品编号上，系统校验并保存 & 1（关键） \\
-UC-02 & 登记货品入库 & 采购、回收、调货、加工完工的货品逐件建档入库 & 2（关键） \\
+UC-02 & 登记货品入库 & 采购、回收、调货、加工完工、寄售的货品逐件建档入库 & 2（关键） \\
 UC-03 & 登记退货 & 收回退货，货品状态改回“在柜”，冲减销售统计 & 4 \\
 UC-04 & 维护客户信息 & 客户姓名、联系方式、偏好与购买记录，支撑精准营销 & 5 \\
 UC-05 & 登记送检与证书 & 送检记录与鉴定证书信息挂到对应货品 & 6 \\
 UC-06 & 查看销售与周转统计 & 月度销售额、销售客户数、货品加权周转周期 & 3 \\
-UC-07 & 维护基础数据 & 供应商、加工师傅、鉴定机构、同行商户与货品类别 & 7 \\
-UC-08 & 登录 & 验证用户名与口令后按角色进入系统（被 UC-01～UC-07 与 UC-11、UC-12、UC-14～UC-20 包含） & — \\
+UC-07 & 维护基础数据 & 来源方（供应商/加工师傅/同行商户）、鉴定机构与货品类别 & 7 \\
+UC-08 & 登录 & 验证用户名与口令后按角色进入系统（被 UC-01～UC-07 与 UC-11、UC-12、UC-14～UC-26 包含） & — \\
 UC-09 & 浏览货品 & 客户无需登录浏览在柜货品图文展示，不显示价格 & 8 \\
 UC-10 & 预约查看货品 & 客户提交联系方式与到店时段，预约到店看货 & 9 \\
 UC-11 & 查看调货价格 & 合作商户登录后查看在柜货品的调货价目 & 10 \\
@@ -494,6 +523,12 @@ UC-17 & 提交完工交付申请 & 加工师傅完工后在线提交交付申请
 UC-18 & 审核出让申请 & 老板审核出让申请，通过后转入入库流程 & 17 \\
 UC-19 & 登记货款记录 & 供货方货款、调货货款与加工工费的新增与收付记录 & 18 \\
 UC-20 & 维护调货记录 & 调货往来记录与调货库存记录的新增与更新 & 19 \\
+UC-21 & 登记寄售合同 & 供应商寄存货品逐件建档入库，寄售价作结算依据 & 20 \\
+UC-22 & 结算寄售货款 & 已售寄售货品按寄售价与供应商结算，明细置已结算 & 21 \\
+UC-23 & 结算调货台账 & 按商户汇总未结算调货记录，一次对账结清 & 22 \\
+UC-24 & 登记分期计划 & 大额成交分期付款，总额等于成交价 & 23 \\
+UC-25 & 记录分期还款 & 录入还款、推进到期日，结清自动归档 & 24 \\
+UC-26 & 查看库存流水 & 货品每次状态变更留痕，进出有账可查 & 25 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -509,15 +544,16 @@ UC-09、UC-10 把在柜货品摆到前端引流并转化到店，排在台账内
 UC-11、UC-12 服务同行调货，减少问价与开户的人工往返；
 UC-13 预定商品锁定到店意向，UC-14～UC-18 把供应商、回流出让方与加工师傅的往来搬到线上，
 省去电话问货与跑腿上门的时间；
-UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
+UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账；
+UC-21～UC-23 把寄售与台账结算搬上线，寄售价作结算依据、按商户一次对账，
+钱账两清有据可查；UC-24～UC-25 承接大额成交的分期付款，逾期可追踪；
+UC-26 库存流水给一本账补上追溯底账，货品每次状态变更留痕。
 
 \subsection{系统用例规约}
 
 根据各用例设计用例规约，进一步详细规定用例的用例编号与用例名、执行者、前置条件、
 后置条件、涉众利益、基本路径、扩展，以及字段列表、业务规则、质量需求、设计约束
-四个补充约束，每个规约用一张两列表格，下文按 UC-01～UC-20 逐个给出。
-路径步骤遵守三条规范：主语只能是执行者或“系统”；用主动语句；
-不写界面组件与交互细节（统一写“系统反馈”，不写“系统显示”）。
+四个补充约束，每个规约用一张两列表格，下文按 UC-01～UC-26 逐个给出。
 前置与后置条件只写系统能检测到的约束，扩展路径只写系统能感知并要处理的意外与分支。
 
 \noindent（1）登记成交
@@ -545,7 +581,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \midrule
 基本路径 & 1. 销售扫描货品条形码或提供货品编号、成交价、支付方式（全款/定金）与客户（散客可不提供）；\newline 2. 系统校验货品处于“在柜”状态；\newline 3. 系统校验成交价合法（不低于该货品最低售价）；\newline 4. 系统创建成交记录，货品状态改为“已售”（定金成交则标记“已订”）；\newline 5. 系统反馈登记结果 \\
 \midrule
-扩展 & 2a. 货品编号不存在或状态非“在柜”（已售、已调出、已送检、预留、代销中）：2a1 系统反馈应重新选择货品；2a2 返回1；\newline 3a. 成交价低于最低售价：3a1 系统要求录入老板授权价及授权说明，无授权时反馈应重新报价；3a2 返回1；\newline 3b. 定金金额超过成交价：3b1 系统反馈应重新输入；3b2 返回1；\newline 4a. 保存失败：4a1 系统反馈应稍后重试；4a2 返回1 \\
+扩展 & 2a. 货品编号不存在或状态非“在柜”（已订、已售、预留、已调出、代销中、已送检、待处理）：2a1 系统反馈应重新选择货品；2a2 返回1；\newline 3a. 成交价低于最低售价：3a1 系统要求录入老板授权价及授权说明，无授权时反馈应重新报价；3a2 返回1；\newline 3b. 定金金额超过成交价：3b1 系统反馈应重新输入；3b2 返回1；\newline 4a. 保存失败：4a1 系统反馈应稍后重试；4a2 返回1 \\
 \midrule
 字段列表 & 货品 = 货品编号 + 品名 + 类别 + 料种（自定义） + 产地（自定义） + 器型（自定义） + 产状{山料|籽料|山流水料|戈壁料} + 克重 + 尺寸 + 证书号 + 图片 + 来源类型 + 来源方 + 成本 + 最低售价 + 入库时间 + 状态{在柜|已送检|预留|已售|已订|已调出|代销中|待处理}；\newline 成交记录 = 成交编号 + 成交时间 + 货品 + 成交价 + 支付方式{全款|定金} + 已收金额 + 客户 + 经手人 \\
 \midrule
@@ -584,9 +620,9 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \midrule
 扩展 & 1a. 来源类型为回收：1a1 系统按回流作价确定成本并标记来源与作价；\newline 1b. 来源类型为调货：1b1 系统标记来源与关联商户，不记成本、只记往来；\newline 2a. 必填字段缺失或金额不合法：2a1 系统反馈应重新输入；2a2 返回1；\newline 3a. 同批次多件（如珠串类）：3a1 系统逐件建档、共用批次信息，编号各不相同 \\
 \midrule
-字段列表 & 货品来源 = 来源类型{采购|回收|调货|加工完工} + 来源方 + 来源单据；\newline 入库记录 = 入库时间 + 验收人 + 货品清单 \\
+字段列表 & 货品来源 = 来源类型{采购|回收|调货|加工完工|寄售} + 来源方 + 来源单据；\newline 入库记录 = 入库时间 + 验收人 + 货品清单 \\
 \midrule
-业务规则 & ①一件货品一个编号，重件需拆分为多条档案；\newline ②回收货品按回流作价入成本；\newline ③调货调入不记成本，只记往来；\newline ④加工完工按料加工合计入成本 \\
+业务规则 & ①一件货品一个编号，重件需拆分为多条档案；\newline ②回收货品按回流作价入成本；\newline ③调货调入不记成本，只记往来；\newline ④加工完工按料加工合计入成本；\newline ⑤寄售货品按寄售价入成本，作为结算依据 \\
 \midrule
 质量需求 & 可用性：逐件建档不超过 30 秒/件 \\
 \midrule
@@ -761,15 +797,15 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \midrule
 前置条件 & 无（身份验证由 UC-08 提供） \\
 \midrule
-后置条件 & 供应商、加工师傅、鉴定机构、同行商户与货品类别等参照数据新增或更新，供入库与成交登记选择 \\
+后置条件 & 来源方（供应商/加工师傅/同行商户）、鉴定机构与货品类别等参照数据新增或更新，供入库与成交登记选择 \\
 \midrule
 涉众利益 & 老板：参照数据齐全，录入时直接选择、不用每次手输；\newline 销售：选择项稳定统一，统计不因写法不同出现偏差 \\
 \midrule
-基本路径 & 1. 老板选择要维护的数据类型（供应商/加工师傅/鉴定机构/同行商户/货品类别）；\newline 2. 老板提供新增、修改或删除的内容；\newline 3. 系统校验名称在同类数据中未重复；\newline 4. 系统保存并反馈维护结果 \\
+基本路径 & 1. 老板选择要维护的数据类型（来源方/鉴定机构/货品类别，来源方以类别区分供应商/加工师傅/同行商户）；\newline 2. 老板提供新增、修改或删除的内容；\newline 3. 系统校验名称在同一类别内未重复；\newline 4. 系统保存并反馈维护结果 \\
 \midrule
 扩展 & 3a. 名称重复：3a1 系统反馈应更换名称；3a2 返回1；\newline 4a. 删除已被引用的数据项：4a1 系统反馈该数据项已被成交或入库记录引用，只能停用；4a2 返回1 \\
 \midrule
-字段列表 & 基础数据 = 供应商 + 加工师傅 + 鉴定机构 + 同行商户 + 货品类别 \\
+字段列表 & 基础数据 = 来源方（类别 + 名称 + 联系人 + 联系电话） + 鉴定机构 + 货品类别 \\
 \midrule
 业务规则 & ①基础数据被引用后不可物理删除，只能停用；\newline ②供应商类型区分玉料/成品/回流 \\
 \midrule
@@ -794,7 +830,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \endhead
 用例编号：用例名 & UC-08：登录 \\
 \midrule
-执行者 & 老板、销售、合作商户、供应商、加工师傅（被 UC-01～UC-07 与 UC-11、UC-12、UC-14～UC-20 以 \code{<<include>>} 包含的公共用例；客户无需登录） \\
+执行者 & 老板、销售、合作商户、供应商、加工师傅（被 UC-01～UC-07 与 UC-11、UC-12、UC-14～UC-26 以 \code{<<include>>} 包含的公共用例；客户无需登录） \\
 \midrule
 前置条件 & 用户账号已由老板建立 \\
 \midrule
@@ -944,17 +980,17 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \midrule
 执行者 & 老板（主执行者） \\
 \midrule
-前置条件 & 开通对象已在基础数据中维护（合作商户在“同行商户”，供应商、加工师傅在各自类别下） \\
+前置条件 & 开通对象已在基础数据中维护（来源方以类别区分供应商、加工师傅等） \\
 \midrule
-后置条件 & 新增一个外部账号，角色为“合作商户”“供应商”或“加工师傅”，可登录办理各自事项；停用后无法登录 \\
+后置条件 & 新增一个外部账号并分配角色（可多选），可登录办理各自事项；停用后无法登录 \\
 \midrule
 涉众利益 & 老板：给谁开账号自己决定，价格与往来信息可控；\newline 合作商户：拿到账号即可自助查价，不用每次电话问价；\newline 供应商与加工师傅：线上提交申请与预约，减少往返沟通 \\
 \midrule
-基本路径 & 1. 老板选择开通对象（合作商户/供应商/加工师傅）并提供账号信息（用户名与初始口令）；\newline 2. 系统校验用户名未重复；\newline 3. 系统创建账号并按开通对象设置角色；\newline 4. 系统反馈开通结果 \\
+基本路径 & 1. 老板选择要开通的角色（可多选）并提供账号信息（用户名与初始口令）；\newline 2. 系统校验用户名未重复；\newline 3. 系统创建账号并分配所选角色；\newline 4. 系统反馈开通结果 \\
 \midrule
 扩展 & 2a. 用户名已存在：2a1 系统反馈应更换用户名；2a2 返回1 \\
 \midrule
-字段列表 & 用户 = 用户名 + 姓名 + 口令（加密保存）+ 角色{合作商户|供应商|加工师傅} + 状态{启用|停用} \\
+字段列表 & 用户 = 用户名 + 姓名 + 口令（加密保存）+ 状态{启用|停用}；\newline 用户-角色 = 用户 + 角色{合作商户|供应商|加工师傅等，可多选} \\
 \midrule
 业务规则 & ①外部账号由老板逐个开通与停用，不能自行注册；\newline ②合作商户角色只有查看调货价格的权限，供应商与加工师傅角色只有各自协同事项的权限，均无内部管理功能；\newline ③口令加密保存，首次登录可修改 \\
 \midrule
@@ -1024,7 +1060,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \midrule
 涉众利益 & 供应商：在线提交货品信息，不用上门先谈一轮；\newline 老板：申请集中在线上，有空再审核，货源线索不散失；\newline 销售：审核通过的货源到店后按常规流程接待 \\
 \midrule
-基本路径 & 1. 供应商选择出让类型（玉料/成品/回流）并填写货品信息（品名、数量、期望出让价、描述），上传料子图片；\newline 2. 系统校验必填字段完整；\newline 3. 系统保存申请并生成申请编号，状态置为“待审核”；\newline 4. 系统反馈提交结果 \\
+基本路径 & 1. 供应商选择出让类型（玉料/成品/回流）并填写货品信息（品名、数量、期望出让价、描述），提供料子图片；\newline 2. 系统校验必填字段完整；\newline 3. 系统保存申请并生成申请编号，状态置为“待审核”；\newline 4. 系统反馈提交结果 \\
 \midrule
 扩展 & 2a. 必填字段缺失：2a1 系统反馈应补全后提交；2a2 返回1 \\
 \midrule
@@ -1032,7 +1068,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \midrule
 业务规则 & ①玉料供应商、成品供应商与回流出让方共用同一申请入口，类型取自供应商档案；\newline ②申请经老板审核通过后，货品实际到店时按 UC-02 建档入库；\newline ③期望出让价仅供审核参考，不对外展示 \\
 \midrule
-质量需求 & 性能：提交后 1 秒内反馈；\newline 可用性：微信小程序内可直接填写提交并上传图片 \\
+质量需求 & 性能：提交后 1 秒内反馈；\newline 可用性：完成一次出让申请不超过 5 次操作 \\
 \midrule
 设计约束 & 申请入口在供应商登录后的界面，与调货价目查询互不可见 \\
 \midrule
@@ -1135,7 +1171,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \midrule
 涉众利益 & 加工师傅：完工即在线报备，不用等老板有空再交接；\newline 老板：完工信息第一时间可见，及时安排交接入库；\newline 销售：货品加工完成的信息可查，便于对客户答复 \\
 \midrule
-基本路径 & 1. 加工师傅选择已完工的加工任务；\newline 2. 加工师傅上传加工前、加工中与完工的实物图并填写完工说明；\newline 3. 系统校验任务状态为“在加工”，更新为“待交付”；\newline 4. 系统反馈提交结果 \\
+基本路径 & 1. 加工师傅选择已完工的加工任务；\newline 2. 加工师傅提供加工前、加工中与完工的实物图与完工说明；\newline 3. 系统校验任务状态为“在加工”，更新为“待交付”；\newline 4. 系统反馈提交结果 \\
 \midrule
 扩展 & 3a. 任务状态不是“在加工”：3a1 系统反馈不允许重复提交；3a2 返回1 \\
 \midrule
@@ -1212,7 +1248,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 供应商与加工师傅：货款收付有据可查，结算不扯皮；\newline
 销售：不承担记账职责 \\
 \midrule
-基本路径 & 1. 老板选择业务类型（采购货款/调货货款/加工工费）并关联对应单据；\newline
+基本路径 & 1. 老板选择业务类型（采购货款/调货货款/加工工费/寄售货款）并关联对应单据；\newline
 2. 老板录入金额与收付方向（支付/收取）；\newline
 3. 系统校验金额与单据一致；\newline
 4. 系统保存货款记录；\newline
@@ -1220,7 +1256,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \midrule
 扩展 & 3a. 金额与单据不一致：3a1 系统反馈应核对后重新录入；3a2 返回2 \\
 \midrule
-字段列表 & 货款记录 = 记录编号 + 业务类型{采购货款|调货货款|加工工费} + 关联单据 + 金额 + 收付方向{支付|收取} + 经手人 + 时间 \\
+字段列表 & 货款记录 = 记录编号 + 业务类型{采购货款|调货货款|加工工费|寄售货款} + 关联单据 + 金额 + 收付方向{支付|收取} + 经手人 + 时间 \\
 \midrule
 业务规则 & ①每条货款记录必须关联来源单据；\newline ②收付方向区分支付与收取；\newline ③记录只增不改，登记错误时作废重录 \\
 \midrule
@@ -1274,6 +1310,268 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \bottomrule
 \end{longtable}}
 
+\noindent（21）登记寄售合同
+
+{\small
+\begin{longtable}{@{}p{2.4cm} p{12.9cm}@{}}
+\caption{登记寄售合同用例规约}\label{tab:uc-21}\\
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endhead
+用例编号：用例名 & UC-21：登记寄售合同 \\
+\midrule
+执行者 & 老板（主执行者） \\
+\midrule
+前置条件 & 供应商在基础数据中已建档 \\
+\midrule
+后置条件 & 新增一份状态为“生效”的寄售合同与寄售明细，货品以寄售方式入库（来源类型为寄售、成本为寄售价、状态为在柜） \\
+\midrule
+涉众利益 & 老板：寄售货品有合同与寄售价为据，售出后结算不扯皮；\newline
+供应商：货品在店期间去向可查，售出按寄售价回款；\newline
+销售：寄售货品与自有货品同场展示，无须区分维护 \\
+\midrule
+基本路径 & 1. 老板选择供应商并填写合同信息（到期日、结算方式）；\newline
+2. 系统校验供应商存在，创建寄售合同；\newline
+3. 老板逐件录入寄售货品（品名、类别、克重与寄售价）；\newline
+4. 系统按寄售方式建档入库并创建寄售明细；\newline
+5. 系统写入库存流水；\newline
+6. 系统反馈登记结果（含合同编号） \\
+\midrule
+扩展 & 2a. 供应商不存在：2a1 系统反馈先在维护基础数据中建档；2a2 返回1 \\
+\midrule
+字段列表 & 寄售合同 = 合同编号 + 供应商 + 签订时间 + 到期日 + 结算方式{售出即结|按月结算} + 状态{生效|已终止|已到期}；\newline 寄售明细 = 合同 + 货品 + 寄售价 + 结算状态{未结算|已结算} \\
+\midrule
+业务规则 & ①一份合同可含多件寄售货品，一件货品同一时间只挂一份未结清合同；\newline ②寄售货品的成本记为寄售价，作为结算依据；\newline ③合同终止或到期后，未结算明细对应的货品退回供应商 \\
+\midrule
+质量需求 & 可用性：登记一件寄售货品不超过 4 次操作 \\
+\midrule
+设计约束 & 寄售货品与自有货品在柜面同场展示，售出流程与 UC-01 相同 \\
+\midrule
+\bottomrule
+\end{longtable}}
+
+\noindent（22）结算寄售货款
+
+{\small
+\begin{longtable}{@{}p{2.4cm} p{12.9cm}@{}}
+\caption{结算寄售货款用例规约}\label{tab:uc-22}\\
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endhead
+用例编号：用例名 & UC-22：结算寄售货款 \\
+\midrule
+执行者 & 老板（主执行者） \\
+\midrule
+前置条件 & 存在已售出且未结算的寄售明细 \\
+\midrule
+后置条件 & 新增一条台账结算（类型为寄售），对应寄售明细置为已结算 \\
+\midrule
+涉众利益 & 老板：按寄售价与供应商结清，账实一致；\newline
+供应商：回款有结算单为据；\newline
+销售：不承担结算职责 \\
+\midrule
+基本路径 & 1. 老板选择已售出的寄售货品；\newline
+2. 系统校验该明细未结算；\newline
+3. 系统按寄售价创建台账结算（往来方为供应商）；\newline
+4. 系统将寄售明细置为已结算；\newline
+5. 系统反馈结算结果（含结算编号） \\
+\midrule
+扩展 & 2a. 明细已结算：2a1 系统反馈该货品已结清；2a2 返回1 \\
+\midrule
+字段列表 & 台账结算 = 结算编号 + 往来方 + 结算类型{调货|寄售} + 结算金额 + 结算方式{现金|转账|冲抵} + 结算时间 + 经手人 \\
+\midrule
+业务规则 & ①结算金额为寄售价；\newline ②一张结算单只对应一张业务单据（寄售明细或调货记录）；\newline ③结算完成后资金流水在 UC-19 货款记录登记 \\
+\midrule
+质量需求 & 可用性：结算一笔不超过 3 次操作 \\
+\midrule
+设计约束 & 寄售与调货结算共用一本台账 \\
+\midrule
+\bottomrule
+\end{longtable}}
+
+\noindent（23）结算调货台账
+
+{\small
+\begin{longtable}{@{}p{2.4cm} p{12.9cm}@{}}
+\caption{结算调货台账用例规约}\label{tab:uc-23}\\
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endhead
+用例编号：用例名 & UC-23：结算调货台账 \\
+\midrule
+执行者 & 老板（主执行者） \\
+\midrule
+前置条件 & 存在未结算的调货记录 \\
+\midrule
+后置条件 & 新增一条台账结算（类型为调货），所选调货记录置为已结算 \\
+\midrule
+涉众利益 & 老板：按商户对账，鉴赏期届满即结清；\newline
+合作商户：往来与结算有据可查，不扯皮；\newline
+销售：不承担对账职责 \\
+\midrule
+基本路径 & 1. 老板选择合作商户，系统列出未结算调货记录；\newline
+2. 老板勾选本次结算的记录并确认结算方式；\newline
+3. 系统汇总金额并创建台账结算；\newline
+4. 系统将所选调货记录置为已结算；\newline
+5. 系统反馈结算结果（含结算编号） \\
+\midrule
+扩展 & 1a. 无未结算记录：1a1 系统反馈该商户往来已结清；1a2 用例结束 \\
+\midrule
+字段列表 & 同台账结算（结算类型为调货），金额为所选调货记录的汇总 \\
+\midrule
+业务规则 & ①结算金额为所选调货记录金额汇总；\newline ②已结算的调货记录不再出现在结算清单；\newline ③与 UC-20 规则②③衔接，鉴赏期届满为结账时点 \\
+\midrule
+质量需求 & 可靠性：结算后单据与商户端记录一致 \\
+\midrule
+设计约束 & 结算清单支持一次多笔 \\
+\midrule
+\bottomrule
+\end{longtable}}
+
+\noindent（24）登记分期计划
+
+{\small
+\begin{longtable}{@{}p{2.4cm} p{12.9cm}@{}}
+\caption{登记分期计划用例规约}\label{tab:uc-24}\\
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endhead
+用例编号：用例名 & UC-24：登记分期计划 \\
+\midrule
+执行者 & 销售（主执行者） \\
+\midrule
+前置条件 & 存在成交记录，且该成交未关联分期计划 \\
+\midrule
+后置条件 & 新增一份状态为“未还”的分期计划，计划总额等于成交价 \\
+\midrule
+涉众利益 & 销售：大额成交当场可谈分期，不丢单；\newline
+客户：分期减轻一次付清压力；\newline
+老板：分期账目清楚，逾期可追踪 \\
+\midrule
+基本路径 & 1. 销售选择成交记录并填写分期期数；\newline
+2. 系统校验该成交未关联分期计划；\newline
+3. 系统按成交价创建分期计划（每期应还、下一期到期日、状态未还）；\newline
+4. 系统反馈登记结果（含计划编号） \\
+\midrule
+扩展 & 2a. 已存在分期计划：2a1 系统反馈一份成交只有一份计划；2a2 用例结束 \\
+\midrule
+字段列表 & 分期计划 = 计划编号 + 成交记录 + 分期期数 + 每期应还 + 已还金额 + 下一期到期日 + 状态{未还|逾期|已结清} \\
+\midrule
+业务规则 & ①一份成交至多一份分期计划，计划总额等于成交价；\newline ②分期期间货款按已收金额累计，不影响货品所有权转移 \\
+\midrule
+质量需求 & 可用性：登记一份计划不超过 3 次操作 \\
+\midrule
+设计约束 & 分期期数与门槛由店内规则决定，系统不设上限 \\
+\midrule
+\bottomrule
+\end{longtable}}
+
+\noindent（25）记录分期还款
+
+{\small
+\begin{longtable}{@{}p{2.4cm} p{12.9cm}@{}}
+\caption{记录分期还款用例规约}\label{tab:uc-25}\\
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endhead
+用例编号：用例名 & UC-25：记录分期还款 \\
+\midrule
+执行者 & 销售（主执行者） \\
+\midrule
+前置条件 & 存在未结清的分期计划 \\
+\midrule
+后置条件 & 更新分期计划的已还金额与下一期到期日，结清后状态置为已结清 \\
+\midrule
+涉众利益 & 客户：还款进度随时可查；\newline
+销售：收款当场登记，不用事后补账；\newline
+老板：逾期计划一目了然 \\
+\midrule
+基本路径 & 1. 销售选择分期计划并录入还款金额；\newline
+2. 系统校验金额不超过未还余额；\newline
+3. 系统累加已还金额并推进下一期到期日；\newline
+4. 系统校验是否结清，结清则置为已结清；\newline
+5. 系统反馈还款结果（含剩余应还） \\
+\midrule
+扩展 & 2a. 金额超过未还余额：2a1 系统反馈应按余额录入；2a2 返回1 \\
+\midrule
+字段列表 & 同分期计划 \\
+\midrule
+业务规则 & ①到期日过仍有未还即置为逾期；\newline ②还款可跨期一次结清；\newline ③结清后计划归档，不再接受还款 \\
+\midrule
+质量需求 & 可用性：记录一次还款不超过 2 次操作 \\
+\midrule
+设计约束 & 逾期状态在查询时按到期日与未还余额实时判定（超过到期日未还即逾期） \\
+\midrule
+\bottomrule
+\end{longtable}}
+
+\noindent（26）查看库存流水
+
+{\small
+\begin{longtable}{@{}p{2.4cm} p{12.9cm}@{}}
+\caption{查看库存流用例规约}\label{tab:uc-26}\\
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{标题} & \textbf{内容} \\
+\midrule
+\endhead
+用例编号：用例名 & UC-26：查看库存流水 \\
+\midrule
+执行者 & 老板（主执行者）；销售、合作商户（只读） \\
+\midrule
+前置条件 & 无（登录即可） \\
+\midrule
+后置条件 & 无数据变更，返回满足条件的库存流水清单 \\
+\midrule
+涉众利益 & 老板：任一货品的进出有账可查，调货库存一本账；\newline
+销售：交接班时核对货品状态；\newline
+合作商户：对账时可当场出示流水 \\
+\midrule
+基本路径 & 1. 老板选择货品或时间段；\newline
+2. 系统按条件查询库存流水；\newline
+3. 系统返回流水清单（变更前状态、变更后状态、关联单据、经手人、时间） \\
+\midrule
+扩展 & 2a. 无满足条件的流水：2a1 系统反馈该条件下无记录 \\
+\midrule
+字段列表 & 库存流水 = 货品 + 变更前状态 + 变更后状态 + 关联单据 + 经手人 + 流水时间 \\
+\midrule
+业务规则 & ①货品每次状态变更必须写一条流水；\newline ②流水写入后不可修改、不可删除 \\
+\midrule
+质量需求 & 性能：单货品流水查询 3 秒内返回 \\
+\midrule
+设计约束 & 流水状态取值与货品状态机（07a）一致 \\
+\midrule
+\bottomrule
+\end{longtable}}
+
 % ==================== C 分析（承接上文，无过渡） ====================
 
 \newpage
@@ -1293,7 +1591,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 
 \subsubsection{边界类与控制类}
 
-边界类与控制类分两张图给出：柜台电脑端一侧见图~\ref{fig:05a-boundary-control-class}，微信小程序一侧见图~\ref{fig:05a2-boundary-control-class}——一个外部系统一张图，。边界类按\textbf{外部系统}划分而不是按角色划分：
+边界类与控制类分两张图给出：柜台电脑端一侧见图~\ref{fig:05a-boundary-control-class}，微信小程序一侧见图~\ref{fig:05a2-boundary-control-class}——一个外部系统一张图。边界类按\textbf{外部系统}划分而不是按角色划分：
 柜台电脑端（老板与销售共用一套系统）与微信小程序（客户、供应商、加工师傅、合作商户共用一个小程序）
 各对应一个边界类，合计 2 个；同一外部系统内各角色能看到的字段与按钮由登录角色决定，不另立边界类。
 登录在两个外部系统都有入口，因此登录控制被两个边界类共同依赖。
@@ -1315,7 +1613,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \toprule
 边界类 & 覆盖的控制类（对应用例） \\
 \midrule
-柜台端界面 & 登记成交、登记货品入库、登记退货、维护客户信息、登记送检与证书、查看销售与周转统计、维护基础数据、开通外部账户、审核出让申请、登记货款记录、维护调货记录（共 11 个） \\
+柜台端界面 & 登记成交、登记货品入库、登记退货、维护客户信息、登记送检与证书、查看销售与周转统计、维护基础数据、开通外部账户、审核出让申请、登记货款记录、维护调货记录、登记寄售合同、结算寄售货款、结算调货台账、登记分期计划、记录分期还款、查看库存流水（共 17 个） \\
 微信小程序界面 & 浏览货品、预约查看货品、查看调货价格、预定商品、提交货品出让申请、预约上门时间、查看加工任务、提交完工交付申请（共 8 个） \\
 两端共用 & 登录（UC-08 被各端用例以 include 引用，在两个外部系统都有入口） \\
 \bottomrule
@@ -1325,27 +1623,34 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 
 \subsubsection{实体类及其关联（关联与组合）}
 
-实体类及其关联如图~\ref{fig:05b1-entity-goods}。共 21 个实体类：货品、入库批次、证书、成交、退货、
-送检、预定、预约、出让申请、上门预约、加工任务、完工交付申请、货款、调货、客户、供应商、
-加工师傅、鉴定机构、同行商户、货品类别、用户。
+实体类及其关联如图~\ref{fig:05b1-entity-goods}。共 26 个实体类：货品、入库批次、证书、成交、退货、
+送检、预定、预约、出让申请、上门预约、加工任务、完工交付申请、货款、调货、寄售合同、寄售明细、
+台账结算、分期计划、库存流水、客户、来源方、鉴定机构、货品类别、用户、角色、权限。
+来源方是供应商、加工师傅与同行商户的合一：三类的属性与操作完全一致，只以类别取值区分
+（与货款按业务类型取值区分同理），类别在同一取值内名称唯一。
 实体类的操作列与下节分析序列图的消息一一对应——某条消息传进来，就是该实体类的操作。
-命名与属性遵守分析口径：类名不带“记录/信息/数据/情况”等后缀，不画标识属性（主键），
-也不画名为“状态”的属性（货品状态交由状态机负责）。
+类名不带“记录/信息/数据/情况”等后缀，不画标识属性（主键），
+也不画名为“状态”的属性（货品状态交由状态机负责）。合同编号、证书编号等业务编码是印在纸质单据上、用户可引用的领域字段，不是主键标识，故保留在类图中；主键（代理键）不画，数据层与业务编码分离。
 
 客户类有一条自反关联：来源渠道含“朋友介绍”，因而客户之间存在介绍关系。
-\textbf{普通关联}用于可共享、或同一对对象可多次发生的关系（如同一件货品的多次成交）；\textbf{组合}用于部分不可共享、且不能脱离整体存在的关系，共三处——证书挂货品、完工交付申请挂加工任务、货品入库批次；控制类到实体类的\textbf{依赖}见分析类图（一）。\textbf{泛化}不采用：各类账户的差别只在权限与登录入口，核心属性完全一致，属于属性值差别；按“属性值差别优先于泛化”与“警惕拼凑泛化”的口径，角色差别由 \textbf{角色} 属性承担，不为五类角色各建子类。
-类之间的 22 条关联连同多重性与角色名见表~\ref{tab:rels}。
+\textbf{普通关联}用于可共享、或同一对对象可多次发生的关系（如同一件货品的多次成交）；\textbf{组合}用于部分不可共享、且不能脱离整体存在的关系，共四处——证书挂货品、完工交付申请挂加工任务、货品入库批次、寄售明细挂寄售合同；控制类到实体类的\textbf{依赖}见分析类图（一）。\textbf{泛化}不采用：各类账户的差别只在权限与登录入口，核心属性完全一致，属于属性值差别；用户与角色为多对多、角色与权限也为多对多，角色与权限各自成类成表，不为五类角色各建子类。
+类之间的 33 条关联连同多重性与角色名见表~\ref{tab:rels}。
 
 \fig{实体类之间的关联（一）：货品与入库批次、证书}{05b1-entity-goods}
 \fig{实体类之间的关联（二）：货品与成交}{05b2-entity-deal}
 \figtwoW{0.72}{实体类之间的关联（三）：送检与证书}{05b3-entity-inspect}{1.0}{实体类之间的关联（四）：预约、货品、预定与客户}{05b4-entity-book}
-\figtwo[0.72]{实体类之间的关联（五）：供应商、出让申请与上门预约}{05b5-entity-transfer}{实体类之间的关联（六）：货品、加工任务与加工师傅}{05b6-entity-process}
+\figtwo[0.60]{实体类之间的关联（五）：来源方、出让申请与上门预约}{05b5-entity-transfer}{实体类之间的关联（六）：货品、加工任务与来源方}{05b6-entity-process}
 \fig{实体类之间的关联（七）：货品类别与货品的分类关系}{05b8-entity-category}
 \fig{实体类之间的关联（八）：货品送检与送检单}{05b9-entity-goods-inspect}
-\fig{实体类之间的关联（九）：调货的往来方同行商户}{05b11-entity-money-partner}
+\fig{实体类之间的关联（九）：调货与来源方往来}{05b11-entity-money-partner}
 \figtwo[0.72]{实体类之间的关联（十）：加工任务与完工交付申请}{05b12-entity-delivery}{实体类之间的关联（十一）：送检、鉴定机构与证书}{05b13-entity-cert-org}
 \fig{实体类之间的关联（十二）：货品的调拨}{05b14-entity-goods-transfer2}
-\figtwo[0.72]{实体类之间的关联（十三）：成交与客户下单}{05b15-entity-return}{实体类之间的关联（十四）：成交与退货}{05b16-entity-return}
+\figtwo[0.72]{实体类之间的关联（十三）：成交与客户下单}{05b15-entity-deal-customer}{实体类之间的关联（十四）：成交与退货}{05b16-entity-deal-return}
+\fig{实体类之间的关联（十五）：来源方、寄售合同、寄售明细与货品}{05b17-entity-consign}
+\fig{实体类之间的关联（十六）：来源方、台账结算、调货与寄售明细}{05b18-entity-settle}
+\fig{实体类之间的关联（十七）：成交与分期计划}{05b19-entity-installment}
+\fig{实体类之间的关联（十八）：货品、用户与库存流水}{05b20-entity-stocklog}
+\fig{实体类之间的关联（十九）：用户、角色与权限}{05b21-entity-rbac}
 
 \needspace{8\baselineskip}
 \begin{table}[H]
@@ -1360,6 +1665,17 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 入库批次 & 1 & 货品 & 0..* & 含货品（一件货品只属一个批次）\textbf{（组合）} \\
 货品 & 1 & 证书 & 0..* & 挂证书（证书不可共享，货品注销则证书无意义）\textbf{（组合）} \\
 加工任务 & 1 & 完工交付申请 & 0..* & 产出（完工交付申请不可脱离任务）\textbf{（组合）} \\
+来源方 & 1 & 寄售合同 & 0..* & 寄出（类别=供应商） \\
+寄售合同 & 1 & 寄售明细 & 0..* & 含（一份合同多件寄售货品）\textbf{（组合）} \\
+货品 & 1 & 寄售明细 & 0..* & 被寄售（一货品同一时间至多一条未结清明细，结算后可再寄售） \\
+来源方 & 1 & 台账结算 & 0..* & 结算往来 \\
+调货 & 1 & 台账结算 & 0..1 & 结算目标（一笔调货至多一次结算） \\
+寄售明细 & 1 & 台账结算 & 0..1 & 结算目标（一件寄售货品至多一次结算） \\
+成交 & 1 & 分期计划 & 0..1 & 分期（一份成交至多一份计划） \\
+货品 & 1 & 库存流水 & 0..* & 记录（每次状态变更必写流水） \\
+用户 & 1 & 库存流水 & 0..* & 经手 \\
+用户 & 0..* & 角色 & 0..* & 具有（多对多，落表 t\_user\_role） \\
+角色 & 0..* & 权限 & 0..* & 授予（多对多，落表 t\_role\_permission） \\
 货品类别 & 1 & 货品 & 0..* & 分类 \\
 货品 & 1 & 成交 & 0..* & 售出（退货后仍可再售，故可多次） \\
 客户 & 0..1 & 成交 & 0..* & 下单（散客不关联客户档案，允许为空） \\
@@ -1372,13 +1688,13 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 预定 & 0..* & 客户 & 0..1 & 登记给（预定以姓名与手机号提交，已建档客户才关联） \\
 客户 & 0..1 & 客户 & 0..* & 介绍（自反关联：来源渠道含“朋友介绍”） \\
 货品 & 1 & 预约 & 0..* & 被预约看 \\
-供应商 & 1 & 出让申请 & 0..* & 提交 \\
+来源方 & 1 & 出让申请 & 0..* & 提交（类别=供应商，含回流出让方） \\
 出让申请 & 0..1 & 上门预约 & 0..* & 预约上门 \\
 完工交付申请 & 0..1 & 上门预约 & 0..* & 预约上门（UC-15 规则①） \\
 货品 & 1 & 加工任务 & 0..* & 加工 \\
-加工师傅 & 1 & 加工任务 & 0..* & 承接 \\
+来源方 & 1 & 加工任务 & 0..* & 承接（类别=加工师傅） \\
 货品 & 1 & 调货 & 0..* & 调拨 \\
-同行商户 & 1 & 调货 & 0..* & 往来方 \\
+来源方 & 1 & 调货 & 0..* & 往来方（类别=同行商户） \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1390,7 +1706,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 研究对象是系统内各类，软件类——执行者只发消息到边界类，
 边界类把请求转给控制类，控制类再组织实体类完成业务。
 消息代表责任分配而非数据流动，控制类只分配责任，不取存实体类的属性。
-20 个用例的基本路径逐一给出，如图~\ref{fig:06a-uc01-sale} 至图~\ref{fig:06h-uc20-transfer-rec}。
+26 个用例的基本路径逐一给出，如图~\ref{fig:06a-uc01-sale} 至图~\ref{fig:06y-uc26-stock-log}。
 
 \fig[1.0]{登记成交（UC-01）分析序列图}{06a-uc01-sale}
 \fig[1.0]{登记货品入库（UC-02）分析序列图}{06b-uc02-goods-in}
@@ -1412,18 +1728,24 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \fig[1.0]{审核出让申请（UC-18）分析序列图}{06g-uc18-transfer-review}
 \fig[1.0]{登记货款记录（UC-19）分析序列图}{06t-uc19-payment}
 \fig[1.0]{维护调货记录（UC-20）分析序列图}{06h-uc20-transfer-rec}
+\fig[1.0]{登记寄售合同（UC-21）分析序列图}{06t-uc21-consign}
+\fig[1.0]{结算寄售货款（UC-22）分析序列图}{06u-uc22-consign-settle}
+\fig[1.0]{结算调货台账（UC-23）分析序列图}{06v-uc23-transfer-settle}
+\fig[1.0]{登记分期计划（UC-24）分析序列图}{06w-uc24-installment}
+\fig[1.0]{记录分期还款（UC-25）分析序列图}{06x-uc25-installment-pay}
+\fig[1.0]{查看库存流水（UC-26）分析序列图}{06y-uc26-stock-log}
 
 \subsection{分析状态机图（只画核心类）}
 
 状态机图只画核心类，每条迁移的触发事件与规约来源一并标注。
-共画七张：货品的八状态总览及分主题三张（售出与预留、调货与代销、送检与处置）、出让申请（三状态）、加工任务（四状态）、预定记录（四状态）。
+共画九张：货品的八状态总览及分主题三张（售出与预留、调货与代销、送检与处置）、出让申请（三状态）、加工任务（四状态）、预定记录（四状态）、寄售合同（三状态）、分期计划（三状态）。
 选取依据是“核心类、状态多的事物”：货品是全系统流转最频繁的对象，加工任务是组合结构的根，
-预定记录的状态直接驱动额度规则；
+预定记录的状态直接驱动额度规则；寄售合同与分期计划是新扩展业务的生命周期载体。
 
 \subsubsection{货品生命周期（八状态，分三张给出）}
 
 货品是全系统流转最频繁的对象，八状态取自 UC-01 的状态枚举：在柜、已订、已售、预留、已调出、代销中、已送检、待处理。
-状态之间的迁移共 17 条，总体结构见图~\ref{fig:07a-goods-state}；
+状态之间的迁移共 18 条，总体结构见图~\ref{fig:07a-goods-state}；
 再按业务主题分三张细化：售出与预留（图~\ref{fig:07a1-goods-sale}）、
 调货与代销（图~\ref{fig:07a2-goods-transfer}）、送检与处置（图~\ref{fig:07a3-goods-inspect}）。
 各迁移及其规约来源见表~\ref{tab:goods-transitions}。
@@ -1444,7 +1766,7 @@ UC-19、UC-20 承接改进场景里的记账消息，货款与调货一本账。
 \toprule
 迁移 & 触发事件 & 规约来源 \\
 \midrule
-$[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & UC-02 \\
+$[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工/寄售） & UC-02 \\
 在柜 $\rightarrow$ 预留 & 客户预留，或预定确定到店 & UC-01 规则③、UC-13 规则⑥ \\
 预留 $\rightarrow$ 在柜 & 取消预留（到店看过暂不决定） & UC-13 规则⑥ \\
 在柜 $\rightarrow$ 已售 & 全款成交 & UC-01 \\
@@ -1491,6 +1813,22 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 
 \fig{预定记录状态机（四状态）}{07d-booking-state}
 
+\subsubsection{寄售合同（三状态）}
+
+寄售合同的状态机如图~\ref{fig:07e-consign-state}。登记寄售合同后即“生效”，
+提前终止转“已终止”，到期日过仍未终止转“已到期”；
+两种结束态下未结算明细对应的货品都退回供应商。
+
+\fig{寄售合同状态机（三状态）}{07e-consign-state}
+
+\subsubsection{分期计划（三状态）}
+
+分期计划的状态机如图~\ref{fig:07f-installment-state}。登记分期计划后为“未还”，
+到期日过仍有未还转“逾期”，还清全部转“已结清”；
+逾期不是终点，补清欠款后同样进入“已结清”。
+
+\fig{分期计划状态机（三状态）}{07f-installment-state}
+
 % ============================================================
 % D 阶段：设计
 % ============================================================
@@ -1501,8 +1839,6 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \section{D 设计}
 
 设计阶段从分析模型出发“从虚到实”，把分析阶段的类与协作落到具体技术实现。
-这一章有两条底线：分析阶段定下的状态机和不变式照原样保住，不因为换了技术就改；
-实现上遇到取舍只做折衷，不推翻分析阶段已经得出的结论。
 三层分别选定技术栈（表~\ref{tab:stack}）：
 前端 Vue3 + Vite + Element-Plus + Pinia，后端 SpringBoot 3 + MyBatis-Plus，
 数据库 MySQL 8.0，外部端微信小程序，柜台电脑端本地部署。
@@ -1542,14 +1878,19 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 按最简实现满足三范式：每行描述单一对象、无重复组、属性原子（1NF）；
 非主属性完全依赖主键、不存在部分依赖（2NF）；非主属性之间不存在传递依赖（3NF）。
 原先把客户标签、料子图片、过程图三处多值属性用逗号分隔塞进一个字段，违反第一范式；
-现已各自独立成表（\code{t\_customer\_tag}、\code{t\_apply\_image}、\code{t\_delivery\_image}），属性恢复为原子值。
+现已各自独立成表（\code{t\_customer\_tag}、\code{t\_apply\_image}、\code{t\_delivery\_image}），属性恢复为原子值；
+寄售明细（一份合同多件货品）同样拆表（\code{t\_consignment\_item}）。
+用户与角色、角色与权限两组多对多各自拆成关联表（\code{t\_user\_role}、\code{t\_role\_permission}）。
+供应商、加工师傅、同行商户三类参照数据属性与操作完全一致，合成一张来源方表
+\code{t\_source\_party}，以类别列区分，同一类别内名称唯一。
 主键一律用代理键（自增 id，唯一且恒定），业务编码单列并加唯一索引；
 外键放在“非 1”方（多方），常规业务行用 RESTRICT 禁止物理删除，
-多值属性拆表随主表级联删除（CASCADE），客户介绍人置空（SET NULL）；
+多值属性拆表与多对多拆表随主表级联删除（CASCADE），客户介绍人置空（SET NULL）；
+外键只保证“指向的记录存在”，来源方类别与单据类型是否匹配、结算单据二选一这类跨表规则由业务层把关；
 状态与枚举字段用字符列存储，注释里列全取值。
 非规范化只用来微调性能，出现不可调和的性能问题才用。这里只留了一处：
 货品表里直接存了证书号，查证书时不用再联表。
-全部建表 DDL 见 \code{docs/schema.sql}，共 24 张表（基础参照 6 张 + 业务 15 张 + 多值属性拆表 3 张）。
+全部建表 DDL 见 \code{docs/schema.sql}，共 31 张表（基础参照 6 张 + 业务 19 张 + 拆表 6 张，其中多值属性拆表 4 张、多对多拆表 2 张）。
 
 存储访问在表数据入口、行数据入口、活动记录、数据映射器四种方式中选定\textbf{数据映射器}：
 由 MyBatis-Plus 的 Mapper 承担对象与表之间的双向转换，领域层不感知 SQL 与表结构。
@@ -1557,43 +1898,51 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 
 \subsubsection{类-表映射}
 
-分析实体类与数据表的对应关系见表~\ref{tab:class-table}：21 个实体类对应 21 张主表，
-另有 3 张是多值属性拆出的表（客户标签、出让申请图片、完工过程图），合计 24 张；
-基础参照类（供应商、加工师傅、鉴定机构、同行商户、货品类别）各成一张参照表。
-分析模型里的三处组合，落到库上就是三个非空外键：\code{t\_goods.stock\_in\_id}、
-\code{t\_certificate.goods\_id}、\code{t\_delivery\_apply.task\_id}；分析模型中未采用泛化，各类账户的角色差别由 \textbf{t\_user.role} 属性值承担。
+分析实体类与数据表的对应关系见表~\ref{tab:class-table}：26 个实体类对应 26 张主表，
+另有 6 张拆表（多值属性 4 张：客户标签、出让申请图片、完工过程图、寄售明细；
+多对多 2 张：用户-角色、角色-权限），合计 31 张；
+基础参照类（来源方、鉴定机构、货品类别、用户、角色、权限）各成一张参照表。
+分析模型里的四处组合，落到库上就是四个非空外键：\code{t\_goods.stock\_in\_id}、
+\code{t\_certificate.goods\_id}、\code{t\_delivery\_apply.task\_id}、\code{t\_consignment\_item.consignment\_id}；
+分析模型中未采用泛化，用户与角色多对多、角色与权限多对多，
+角色经 \code{t\_user\_role} 关联，权限经 \code{t\_role\_permission} 关联。
 
 \needspace{8\baselineskip}
 \begin{table}[H]
 \centering
 \small
-\caption{分析实体类到数据表的映射（21 个分析类对应 21 张表）}
+\caption{分析实体类到数据表的映射（26 个分析类对应 26 张表）}
 \label{tab:class-table}
 \begin{tabularx}{\textwidth}{@{}l X@{}}
 \toprule
 分析实体类 & 对应数据表 \\
 \midrule
 货品（E1） & \code{t\_goods}（货品） \\
-入库批次（E13） & \code{t\_stock\_in}（入库批次） \\
-证书（E12） & \code{t\_certificate}（证书） \\
-成交（E2） & \code{t\_sale}（成交） \\
-退货（E14） & \code{t\_return}（退货） \\
-送检（E4） & \code{t\_inspection}（送检） \\
-预定（E5） & \code{t\_booking}（预定） \\
-预约（E15） & \code{t\_reservation}（预约看货，UC-10） \\
-出让申请（E6） & \code{t\_transfer\_apply}（出让申请，含审核字段） \\
-上门预约（E7） & \code{t\_visit\_appt}（上门预约） \\
-加工任务（E8） & \code{t\_process\_task}（加工任务） \\
-完工交付申请（E16） & \code{t\_delivery\_apply}（完工交付申请） \\
-货款（E9） & \code{t\_payment}（货款） \\
-调货（E10） & \code{t\_transfer}（调货） \\
-客户（E3） & \code{t\_customer}（客户） \\
-供应商（E17） & \code{t\_supplier}（供应商） \\
-加工师傅（E18） & \code{t\_craftsman}（加工师傅） \\
-鉴定机构（E19） & \code{t\_cert\_org}（鉴定机构） \\
-同行商户（E20） & \code{t\_merchant}（同行商户） \\
-货品类别（E21） & \code{t\_category}（货品类别） \\
-用户（E11） & \code{t\_user}（用户与外部账户） \\
+货品（E2） & \code{t\_stock\_in}（入库批次） \\
+货品（E3） & \code{t\_certificate}（证书） \\
+货品（E4） & \code{t\_sale}（成交） \\
+货品（E5） & \code{t\_return}（退货） \\
+货品（E6） & \code{t\_inspection}（送检） \\
+货品（E7） & \code{t\_booking}（预定） \\
+货品（E8） & \code{t\_reservation}（预约看货，UC-10） \\
+货品（E9） & \code{t\_transfer\_apply}（出让申请，含审核字段） \\
+货品（E10） & \code{t\_visit\_appt}（上门预约） \\
+货品（E11） & \code{t\_process\_task}（加工任务） \\
+货品（E12） & \code{t\_delivery\_apply}（完工交付申请） \\
+货品（E13） & \code{t\_payment}（货款） \\
+货品（E14） & \code{t\_transfer}（调货） \\
+货品（E15） & \code{t\_consignment}（寄售合同） \\
+货品（E16） & \code{t\_consignment\_item}（寄售明细，多值拆表） \\
+货品（E17） & \code{t\_settlement}（台账结算） \\
+货品（E18） & \code{t\_installment}（分期计划） \\
+货品（E19） & \code{t\_stock\_log}（库存流水） \\
+货品（E20） & \code{t\_customer}（客户） \\
+货品（E21） & \code{t\_source\_party}（来源方，类别区分供应商/加工师傅/同行商户） \\
+货品（E22） & \code{t\_cert\_org}（鉴定机构） \\
+货品（E23） & \code{t\_category}（货品类别） \\
+货品（E24） & \code{t\_user}（用户与外部账户） \\
+货品（E25） & \code{t\_role}（角色） \\
+货品（E26） & \code{t\_permission}（权限） \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1614,18 +1963,19 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 规约字段列表名（A/B） & 分析实体类名（C） & 数据表（D） \\
 \midrule
 成交记录 & 成交 & \code{t\_sale} \\
+退货记录 & 退货 & \code{t\_return} \\
 送检记录 & 送检 & \code{t\_inspection} \\
 预定记录 & 预定 & \code{t\_booking} \\
 货款记录 & 货款 & \code{t\_payment} \\
 调货记录 & 调货 & \code{t\_transfer} \\
-基础数据（供应商/加工师傅/鉴定机构/同行商户/货品类别） & 同名五个实体类 & 五张参照表 \\
+寄售合同 & 寄售合同 & \code{t\_consignment}（明细见 \code{t\_consignment\_item}） \\
+台账结算 & 台账结算 & \code{t\_settlement} \\
+分期计划 & 分期计划 & \code{t\_installment} \\
+库存流水 & 库存流水 & \code{t\_stock\_log} \\
+基础数据（来源方/鉴定机构/货品类别） & 同名三个实体类 & 参照表（来源方合一，类别区分） \\
 \bottomrule
 \end{tabularx}
 \end{table}
-
-类图上的关系按课件给的规则落到表上：关联和组合都把外键放在"非 1 方"（多方），
-组合的外键还不为空；多值属性拆成独立表；泛化用超类的主键；主键要唯一、恒定，
-并且和领域字段分开。逐条对照见表~\ref{tab:map-rules}。
 
 \needspace{8\baselineskip}
 \begin{table}[H]
@@ -1642,29 +1992,31 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \code{t\_certificate.org\_id} 指向 \code{t\_cert\_org} \\
 组合 & 外键放在非 1 方，且不为空 &
 \code{t\_goods.stock\_in\_id}、\code{t\_certificate.goods\_id}、
-\code{t\_delivery\_apply.task\_id} 三列都是 \code{NOT NULL} \\
+\code{t\_delivery\_apply.task\_id}、\code{t\_consignment\_item.consignment\_id} 四列都是 \code{NOT NULL} \\
 多值属性 & 拆成独立表，属性恢复原子（1NF） &
 \code{t\_customer\_tag}（客户标签）、\code{t\_apply\_image}（出让申请图片）、
-\code{t\_delivery\_image}（完工过程图） \\
-多对多 & 拆成关联表 & 分析模型里没有多对多关系，此规则未用到 \\
+\code{t\_delivery\_image}（完工过程图）、\code{t\_consignment\_item}（寄售明细） \\
+多对多 & 拆成关联表 &
+用户-角色落 \code{t\_user\_role}，角色-权限落 \code{t\_role\_permission}，
+两端都是组合外键（非空、级联删除） \\
 泛化 & 用超类的主键作为所有类的主键 &
-分析模型没有采用泛化；账户之间的角色差别由 \code{t\_user.role} 的取值承担 \\
+分析模型没有采用泛化；用户与角色多对多、角色与权限多对多，各自拆表；来源方三表合一以类别列区分 \\
 主键 & 唯一、恒定，和领域字段分开 &
 自增 \code{id} 作主键，业务编码另设一列并加唯一索引，如 \code{t\_goods.goods\_no} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-24 张表的整体结构按用途分组列在表~\ref{tab:tables}，
+31 张表的整体结构按用途分组列在表~\ref{tab:tables}，
 每张表的字段名称、中文含义、数据类型和约束条件在下一节逐张说明。
 
 \subsubsection{表结构清单}
 
-24 张表按用途分组，清单见表~\ref{tab:tables}。
+31 张表按用途分组，清单见表~\ref{tab:tables}。
 
 \needspace{6\baselineskip}
 \begin{longtable}{@{}p{3.3cm} p{1.9cm} p{5.7cm} p{2.3cm}@{}}
-\caption{数据表清单（共 24 张）}\label{tab:tables}\\
+\caption{数据表清单（共 31 张）}\label{tab:tables}\\
 \toprule
 表名 & 中文名 & 主要字段（列） & 对应用例 \\
 \midrule
@@ -1676,11 +2028,11 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \bottomrule
 \endlastfoot
 \code{t\_category} & 货品类别 & name, remark & UC-07 \\
-\code{t\_user} & 用户/外部账户 & username, name, password\_hash, role, status & UC-08/12 \\
-\code{t\_supplier} & 供应商 & name, contact\_person, phone & UC-07 \\
-\code{t\_craftsman} & 加工师傅 & name, phone & UC-07 \\
+\code{t\_user} & 用户/外部账户 & username, name, password\_hash, status & UC-08/12 \\
+\code{t\_role} & 角色 & role\_code, role\_name & UC-12 \\
+\code{t\_permission} & 权限 & perm\_code, perm\_name & 全部用例（权限矩阵） \\
+\code{t\_source\_party} & 来源方 & party\_type, name, contact\_person, phone & UC-07 \\
 \code{t\_cert\_org} & 鉴定机构 & name, phone & UC-07 \\
-\code{t\_merchant} & 同行商户 & name, phone & UC-07 \\
 \code{t\_stock\_in} & 入库批次 & in\_time, receiver\_id & UC-02 \\
 \code{t\_goods} & 货品档案 & goods\_no, name, category\_id, material, origin, shape, form, weight\_g, size, cert\_no, image, src\_type, src\_party, src\_doc, cost, min\_price, transfer\_price, in\_time, stock\_in\_id, status & UC-01/02/09/11 \\
 \code{t\_customer} & 客户 & customer\_no, name, phone, wechat, source\_channel, introducer\_id, pref\_category, pref\_size, pref\_budget, remark & UC-04 \\
@@ -1692,7 +2044,7 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \code{t\_certificate} & 鉴定证书 & cert\_no, org\_id, insp\_id, goods\_id, conclusion, issue\_date, cert\_qrcode & UC-05 \\
 \code{t\_sale} & 成交记录 & sale\_no, goods\_id, sale\_time, price, pay\_method, received, customer\_id, operator\_id, recorded\_at & UC-01/06 \\
 \code{t\_return} & 退货记录 & return\_time, sale\_id, reason, refund, operator\_id & UC-03 \\
-\code{t\_transfer} & 调货记录 & record\_no, direction, merchant\_id, goods\_id, quantity, status, record\_time & UC-20 \\
+\code{t\_transfer} & 调货记录 & record\_no, direction, merchant\_id, goods\_id, quantity, status, settled, record\_time & UC-20/23 \\
 \code{t\_transfer\_apply} & 出让申请(含审核) & apply\_no, supplier\_id, out\_type, name, quantity, expect\_price, description, submit\_time, status, audit\_opinion, audit\_time, auditor\_id & UC-14/18 \\
 \code{t\_apply\_image} & 出让申请图片 & apply\_id, seq, image\_path & UC-14（多图属性拆表）\\
 
@@ -1702,6 +2054,13 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \code{t\_delivery\_image} & 完工过程图 & apply\_id, stage, image\_path & UC-17（多图属性拆表）\\
 
 \code{t\_payment} & 货款记录 & record\_no, biz\_type, related\_type, related\_no, amount, direction, operator\_id, pay\_time & UC-19 \\
+\code{t\_consignment} & 寄售合同 & consign\_no, supplier\_id, sign\_time, expire\_date, settle\_cycle, status & UC-21 \\
+\code{t\_consignment\_item} & 寄售明细 & consignment\_id, goods\_id, consign\_price, settle\_status & UC-21/22（多值属性拆表）\\
+\code{t\_settlement} & 台账结算 & settle\_no, party\_id, settle\_type, transfer\_id, consign\_item\_id, amount, settle\_method, settle\_time, operator\_id & UC-22/23 \\
+\code{t\_installment} & 分期计划 & plan\_no, sale\_id, periods, period\_amount, paid\_amount, next\_due\_date, start\_date, status & UC-24/25 \\
+\code{t\_stock\_log} & 库存流水 & goods\_id, from\_status, to\_status, ref\_type, ref\_no, operator\_id, log\_time & UC-26 \\
+\code{t\_user\_role} & 用户-角色 & user\_id, role\_id & UC-12（多对多拆表）\\
+\code{t\_role\_permission} & 角色-权限 & role\_id, permission\_id & 权限矩阵（多对多拆表）\\
 \end{longtable}
 
 \subsubsection{各表字段说明}
@@ -1744,7 +2103,6 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \code{username} & 用户名（登录名） & \code{VARCHAR(64)} & 唯一、非空 \\
 \code{name} & 姓名 & \code{VARCHAR(64)} & 非空 \\
 \code{password\_hash} & 口令（加密保存，禁止明文） & \code{VARCHAR(128)} & 非空 \\
-\code{role} & 角色：老板|销售|合作商户|供应商|加工师傅 & \code{VARCHAR(16)} & 非空 \\
 \code{status} & 状态：启用|停用 & \code{VARCHAR(8)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
@@ -1752,7 +2110,7 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 
 \needspace{8\baselineskip}
 \begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
-\caption{供应商表 \code{t\_supplier} 的字段说明}\label{tab:f-t-supplier}\\
+\caption{角色表 \code{t\_role} 的字段说明}\label{tab:f-t-role}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
 \midrule
@@ -1764,17 +2122,15 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \bottomrule
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
-\code{name} & 供应商名称 & \code{VARCHAR(128)} & 唯一、非空 \\
-\code{contact\_person} & 联系人 & \code{VARCHAR(64)} & 可空 \\
-\code{phone} & 联系电话 & \code{VARCHAR(32)} & 可空 \\
+\code{role\_code} & 角色编码（BOSS/SALE/MERCHANT/SUPPLIER/CRAFTSMAN） & \code{VARCHAR(16)} & 唯一、非空 \\
+\code{role\_name} & 角色名：老板|销售|合作商户|供应商|加工师傅 & \code{VARCHAR(32)} & 非空 \\
 \code{remark} & 备注 & \code{VARCHAR(255)} & 可空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
-\code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \needspace{8\baselineskip}
 \begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
-\caption{加工师傅表 \code{t\_craftsman} 的字段说明}\label{tab:f-t-craftsman}\\
+\caption{权限表 \code{t\_permission} 的字段说明}\label{tab:f-t-permission}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
 \midrule
@@ -1786,8 +2142,29 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \bottomrule
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
-\code{name} & 师傅姓名 & \code{VARCHAR(64)} & 唯一、非空 \\
-\code{contact\_person} & 联系人 & \code{VARCHAR(64)} & 可空 \\
+\code{perm\_code} & 权限编码（对应用例编号，如 UC-01） & \code{VARCHAR(16)} & 唯一、非空 \\
+\code{perm\_name} & 权限名（用例名） & \code{VARCHAR(64)} & 非空 \\
+\code{remark} & 备注 & \code{VARCHAR(255)} & 可空 \\
+\code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
+\end{longtable}
+
+\needspace{8\baselineskip}
+\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\caption{来源方表 \code{t\_source\_party} 的字段说明}\label{tab:f-t-source-party}\\
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endfirsthead
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
+\code{party\_type} & 类别：供应商|加工师傅|同行商户 & \code{VARCHAR(16)} & 非空 \\
+\code{name} & 名称（公司名/师傅姓名/店名） & \code{VARCHAR(128)} & 类别内唯一、非空 \\
+\code{contact\_person} & 联系人（名称为个人时留空） & \code{VARCHAR(64)} & 可空 \\
 \code{phone} & 联系电话 & \code{VARCHAR(32)} & 可空 \\
 \code{remark} & 备注 & \code{VARCHAR(255)} & 可空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
@@ -1809,28 +2186,6 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{name} & 鉴定机构名称 & \code{VARCHAR(128)} & 唯一、非空 \\
-\code{phone} & 联系电话 & \code{VARCHAR(32)} & 可空 \\
-\code{remark} & 备注 & \code{VARCHAR(255)} & 可空 \\
-\code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
-\code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
-\end{longtable}
-
-\needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
-\caption{同行商户表 \code{t\_merchant} 的字段说明}\label{tab:f-t-merchant}\\
-\toprule
-字段名称 & 中文描述 & 数据类型 & 约束条件 \\
-\midrule
-\endfirsthead
-\toprule
-字段名称 & 中文描述 & 数据类型 & 约束条件 \\
-\midrule
-\endhead
-\bottomrule
-\endlastfoot
-\code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
-\code{name} & 同行商户名称 & \code{VARCHAR(128)} & 唯一、非空 \\
-\code{contact\_person} & 联系人 & \code{VARCHAR(64)} & 可空 \\
 \code{phone} & 联系电话 & \code{VARCHAR(32)} & 可空 \\
 \code{remark} & 备注 & \code{VARCHAR(255)} & 可空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
@@ -1882,7 +2237,7 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \code{size} & 尺寸/圈口（如内径56mm） & \code{VARCHAR(64)} & 可空 \\
 \code{cert\_no} & 证书号（取最新一张证书的编号，完整证书见 t\_certificate） & \code{VARCHAR(64)} & 可空 \\
 \code{image} & 图片（文件路径/URL） & \code{VARCHAR(500)} & 可空 \\
-\code{src\_type} & 来源类型：采购|回收|调货|加工完工 & \code{VARCHAR(16)} & 非空 \\
+\code{src\_type} & 来源类型：采购|回收|调货|加工完工|寄售 & \code{VARCHAR(16)} & 非空 \\
 \code{src\_party} & 来源方（供应商/商户/师傅名） & \code{VARCHAR(128)} & 可空 \\
 \code{src\_doc} & 来源单据号 & \code{VARCHAR(64)} & 可空 \\
 \code{cost} & 成本（调货调入不记成本，只记往来） & \code{DECIMAL(12,2)} & 可空 \\
@@ -1911,7 +2266,7 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{customer\_no} & 客户编号（系统生成） & \code{VARCHAR(32)} & 唯一、非空 \\
 \code{name} & 姓名 & \code{VARCHAR(64)} & 非空 \\
-\code{phone} & 手机号 & \code{VARCHAR(32)} & 非空 \\
+\code{phone} & 手机号 & \code{VARCHAR(32)} & 非空、唯一 \\
 \code{wechat} & 微信号 & \code{VARCHAR(64)} & 可空 \\
 \code{source\_channel} & 来源渠道：闲鱼|微信朋友圈|朋友介绍|线下|直播|老客户复购|其他 & \code{VARCHAR(16)} & 非空 \\
 \code{introducer\_id} & 介绍人，指向 t\_customer（来源渠道为朋友介绍时，UC-04） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、置空 \\
@@ -2081,10 +2436,11 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{record\_no} & 记录编号 & \code{VARCHAR(32)} & 唯一、非空 \\
 \code{direction} & 方向：调入|调出 & \code{VARCHAR(8)} & 非空 \\
-\code{merchant\_id} & 合作商户，指向 t\_merchant & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
+\code{merchant\_id} & 合作商户，指向 t\_source\_party（类别=同行商户） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{goods\_id} & 货品，指向 t\_goods & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{quantity} & 数量 & \code{INT} & 非空 \\
 \code{status} & 状态：在调|已售|已退回 & \code{VARCHAR(8)} & 非空 \\
+\code{settled} & 已结算：否|是（UC-23 台账结算后置是） & \code{VARCHAR(4)} & 非空 \\
 \code{record\_time} & 时间（鉴赏期结算时点见 UC-20 规则③） & \code{DATETIME} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
@@ -2105,7 +2461,7 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{apply\_no} & 申请编号 & \code{VARCHAR(32)} & 唯一、非空 \\
-\code{supplier\_id} & 供应商，指向 t\_supplier（含回流出让方） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
+\code{supplier\_id} & 供应商，指向 t\_source\_party（类别=供应商，含回流出让方） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{out\_type} & 出让类型：玉料|成品|回流 & \code{VARCHAR(8)} & 非空 \\
 \code{name} & 品名 & \code{VARCHAR(128)} & 非空 \\
 \code{quantity} & 数量 & \code{INT} & 非空 \\
@@ -2162,7 +2518,7 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{task\_no} & 任务编号 & \code{VARCHAR(32)} & 唯一、非空 \\
 \code{goods\_id} & 货品，指向 t\_goods（加工对象） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
-\code{craftsman\_id} & 加工师傅，指向 t\_craftsman（分派对象） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
+\code{craftsman\_id} & 加工师傅，指向 t\_source\_party（类别=加工师傅，分派对象） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{requirement} & 加工要求 & \code{VARCHAR(500)} & 非空 \\
 \code{labor\_fee} & 工费 & \code{DECIMAL(12,2)} & 非空 \\
 \code{deadline} & 期限 & \code{DATE} & 非空 \\
@@ -2209,7 +2565,7 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{record\_no} & 记录编号 & \code{VARCHAR(32)} & 唯一、非空 \\
-\code{biz\_type} & 业务类型：采购货款|调货货款|加工工费 & \code{VARCHAR(16)} & 非空 \\
+\code{biz\_type} & 业务类型：采购货款|调货货款|加工工费|寄售货款 & \code{VARCHAR(16)} & 非空 \\
 \code{related\_type} & 关联单据类型（入库批次/调货记录/加工任务） & \code{VARCHAR(32)} & 非空 \\
 \code{related\_no} & 关联单据编号（逻辑引用，不建硬外键） & \code{VARCHAR(32)} & 非空 \\
 \code{amount} & 金额 & \code{DECIMAL(12,2)} & 非空 \\
@@ -2276,14 +2632,175 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工） & U
 \code{image\_path} & 图片路径 & \code{VARCHAR(255)} & 非空 \\
 \end{longtable}
 
+\needspace{8\baselineskip}
+\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\caption{寄售合同表 \code{t\_consignment} 的字段说明}\label{tab:f-t-consignment}\\
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endfirsthead
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
+\code{consign\_no} & 合同编号 & \code{VARCHAR(32)} & 唯一、非空 \\
+\code{supplier\_id} & 寄售供应商，指向 t\_source\_party（类别=供应商） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
+\code{sign\_time} & 签订时间 & \code{DATETIME} & 非空 \\
+\code{expire\_date} & 到期日（到期未终止即置已到期） & \code{DATE} & 非空 \\
+\code{settle\_cycle} & 结算方式：售出即结|按月结算 & \code{VARCHAR(16)} & 非空 \\
+\code{status} & 状态：生效|已终止|已到期（状态机见 07e） & \code{VARCHAR(8)} & 非空 \\
+\code{remark} & 备注 & \code{VARCHAR(255)} & 可空 \\
+\code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
+\code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
+\end{longtable}
+
+\needspace{8\baselineskip}
+\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\caption{寄售明细表 \code{t\_consignment\_item} 的字段说明}\label{tab:f-t-consignment-item}\\
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endfirsthead
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
+\code{consignment\_id} & 寄售合同，指向 t\_consignment & \code{BIGINT UNSIGNED} & 非空、组合外键（非 1 方）、随主表级联删除 \\
+\code{goods\_id} & 货品，指向 t\_goods & \code{BIGINT UNSIGNED} & 非空、索引、外键（非 1 方）、禁止删除 \\
+\code{consign\_price} & 寄售价（售出后按此价与供应商结算） & \code{DECIMAL(12,2)} & 非空 \\
+\code{settle\_status} & 结算状态：未结算|已结算（UC-22） & \code{VARCHAR(8)} & 非空 \\
+\code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
+\end{longtable}
+
+\needspace{8\baselineskip}
+\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\caption{台账结算表 \code{t\_settlement} 的字段说明}\label{tab:f-t-settlement}\\
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endfirsthead
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
+\code{settle\_no} & 结算编号 & \code{VARCHAR(32)} & 唯一、非空 \\
+\code{party\_id} & 结算往来方，指向 t\_source\_party & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
+\code{settle\_type} & 结算类型：调货|寄售 & \code{VARCHAR(8)} & 非空 \\
+\code{transfer\_id} & 调货记录，指向 t\_transfer（结算类型=调货时非空） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、禁止删除 \\
+\code{consign\_item\_id} & 寄售明细，指向 t\_consignment\_item（结算类型=寄售时非空） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、禁止删除 \\
+\code{amount} & 结算金额 & \code{DECIMAL(12,2)} & 非空 \\
+\code{settle\_method} & 结算方式：现金|转账|冲抵 & \code{VARCHAR(16)} & 非空 \\
+\code{settle\_time} & 结算时间 & \code{DATETIME} & 非空 \\
+\code{operator\_id} & 经手人，指向 t\_user & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
+\code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
+\end{longtable}
+
+\needspace{8\baselineskip}
+\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\caption{分期计划表 \code{t\_installment} 的字段说明}\label{tab:f-t-installment}\\
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endfirsthead
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
+\code{plan\_no} & 计划编号 & \code{VARCHAR(32)} & 唯一、非空 \\
+\code{sale\_id} & 成交记录，指向 t\_sale & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
+\code{periods} & 分期期数 & \code{INT} & 非空 \\
+\code{period\_amount} & 每期应还金额 & \code{DECIMAL(12,2)} & 非空 \\
+\code{paid\_amount} & 已还金额 & \code{DECIMAL(12,2)} & 非空 \\
+\code{next\_due\_date} & 下一期到期日（超过未结清即逾期） & \code{DATE} & 非空 \\
+\code{start\_date} & 计划生效日 & \code{DATE} & 非空 \\
+\code{status} & 状态：未还|逾期|已结清（状态机见 07f） & \code{VARCHAR(8)} & 非空 \\
+\code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
+\code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
+\end{longtable}
+
+\needspace{8\baselineskip}
+\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\caption{库存流水表 \code{t\_stock\_log} 的字段说明}\label{tab:f-t-stock-log}\\
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endfirsthead
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
+\code{goods\_id} & 货品，指向 t\_goods & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
+\code{from\_status} & 变更前状态（入库为第一条流水时为空） & \code{VARCHAR(16)} & 可空 \\
+\code{to\_status} & 变更后状态（取值同 t\_goods.status） & \code{VARCHAR(16)} & 非空 \\
+\code{ref\_type} & 关联单据类型（成交/退货/调货记录/加工任务/送检记录/入库批次/寄售合同） & \code{VARCHAR(16)} & 可空 \\
+\code{ref\_no} & 关联单据编号（逻辑引用，同 t\_payment 口径） & \code{VARCHAR(32)} & 可空 \\
+\code{operator\_id} & 经手人，指向 t\_user & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
+\code{log\_time} & 流水时间（系统时间） & \code{DATETIME} & 非空 \\
+\code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
+\end{longtable}
+
+\needspace{8\baselineskip}
+\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\caption{用户-角色表 \code{t\_user\_role} 的字段说明}\label{tab:f-t-user-role}\\
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endfirsthead
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
+\code{user\_id} & 用户，指向 t\_user & \code{BIGINT UNSIGNED} & 非空、组合外键（非 1 方）、随主表级联删除 \\
+\code{role\_id} & 角色，指向 t\_role & \code{BIGINT UNSIGNED} & 非空、组合外键（非 1 方）、随主表级联删除 \\
+\end{longtable}
+
+\needspace{8\baselineskip}
+\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\caption{角色-权限表 \code{t\_role\_permission} 的字段说明}\label{tab:f-t-role-permission}\\
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endfirsthead
+\toprule
+字段名称 & 中文描述 & 数据类型 & 约束条件 \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
+\code{role\_id} & 角色，指向 t\_role & \code{BIGINT UNSIGNED} & 非空、组合外键（非 1 方）、随主表级联删除 \\
+\code{permission\_id} & 权限，指向 t\_permission & \code{BIGINT UNSIGNED} & 非空、组合外键（非 1 方）、随主表级联删除 \\
+\end{longtable}
+
 \subsubsection{建表 SQL}
 
-24 张表的完整建表语句（含字段注释、唯一索引、外键约束）见 \code{docs/schema.sql}。
+31 张表的完整建表语句（含字段注释、唯一索引、外键约束）见 \code{docs/schema.sql}。
 设计要点：建库统一 \code{utf8mb4} 字符集；每张表以自增 \code{id} 为代理键；
 业务编码列（goods\_no、sale\_no 等）加唯一索引；外键集中在非 1 方，
-常规业务行 \code{ON DELETE RESTRICT}，多值属性拆表 \code{ON DELETE CASCADE}，客户介绍人 \code{ON DELETE SET NULL}；
+常规业务行 \code{ON DELETE RESTRICT}，多值属性拆表与多对多拆表 \code{ON DELETE CASCADE}，客户介绍人 \code{ON DELETE SET NULL}；
 金额用 \code{DECIMAL(12,2)}。
-货款记录关联的单据跨入库、调货、加工等多类，用 \code{biz\_type + related\_type + related\_no} 定位。
+来源方三表合一，类别列区分、类别内名称唯一（唯一键 类别+名称）；客户手机号唯一（同一手机号不重复建档）；
+台账结算一单一据，调货记录与寄售明细两条可空外键二选一，由业务层把关；
+货款记录关联的单据跨入库、调货、加工等多类，用 \code{biz\_type + related\_type + related\_no} 定位；
+库存流水只增不改不删，货品每次状态变更必写一条。
 
 \subsection{业务层设计}
 
@@ -2292,9 +2809,10 @@ Controller 接收请求与参数校验，Service 承载全部业务规则（规�
 Mapper 通过 MyBatis-Plus 封装为仓储（数据映射器）访问数据层，屏蔽 SQL 细节。
 
 类图给出属性、关系与操作的定义；序列图给出操作实现中调用其他类的操作；
-状态机图给出操作实现中的全部逻辑（迁移、警戒条件和进入/退出动作）。
+状态机图给出操作实现中的迁移与触发事件；警戒条件已在 B 段规约业务规则中写明，进入/退出动作由 Service 执行。
 服务的操作从序列图和状态机推出来，不是从属性推出来。
-服务划分见表~\ref{tab:services}，与 C 阶段控制类一一对应，只是把“控制类”落到具体服务。
+服务划分见表~\ref{tab:services}：服务是控制类落到业务层的载体，一个服务承接同域的若干控制类
+（如 CollabService 覆盖出让、加工、预约、预定 7 个控制类），职责与 C 阶段控制类一致。
 
 \needspace{8\baselineskip}
 \begin{table}[H]
@@ -2306,14 +2824,16 @@ Mapper 通过 MyBatis-Plus 封装为仓储（数据映射器）访问数据层�
 \toprule
 服务 & 职责 & 主要用例 \\
 \midrule
-GoodsService & 入库建档、货品状态变更、按金额加权周转 & UC-01/02/05/20/06 \\
-SaleService & 成交登记、退货与统计冲减 & UC-01/03 \\
+GoodsService & 入库建档、货品状态变更、按金额加权周转、库存流水写入与查询、基础数据维护 & UC-01/02/05/07/20/06/26 \\
+SaleService & 成交登记、退货与统计冲减、分期计划与还款 & UC-01/03/24/25 \\
 CustomerService & 客户档案维护与检索、偏好 & UC-04 \\
 TransferService & 调货往来与调货库存维护 & UC-20 \\
 PaymentService & 货款与工费收付记录 & UC-19 \\
-CollabService & 出让申请/审核、加工任务/完工、预约、预定 & UC-10/13/14/15/16/17/18 \\
+ConsignService & 寄售合同登记与寄售货款结算 & UC-21/22 \\
+LedgerService & 调货台账结算 & UC-23 \\
+CollabService & 货品浏览、调货价目、出让申请/审核、加工任务/完工、预约、预定 & UC-09/10/11/13/14/15/16/17/18 \\
 StatsService & 月度销售额、销售客户数、渠道分布 & UC-06 \\
-AuthService & 登录鉴权、角色与外部账户开通 & UC-08/12 \\
+AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & UC-08/12 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2322,6 +2842,14 @@ AuthService & 登录鉴权、角色与外部账户开通 & UC-08/12 \\
 \code{SaleService} 校验货品处于“在柜”、成交价不低于最低售价，
 再分别经 \code{GoodsMapper} 更新货品状态、经 \code{SaleMapper} 落成交记录，
 最后返回登记结果。
+
+跨表不变式由业务层统一把关，全部写在 Service 一层：
+①货品每次状态变更必须写一条库存流水，流水写入后不可修改、不可删除；
+②一张台账结算单只对应一张业务单据（调货记录或寄售明细），结算后单据置已结算，已结算单据不再出现在结算清单；
+③一份成交至多一份分期计划，计划总额等于成交价，还款不超过未还余额；
+④一件货品同一时间只挂一份未结清的寄售明细；
+⑤用户至少拥有一个角色、角色至少拥有一条权限，权限与用例一一对应；
+⑥来源方类别与引用它的单据类型匹配（出让申请引用类别=供应商的来源方，加工任务引用类别=加工师傅，调货记录引用类别=同行商户）。
 
 \subsection{表示层设计}
 
@@ -2339,11 +2867,11 @@ AuthService & 登录鉴权、角色与外部账户开通 & UC-08/12 \\
 \toprule
 端 / 模块 & 功能 \\
 \midrule
-柜台电脑端 · 老板管理端 & 货品入库、统计报表、基础数据维护、外部账户开通、出让申请审核、货款登记、调货记录 \\
-柜台电脑端 · 销售柜台端 & 登记成交、登记退货、客户维护、送检与证书登记 \\
+柜台电脑端 · 老板管理端 & 货品入库、统计报表、基础数据维护、外部账户开通、出让申请审核、货款登记、调货记录、寄售合同（UC-21）、寄售与台账结算（UC-22/23）、库存流水（UC-26） \\
+柜台电脑端 · 销售柜台端 & 登记成交、登记退货、客户维护、送检与证书登记、分期计划与还款（UC-24/25） \\
 微信小程序 · 客户 & 浏览货品（UC-09）、预约看货（UC-10）、预定商品（UC-13） \\
 微信小程序 · 供应商 & 提交出让申请（UC-14）、预约上门时间（UC-15） \\
-微信小程序 · 加工师傅 & 查看加工任务（UC-16）、提交完工交付申请（UC-17） \\
+微信小程序 · 加工师傅 & 预约上门时间（UC-15）、查看加工任务（UC-16）、提交完工交付申请（UC-17） \\
 微信小程序 · 合作商户 & 查看调货价目（UC-11） \\
 \bottomrule
 \end{tabularx}
@@ -2356,5 +2884,109 @@ AuthService & 登录鉴权、角色与外部账户开通 & UC-08/12 \\
 两者粒度不同：一个边界类对应某一端里的多个角色组件。
 状态机也要落到界面上：货品处在不同状态时可点的按钮不同，
 例如已售的货品不再显示“登记成交”，在检的货品显示“录入证书”。
+
+\subsubsection{页面状态机与组件可用}
+
+页面自己的状态决定组件什么时候可用。以两个代表页面为例给出页面状态机：
+成交登记页（录入型）与调货结算页（操作型），如图~\ref{fig:11a-page-state-deal}
+与图~\ref{fig:11b-page-state-transfer}；其余页面按同一模板给出。
+
+\fig{设计状态机图：成交登记页的页面状态}{11a-page-state-deal}
+
+\fig{设计状态机图：调货结算页的页面状态}{11b-page-state-transfer}
+
+页面状态的迁移全部由用户事件与校验结果驱动，与 C 阶段状态机一致：
+成交登记页的“校验通过”即 UC-01 的全部校验规则，调货结算页的“创建结算单成功”即 UC-23 的结算规则。
+每个页面状态下组件的可用与禁用见表~\ref{tab:ui-deal} 与表~\ref{tab:ui-transfer}，
+禁用的组件置灰显示而不是隐藏，操作者能看出功能存在但不满足条件。
+
+\needspace{8\baselineskip}
+\begin{table}[H]
+\centering
+\small
+\caption{成交登记页组件可用表}
+\label{tab:ui-deal}
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+组件 & 类型 & 可用条件（其余状态置灰） \\
+\midrule
+货品选择列表 & 输入 & 待选货品、信息填写状态下可用；检索范围仅“在柜”货品 \\
+成交价输入 & 输入 & 信息填写状态下可用；不高于最低售价时提交按钮置灰并提示 \\
+客户选择 & 输入 & 信息填写状态下可用；可空（散客） \\
+支付方式选择 & 输入 & 信息填写状态下可用；全款或定金 \\
+分期入口按钮 & 按钮 & 信息填写状态下、成交金额达到分期门槛时可用，进入 UC-24 \\
+提交按钮 & 按钮 & 信息填写状态下且必填项完整时可用；校验中、已登记状态下置灰 \\
+返回按钮 & 按钮 & 任意状态可用 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\needspace{8\baselineskip}
+\begin{table}[H]
+\centering
+\small
+\caption{调货结算页组件可用表}
+\label{tab:ui-transfer}
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+组件 & 类型 & 可用条件（其余状态置灰） \\
+\midrule
+商户选择 & 输入 & 待选商户状态下可用；检索范围为基础数据中类别为同行商户的来源方 \\
+记录清单 & 显示 & 记录清单状态下载入该商户未结算的调货记录，只读 \\
+记录勾选 & 输入 & 记录清单、清单确认状态下可用；仅“已结算=否”的记录可选 \\
+结算金额 & 显示 & 只读，系统按勾选记录汇总，不可录入 \\
+结算方式选择 & 输入 & 清单确认状态下可用；现金、转账或冲抵 \\
+结算按钮 & 按钮 & 清单确认状态下且至少勾选一条记录时可用；结算中、已结算状态下置灰 \\
+返回按钮 & 按钮 & 任意状态可用 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsubsection{权限矩阵与角色控制}
+
+用户与角色多对多、角色与权限多对多（见 D 段数据层）：
+一个账号可以同时具有多个角色，一个角色聚合多条权限，权限与用例一一对应。
+登录时 AuthService 按 \code{t\_user\_role} 取出角色集合，再经 \code{t\_role\_permission}
+汇成权限集合，菜单按权限生成、按钮按权限矩阵置灰。
+五个角色对全部用例的授权见表~\ref{tab:perm}（√ 为可执行，— 为无权限）。
+
+\needspace{8\baselineskip}
+\begin{table}[H]
+\centering
+\small
+\caption{角色功能权限矩阵}
+\label{tab:perm}
+\begin{tabularx}{\textwidth}{@{}X c c c c c@{}}
+\toprule
+用例（权限） & 老板 & 销售 & 合作商户 & 供应商 & 加工师傅 \\
+\midrule
+UC-01 登记成交 / UC-03 登记退货 & √ & √ & — & — & — \\
+UC-02 登记货品入库 & √ & — & — & — & — \\
+UC-04 维护客户信息 & √ & √ & — & — & — \\
+UC-05 登记送检与证书 & √ & √ & — & — & — \\
+UC-06 查看销售与周转统计 & √ & — & — & — & — \\
+UC-07 维护基础数据 & √ & — & — & — & — \\
+UC-09 浏览货品 / UC-10 预约看货 / UC-13 预定商品 & — & — & — & — & — \\
+UC-11 查看调货价格 & — & — & √ & — & — \\
+UC-12 开通外部账户 & √ & — & — & — & — \\
+UC-14 提交货品出让申请 / UC-15 预约上门 & — & — & — & √ & √ \\
+UC-16 查看加工任务 / UC-17 提交完工交付申请 & — & — & — & — & √ \\
+UC-18 审核出让申请 & √ & — & — & — & — \\
+UC-19 登记货款记录 & √ & — & — & — & — \\
+UC-20 维护调货记录 & √ & 只读 & — & — & — \\
+UC-21 登记寄售合同 / UC-22 结算寄售货款 & √ & — & — & — & — \\
+UC-23 结算调货台账 & √ & — & — & — & — \\
+UC-24 登记分期计划 / UC-25 记录分期还款 & √ & √ & — & — & — \\
+UC-26 查看库存流水 & √ & 只读 & — & — & — \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+注：老板在销售端用例行的 √ 为代执行权限，不改变 B 段规约的主执行者。
+
+矩阵落在库上就是 \code{t\_role\_permission} 的种子数据：每行一个角色对一条权限的授权，
+老板持有全部权限，外部三角色只持各自提交与查询类权限。
+权限校验在业务层 AuthService 收口，表示层按同一矩阵控制菜单与按钮的置灰，
+两层读的是同一份数据，不会出现界面放行而接口拒绝之外的口径差。
 
 \end{document}
