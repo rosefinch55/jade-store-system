@@ -476,6 +476,21 @@ CREATE TABLE t_consignment (
   CONSTRAINT fk_consignment_supplier FOREIGN KEY (supplier_id) REFERENCES t_source_party (id) ON DELETE RESTRICT
 ) ENGINE=InnoDB COMMENT='寄售合同（UC-21，寄售入库与结算的依据）';
 
+-- 寄售明细（一份合同带多件货品，多值拆表；组合外键非空）
+CREATE TABLE t_consignment_item (
+  id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '代理键',
+  consignment_id BIGINT UNSIGNED NOT NULL COMMENT '寄售合同 -> t_consignment',
+  goods_id       BIGINT UNSIGNED NOT NULL COMMENT '货品 -> t_goods（入库来源类型=寄售，成本=寄售价）',
+  consign_price  DECIMAL(12,2) NOT NULL COMMENT '寄售价（售出后按此价与供应商结算）',
+  settle_status  VARCHAR(8)    NOT NULL DEFAULT '未结算' COMMENT '结算状态：未结算|已结算（UC-22）',
+  created_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (id),
+  KEY idx_consignment_item_goods (goods_id),
+  KEY idx_consignment_item_consignment (consignment_id),
+  CONSTRAINT fk_consignment_item_consignment FOREIGN KEY (consignment_id) REFERENCES t_consignment (id) ON DELETE CASCADE,
+  CONSTRAINT fk_consignment_item_goods       FOREIGN KEY (goods_id)       REFERENCES t_goods (id)       ON DELETE RESTRICT
+) ENGINE=InnoDB COMMENT='寄售明细（UC-21，一合同多件货品；一货品在档至多一条明细，重复寄售前须结清原合同）';
+
 -- =====================================================================
 -- 十一、台账结算（UC-22 寄售货款结算 / UC-23 调货台账结算）
 -- =====================================================================
@@ -564,21 +579,6 @@ CREATE TABLE t_delivery_image (
   UNIQUE KEY uk_delivery_image_stage (apply_id, stage),
   CONSTRAINT fk_delivery_image_apply FOREIGN KEY (apply_id) REFERENCES t_delivery_apply (id) ON DELETE CASCADE
 ) ENGINE=InnoDB COMMENT='完工交付过程图（UC-17，原逗号分隔字段拆表）';
-
--- 寄售明细（一份合同带多件货品，多值拆表；组合外键非空）
-CREATE TABLE t_consignment_item (
-  id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '代理键',
-  consignment_id BIGINT UNSIGNED NOT NULL COMMENT '寄售合同 -> t_consignment',
-  goods_id       BIGINT UNSIGNED NOT NULL COMMENT '货品 -> t_goods（入库来源类型=寄售，成本=寄售价）',
-  consign_price  DECIMAL(12,2) NOT NULL COMMENT '寄售价（售出后按此价与供应商结算）',
-  settle_status  VARCHAR(8)    NOT NULL DEFAULT '未结算' COMMENT '结算状态：未结算|已结算（UC-22）',
-  created_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (id),
-  KEY idx_consignment_item_goods (goods_id),
-  KEY idx_consignment_item_consignment (consignment_id),
-  CONSTRAINT fk_consignment_item_consignment FOREIGN KEY (consignment_id) REFERENCES t_consignment (id) ON DELETE CASCADE,
-  CONSTRAINT fk_consignment_item_goods       FOREIGN KEY (goods_id)       REFERENCES t_goods (id)       ON DELETE RESTRICT
-) ENGINE=InnoDB COMMENT='寄售明细（UC-21，一合同多件货品；一货品在档至多一条明细，重复寄售前须结清原合同）';
 
 -- 用户-角色（多对多拆表，组合外键非空）
 CREATE TABLE t_user_role (
