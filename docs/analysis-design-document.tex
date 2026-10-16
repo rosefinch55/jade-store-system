@@ -135,7 +135,7 @@
 在柜货品约 3000–4000 件（小件多、部分货品可拆，数量常有出入），货值约 2000–3000 万元，
 其中相当一部分是向同行调来的货，并非都是门店自有。
 货品来源按占比大致是：同行调货约 40\%、买料加工约 30\%、回收回流约 20\%、成品进货约 10\%；
-主做新疆料，加工以切山料、籽料为主，戈壁料与籽料也卖一些，原石山流水料因风险大而少买。
+主做新疆料，加工以切山料、籽料为主，戈壁料也卖一些，原石山流水料因风险大而少买。
 正因为非标准化——同一款手串做 100 条，克重、成色、定价各不相同，无法按“件”套用现成进销存，
 只能逐件建档。玉的真假依靠鉴定证书，而产地目前证书做不出来，靠老板眼力把关。
 
@@ -337,7 +337,7 @@
 
 账号角色设老板、销售、合作商户、供应商与加工师傅五种，
 合作商户、供应商与加工师傅的账号都由老板逐个开通（UC-12），不开放自助注册；
-客户浏览、预约与预定无需账号，前端不展示价格——标出的价格并不是底价。
+客户浏览、预约与预定无需账号，前端不展示价格——标出的价格并不是最低售价。
 柜台端用电脑操作；供应商、加工师傅与同行商户多在散档口、不便用电脑且文化程度不一，
 外部协同端做成微信小程序，操作步骤尽量少，账号与初始口令由老板线下交付。
 入库与出库在现实里由老板和销售同时经手，改进后的口径是默认分工加系统兜底：
@@ -2030,7 +2030,7 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工/寄售
 \code{t\_category} & 货品类别 & name, remark & UC-07 \\
 \code{t\_user} & 用户/外部账户 & username, name, password\_hash, status & UC-08/12 \\
 \code{t\_role} & 角色 & role\_code, role\_name & UC-12 \\
-\code{t\_permission} & 权限 & perm\_code, perm\_name & 全部用例（权限矩阵） \\
+\code{t\_permission} & 权限 & perm\_code, perm\_name & 各功能用例（权限矩阵） \\
 \code{t\_source\_party} & 来源方 & party\_type, name, contact\_person, phone & UC-07 \\
 \code{t\_cert\_org} & 鉴定机构 & name, phone & UC-07 \\
 \code{t\_stock\_in} & 入库批次 & in\_time, receiver\_id & UC-02 \\
@@ -2038,7 +2038,7 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工/寄售
 \code{t\_customer} & 客户 & customer\_no, name, phone, wechat, source\_channel, introducer\_id, pref\_category, pref\_size, pref\_budget, remark & UC-04 \\
 \code{t\_customer\_tag} & 客户标签 & customer\_id, tag & UC-04（多选属性拆表）\\
 
-\code{t\_reservation} & 预约看货 & resv\_no, goods\_id, name, phone, expect\_slot, status & UC-10（状态枚举为设计阶段按接待流程补充）\\
+\code{t\_reservation} & 预约看货 & resv\_no, goods\_id, name, phone, expect\_slot, status & UC-10（状态：待确认|已到店|已取消）\\
 \code{t\_booking} & 预定记录 & booking\_no, goods\_id, name, phone, customer\_id, submit\_time, status & UC-13 \\
 \code{t\_inspection} & 送检记录 & insp\_time, goods\_id, org\_id, submitter\_id & UC-05 \\
 \code{t\_certificate} & 鉴定证书 & cert\_no, org\_id, insp\_id, goods\_id, conclusion, issue\_date, cert\_qrcode & UC-05 \\
@@ -2848,7 +2848,7 @@ AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & 
 ②一张台账结算单只对应一张业务单据（调货记录或寄售明细），结算后单据置已结算，已结算单据不再出现在结算清单；
 ③一份成交至多一份分期计划，计划总额等于成交价，还款不超过未还余额；
 ④一件货品同一时间只挂一份未结清的寄售明细；
-⑤用户至少拥有一个角色、角色至少拥有一条权限，权限与用例一一对应；
+⑤用户至少拥有一个角色、角色至少拥有一条权限，权限与各功能用例一一对应；
 ⑥来源方类别与引用它的单据类型匹配（出让申请引用类别=供应商的来源方，加工任务引用类别=加工师傅，调货记录引用类别=同行商户）。
 
 \subsection{表示层设计}
@@ -2946,10 +2946,10 @@ AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & 
 \subsubsection{权限矩阵与角色控制}
 
 用户与角色多对多、角色与权限多对多（见 D 段数据层）：
-一个账号可以同时具有多个角色，一个角色聚合多条权限，权限与用例一一对应。
+一个账号可以同时具有多个角色，一个角色聚合多条权限，权限与各功能用例一一对应。
 登录时 AuthService 按 \code{t\_user\_role} 取出角色集合，再经 \code{t\_role\_permission}
 汇成权限集合，菜单按权限生成、按钮按权限矩阵置灰。
-五个角色对全部用例的授权见表~\ref{tab:perm}（√ 为可执行，只读 为可查看不可执行，— 为无权限）。
+五个角色对各功能用例的授权见表~\ref{tab:perm}（√ 为可执行，只读 为可查看不可执行，— 为无权限）。
 
 \needspace{8\baselineskip}
 \begin{table}[H]
@@ -2984,7 +2984,7 @@ UC-26 查看库存流水 & √ & 只读 & 只读 & — & — \\
 \end{tabularx}
 \end{table}
 
-注：老板在销售端用例行的 √ 与销售在 UC-02 行的 √ 均为代执行权限，不改变 B 段规约的主执行者；UC-09/10/13 由小程序客户使用，不占用五个角色的授权，故记作“—”。
+注：老板在销售端用例行的 √ 与销售在 UC-02 行的 √ 均为代执行权限，不改变 B 段规约的主执行者；UC-08 登录是身份验证的前置（权限在登录成功后才按角色汇总），故不作为功能权限列出；UC-09/10/13 由小程序客户使用，不占用五个角色的授权，故记作“—”。
 
 矩阵落在库上就是 \code{t\_role\_permission} 的种子数据：每行一个角色对一条权限的授权，
 老板持有全部权限，外部三角色只持各自提交与查询类权限。
