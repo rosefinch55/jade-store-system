@@ -4,7 +4,7 @@
 
 | 文档 | 在线打开（浏览器自带阅读器） | 直接下载 |
 |---|---|---|
-| 分析设计报告（144 页） | [点击打开](https://raw.githubusercontent.com/rosefinch55/jade-store-system/main/analysis-design-document.pdf) | [下载](https://github.com/rosefinch55/jade-store-system/raw/main/analysis-design-document.pdf) |
+| 分析设计报告（136 页） | [点击打开](https://raw.githubusercontent.com/rosefinch55/jade-store-system/main/analysis-design-document.pdf) | [下载](https://github.com/rosefinch55/jade-store-system/raw/main/analysis-design-document.pdf) |
 | 数据库表关系 | [点击打开](https://raw.githubusercontent.com/rosefinch55/jade-store-system/main/data-table-relationships.pdf) | [下载](https://github.com/rosefinch55/jade-store-system/raw/main/data-table-relationships.pdf) |
 | 需求调研报告 | [点击打开](https://raw.githubusercontent.com/rosefinch55/jade-store-system/main/docs/research-report.pdf) | [下载](https://github.com/rosefinch55/jade-store-system/raw/main/docs/research-report.pdf) |
 

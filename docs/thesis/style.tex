@@ -1,0 +1,119 @@
+% !TEX root = main.tex
+% ============================================================
+% 原文档导言区与图宏移植
+% ============================================================
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{needspace}
+\usepackage{pdflscape}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue, citecolor=black,
+  pdftitle={系统分析与设计课程作业},
+  pdfsubject={玉器门店顾客服务与经营管理系统：愿景、业务建模、需求、分析与设计},
+  pdfauthor={张昊轩}}
+
+% 图题与表题：标签与文字之间用 quad 分隔
+\captionsetup{labelsep=quad}
+
+% 图表按章编号，形如 图1-1、表4-12
+\counterwithin{table}{chapter}
+\counterwithin{figure}{chapter}
+\renewcommand{\thetable}{\thechapter-\arabic{table}}
+\renewcommand{\thefigure}{\thechapter-\arabic{figure}}
+
+\newcommand{\codefont}{\ttfamily\fontsize{10}{11}\selectfont}
+\newcommand{\code}[1]{\codefont #1}
+
+% 带圈数字划归 CJK 类，由中文字体渲染，避免静默丢字
+\xeCJKDeclareCharClass{CJK}{"2460 -> "24FF, "2014}
+
+% ------------------------------------------------------------
+% 图宏：依次在 ../figs/ 的分类子目录里找文件，都没有时给出提示方框
+% ------------------------------------------------------------
+\newlength{\figw}
+\newlength{\figmaxh}
+\setlength{\figmaxh}{22.5cm}
+
+\newcommand{\fig}[3][1.0]{%
+  \setlength{\figw}{#1\textwidth}%
+  \clearpage
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{../figs/analysis/#3.png}{%
+      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/analysis/#3.png}%
+    }{%
+    \IfFileExists{../figs/analysis/#3}{%
+      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/analysis/#3}%
+    }{%
+    \IfFileExists{../figs/design/#3.png}{%
+      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/design/#3.png}%
+    }{%
+    \IfFileExists{../figs/design/#3}{%
+      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/design/#3}%
+    }{%
+      \fbox{\parbox[c][4.6cm][c]{0.8\textwidth}{\centering
+        【待插入图形】\vspace{6pt}
+        \texttt{../figs/#3}}}}}}}
+    \caption{#2}
+    \label{fig:#3}
+  \end{figure}%
+}
+
+\newcommand{\figtwo}[5][1.0]{%
+  \setlength{\figw}{#1\textwidth}%
+  \clearpage
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{../figs/analysis/#3.png}{\includegraphics[width=\figw]{../figs/analysis/#3.png}}{%
+    \IfFileExists{../figs/design/#3.png}{\includegraphics[width=\figw]{../figs/design/#3.png}}{\fbox{【待插入图形】\texttt{#3}}}}%
+    \caption{#2}\label{fig:#3}\vspace{6pt}
+    \IfFileExists{../figs/analysis/#5.png}{\includegraphics[width=\figw]{../figs/analysis/#5.png}}{%
+    \IfFileExists{../figs/design/#5.png}{\includegraphics[width=\figw]{../figs/design/#5.png}}{\fbox{【待插入图形】\texttt{#5}}}}%
+    \caption{#4}\label{fig:#5}
+  \end{figure}%
+}
+
+% 同页两图、各自独立宽度：#1=宽1 #2=图题1 #3=图名1 #4=宽2 #5=图题2 #6=图名2
+\newcommand{\figtwoW}[6]{%
+  \clearpage
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{../figs/analysis/#3.png}{\includegraphics[width=#1\textwidth]{../figs/analysis/#3.png}}{%
+    \IfFileExists{../figs/design/#3.png}{\includegraphics[width=#1\textwidth]{../figs/design/#3.png}}{\fbox{【待插入图形】\texttt{#3}}}}%
+    \caption{#2}\label{fig:#3}\vspace{6pt}
+    \IfFileExists{../figs/analysis/#6.png}{\includegraphics[width=#4\textwidth]{../figs/analysis/#6.png}}{%
+    \IfFileExists{../figs/design/#6.png}{\includegraphics[width=#4\textwidth]{../figs/design/#6.png}}{\fbox{【待插入图形】\texttt{#6}}}}%
+    \caption{#5}\label{fig:#6}
+  \end{figure}%
+}
+
+\newcommand{\figab}[3][0.86]{%
+  \needspace{10\baselineskip}
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{../figs/business-use-cases/#3}{%
+      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/business-use-cases/#3}%
+    }{%
+    \IfFileExists{../figs/business-sequence/#3}{%
+      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/business-sequence/#3}%
+    }{%
+    \IfFileExists{../figs/improved-business-sequence/#3}{%
+      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/improved-business-sequence/#3}%
+    }{%
+    \IfFileExists{../figs/system-use-cases/#3}{%
+      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/system-use-cases/#3}%
+    }{%
+      \fbox{\parbox[c][4.6cm][c]{0.8\textwidth}{\centering
+        【待插入图形】\\[6pt]
+        \texttt{../figs/#3}}}}}}}
+    \caption{#2}
+    \label{fig:#3}
+  \end{figure}%
+}
