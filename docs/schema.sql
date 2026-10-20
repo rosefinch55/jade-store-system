@@ -188,7 +188,7 @@ CREATE TABLE t_reservation (
   UNIQUE KEY uk_reservation_no (resv_no),
   KEY idx_reservation_goods (goods_id),
   CONSTRAINT fk_reservation_goods FOREIGN KEY (goods_id) REFERENCES t_goods (id) ON DELETE RESTRICT
-) ENGINE=InnoDB COMMENT='预约看货（UC-10）';
+) ENGINE=InnoDB COMMENT='预约看货（UC-10；UC-27 凭手机号后四位查询）';
 
 -- 预定记录（UC-13 预定商品；与预留不同：锁定购买意向，一手机号 3 次额度）
 CREATE TABLE t_booking (
@@ -199,7 +199,8 @@ CREATE TABLE t_booking (
   phone        VARCHAR(32)  NOT NULL COMMENT '手机号（3 次额度按此计）',
   customer_id  BIGINT UNSIGNED NULL COMMENT '客户 -> t_customer（已建档客户按手机号关联，散客可空）',
   submit_time  DATETIME     NOT NULL COMMENT '提交时间',
-  status       VARCHAR(16)  NOT NULL DEFAULT '待到店' COMMENT '状态：待到店|已达成|已爽约|已取消',
+  contact_time DATETIME     NULL     COMMENT '联系时间（UC-28 标记已联系时写入）',
+  status       VARCHAR(16)  NOT NULL DEFAULT '待到店' COMMENT '状态：待到店|已联系|已达成|已爽约|已取消',
   created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   updated_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (id),
@@ -209,7 +210,7 @@ CREATE TABLE t_booking (
   KEY idx_booking_customer (customer_id),
   CONSTRAINT fk_booking_goods    FOREIGN KEY (goods_id)    REFERENCES t_goods (id)    ON DELETE RESTRICT,
   CONSTRAINT fk_booking_customer FOREIGN KEY (customer_id) REFERENCES t_customer (id) ON DELETE RESTRICT
-) ENGINE=InnoDB COMMENT='预定记录（UC-13，状态机见规约；区别于 UC-01 规则③ 预留）';
+) ENGINE=InnoDB COMMENT='预定记录（UC-13 预定、UC-28 到店跟进，状态机见规约；区别于 UC-01 规则③ 预留）';
 
 -- =====================================================================
 -- 四、送检与证书（UC-05 登记送检与证书）

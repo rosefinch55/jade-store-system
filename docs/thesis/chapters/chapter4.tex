@@ -201,8 +201,8 @@
 \code{t\_customer} & 客户 & customer\_no, name, phone, wechat, source\_channel, introducer\_id, pref\_category, pref\_size, pref\_budget, remark & UC-04 \\
 \code{t\_customer\_tag} & 客户标签 & customer\_id, tag & UC-04（多选属性拆表）\\
 
-\code{t\_reservation} & 预约看货 & resv\_no, goods\_id, name, phone, expect\_slot, status & UC-10（状态：待确认|已到店|已取消）\\
-\code{t\_booking} & 预定记录 & booking\_no, goods\_id, name, phone, customer\_id, submit\_time, status & UC-13 \\
+\code{t\_reservation} & 预约看货 & resv\_no, goods\_id, name, phone, expect\_slot, status & UC-10/27（状态：待确认|已到店|已取消）\\
+\code{t\_booking} & 预定记录 & booking\_no, goods\_id, name, phone, customer\_id, submit\_time, contact\_time, status & UC-13/28 \\
 \code{t\_inspection} & 送检记录 & insp\_time, goods\_id, org\_id, submitter\_id & UC-05 \\
 \code{t\_certificate} & 鉴定证书 & cert\_no, org\_id, insp\_id, goods\_id, conclusion, issue\_date, cert\_qrcode & UC-05 \\
 \code{t\_sale} & 成交记录 & sale\_no, goods\_id, sale\_time, price, pay\_method, received, customer\_id, operator\_id, recorded\_at & UC-01/06 \\
@@ -485,7 +485,8 @@
 \code{phone} & 手机号（3 次额度按此计） & \code{VARCHAR(32)} & 非空 \\
 \code{customer\_id} & 客户，指向 t\_customer（散客可空） & \code{BIGINT UNSIGNED} & 可空、外键（非 1 方）、禁止删除 \\
 \code{submit\_time} & 提交时间 & \code{DATETIME} & 非空 \\
-\code{status} & 状态：待到店|已达成|已爽约|已取消 & \code{VARCHAR(16)} & 非空 \\
+\code{contact\_time} & 联系时间（UC-28 标记已联系时写入） & \code{DATETIME} & 可空 \\
+\code{status} & 状态：待到店|已联系|已达成|已爽约|已取消 & \code{VARCHAR(16)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
@@ -963,7 +964,8 @@
 来源方三表合一，类别列区分、类别内名称唯一（唯一键 类别+名称）；客户手机号唯一（同一手机号不重复建档）；
 台账结算一单一据，调货记录与寄售明细两条可空外键二选一，由业务层把关；
 货款记录关联的单据跨入库、调货、加工等多类，用 \code{biz\_type + related\_type + related\_no} 定位；
-库存流水只增不改不删，货品每次状态变更必写一条。
+库存流水只增不改不删，货品每次状态变更必写一条；
+预约查询按手机号后四位做后缀匹配，预约表日均只有几十条记录，全表扫描即可，不另建索引。
 
 \section{业务层设计}
 
@@ -975,7 +977,7 @@ Mapper 通过 MyBatis-Plus 封装为仓储（数据映射器）访问数据层�
 状态机图给出操作实现中的迁移与触发事件；警戒条件已在 B 段规约业务规则中写明，进入/退出动作由 Service 执行。
 服务的操作从序列图和状态机推出来，不是从属性推出来。
 服务划分见表~\ref{tab:services}：服务是控制类落到业务层的载体，一个服务承接同域的若干控制类
-（如 CollabService 覆盖出让、加工、预约、预定 7 个控制类），职责与 C 阶段控制类一致。
+（如 CollabService 覆盖浏览、预约、预定、出让、加工等 11 个控制类），职责与 C 阶段控制类一致。
 
 \needspace{8\baselineskip}
 \begin{table}[H]
@@ -994,7 +996,7 @@ TransferService & 调货往来与调货库存维护 & UC-20 \\
 PaymentService & 货款与工费收付记录 & UC-19 \\
 ConsignService & 寄售合同登记与寄售货款结算 & UC-21/22 \\
 LedgerService & 调货台账结算 & UC-23 \\
-CollabService & 货品浏览、调货价目、出让申请/审核、加工任务/完工、预约、预定 & UC-09/10/11/13/14/15/16/17/18 \\
+CollabService & 货品浏览、调货价目、出让申请/审核、加工任务/完工、预约与查询、预定与到店跟进 & UC-09/10/11/13/14/15/16/17/18/27/28 \\
 StatsService & 月度销售额、销售客户数、渠道分布 & UC-06 \\
 AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & UC-08/12 \\
 \bottomrule
@@ -1031,8 +1033,8 @@ AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & 
 端 / 模块 & 功能 \\
 \midrule
 柜台电脑端 · 老板管理端 & 货品入库、统计报表、基础数据维护、外部账户开通、出让申请审核、货款登记、调货记录、寄售合同（UC-21）、寄售与台账结算（UC-22/23）、库存流水（UC-26） \\
-柜台电脑端 · 销售柜台端 & 登记成交、登记退货、客户维护、送检与证书登记、分期计划与还款（UC-24/25） \\
-微信小程序 · 客户 & 浏览货品（UC-09）、预约看货（UC-10）、预定商品（UC-13） \\
+柜台电脑端 · 销售柜台端 & 登记成交、登记退货、客户维护、送检与证书登记、分期计划与还款（UC-24/25）、预定到店跟进（UC-28） \\
+微信小程序 · 客户 & 浏览货品（UC-09）、预约看货（UC-10）、预定商品（UC-13）、查询预约（UC-27） \\
 微信小程序 · 供应商 & 提交出让申请（UC-14）、预约上门时间（UC-15） \\
 微信小程序 · 加工师傅 & 预约上门时间（UC-15）、查看加工任务（UC-16）、提交完工交付申请（UC-17） \\
 微信小程序 · 合作商户 & 查看调货价目（UC-11） \\
@@ -1143,11 +1145,13 @@ UC-21 登记寄售合同 / UC-22 结算寄售货款 & √ & — & — & — & �
 UC-23 结算调货台账 & √ & — & — & — & — \\
 UC-24 登记分期计划 / UC-25 记录分期还款 & √ & √ & — & — & — \\
 UC-26 查看库存流水 & √ & 只读 & 只读 & — & — \\
+UC-27 查询预约 & — & — & — & — & — \\
+UC-28 跟进预定到店 & √ & √ & — & — & — \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-注：老板在销售端用例行的 √ 与销售在 UC-02 行的 √ 均为代执行权限，不改变 B 段规约的主执行者；UC-08 登录是身份验证的前置（权限在登录成功后才按角色汇总），故不作为功能权限列出；UC-09/10/13 由小程序客户使用，不占用五个角色的授权，故记作“—”。
+注：老板在销售端用例行的 √ 与销售在 UC-02 行的 √ 均为代执行权限，不改变 B 段规约的主执行者；UC-08 登录是身份验证的前置（权限在登录成功后才按角色汇总），故不作为功能权限列出；UC-09/10/13/27 由小程序客户使用，不占用五个角色的授权，故记作“—”。
 
 矩阵落在库上就是 \code{t\_role\_permission} 的种子数据：每行一个角色对一条权限的授权，
 老板持有全部权限，外部三角色只持各自提交与查询类权限。
