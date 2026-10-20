@@ -14,6 +14,10 @@
 \usepackage{pdflscape}
 \usepackage{hyperref}
 
+% 表格正文列一律左对齐：中文两端对齐会把字距拉开，长串枚举时尤其明显
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
 \hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue, citecolor=black,
   pdftitle={系统分析与设计课程作业},
   pdfsubject={玉器门店顾客服务与经营管理系统：愿景、业务建模、需求、分析与设计},
@@ -30,6 +34,10 @@
 
 \newcommand{\codefont}{\ttfamily\fontsize{10}{11}\selectfont}
 \newcommand{\code}[1]{\codefont #1}
+
+% 下划线处允许折行，长字段名（如 transfer_apply_id）不至于压到右侧一列
+\let\csuUnderscore\_
+\renewcommand{\_}{\csuUnderscore\allowbreak}
 
 % 带圈数字划归 CJK 类，由中文字体渲染，避免静默丢字
 \xeCJKDeclareCharClass{CJK}{"2460 -> "24FF, "2014}

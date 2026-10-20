@@ -13,7 +13,7 @@
 \small
 \caption{三层技术选型}
 \label{tab:stack}
-\begin{tabularx}{\textwidth}{@{}l X@{}}
+\begin{tabularx}{\textwidth}{@{}l Y@{}}
 \toprule
 层 & 技术选型 \\
 \midrule
@@ -76,7 +76,7 @@
 \small
 \caption{分析实体类到数据表的映射（26 个分析类对应 26 张表）}
 \label{tab:class-table}
-\begin{tabularx}{\textwidth}{@{}l X@{}}
+\begin{tabularx}{\textwidth}{@{}l Y@{}}
 \toprule
 分析实体类 & 对应数据表 \\
 \midrule
@@ -121,7 +121,7 @@
 \small
 \caption{规约字段列表名 / 分析实体类名 / 数据表 的对照}
 \label{tab:name-map}
-\begin{tabularx}{\textwidth}{@{}p{4.7cm} p{3.2cm} X@{}}
+\begin{tabularx}{\textwidth}{@{}L{4.7cm} L{3.2cm} Y@{}}
 \toprule
 规约字段列表名（A/B） & 分析实体类名（C） & 数据表（D） \\
 \midrule
@@ -146,7 +146,7 @@
 \small
 \caption{类图上的关系在数据层的落法}
 \label{tab:map-rules}
-\begin{tabularx}{\textwidth}{@{}p{3.4cm} p{4.0cm} X@{}}
+\begin{tabularx}{\textwidth}{@{}L{3.4cm} L{4.0cm} Y@{}}
 \toprule
 分析模型里的 & 落到数据层 & 这里的例子 \\
 \midrule
@@ -178,7 +178,7 @@
 31 张表按用途分组，清单见表~\ref{tab:tables}。
 
 \Needspace{6\baselineskip}
-\begin{longtable}{@{}p{3.5cm} p{1.7cm} p{5.7cm} p{2.3cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{1.7cm} L{5.7cm} L{2.3cm}@{}}
 \caption{数据表清单（共 31 张）}\label{tab:tables}\\
 \toprule
 表名 & 中文名 & 主要字段（列） & 对应用例 \\
@@ -201,7 +201,7 @@
 \code{t\_customer} & 客户 & customer\_no, name, phone, wechat, source\_channel, introducer\_id, pref\_category, pref\_size, pref\_budget, remark & UC-04 \\
 \code{t\_customer\_tag} & 客户标签 & customer\_id, tag & UC-04（多选属性拆表）\\
 
-\code{t\_reservation} & 预约看货 & resv\_no, goods\_id, name, phone, expect\_slot, status & UC-10/27（状态：待确认|已到店|已取消）\\
+\code{t\_reservation} & 预约看货 & resv\_no, goods\_id, name, phone, expect\_slot, status & UC-10/27（状态：待确认、已到店、已取消）\\
 \code{t\_booking} & 预定记录 & booking\_no, goods\_id, name, phone, customer\_id, submit\_time, contact\_time, status & UC-13/28 \\
 \code{t\_inspection} & 送检记录 & insp\_time, goods\_id, org\_id, submitter\_id & UC-05 \\
 \code{t\_certificate} & 鉴定证书 & cert\_no, org\_id, insp\_id, goods\_id, conclusion, issue\_date, cert\_qrcode & UC-05 \\
@@ -231,7 +231,7 @@
 下表按案例的写法，逐张列出字段名称、中文描述、数据类型与约束条件。
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{货品类别表 \code{t\_category} 的字段说明}\label{tab:f-t-category}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -250,7 +250,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{用户与外部账户表 \code{t\_user} 的字段说明}\label{tab:f-t-user}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -266,13 +266,13 @@
 \code{username} & 用户名（登录名） & \code{VARCHAR(64)} & 唯一、非空 \\
 \code{name} & 姓名 & \code{VARCHAR(64)} & 非空 \\
 \code{password\_hash} & 口令（加密保存，禁止明文） & \code{VARCHAR(128)} & 非空 \\
-\code{status} & 状态：启用|停用 & \code{VARCHAR(8)} & 非空 \\
+\code{status} & 状态：启用、停用 & \code{VARCHAR(8)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{角色表 \code{t\_role} 的字段说明}\label{tab:f-t-role}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -286,13 +286,13 @@
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{role\_code} & 角色编码（BOSS/SALE/MERCHANT/SUPPLIER/CRAFTSMAN） & \code{VARCHAR(16)} & 唯一、非空 \\
-\code{role\_name} & 角色名：老板|销售|合作商户|供应商|加工师傅 & \code{VARCHAR(32)} & 非空 \\
+\code{role\_name} & 角色名：老板、销售、合作商户、供应商、加工师傅 & \code{VARCHAR(32)} & 非空 \\
 \code{remark} & 备注 & \code{VARCHAR(255)} & 可空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{权限表 \code{t\_permission} 的字段说明}\label{tab:f-t-permission}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -312,7 +312,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{来源方表 \code{t\_source\_party} 的字段说明}\label{tab:f-t-source-party}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -325,7 +325,7 @@
 \bottomrule
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
-\code{party\_type} & 类别：供应商|加工师傅|同行商户 & \code{VARCHAR(16)} & 非空 \\
+\code{party\_type} & 类别：供应商、加工师傅、同行商户 & \code{VARCHAR(16)} & 非空 \\
 \code{name} & 名称（公司名/师傅姓名/店名） & \code{VARCHAR(128)} & 类别内唯一、非空 \\
 \code{contact\_person} & 联系人（名称为个人时留空） & \code{VARCHAR(64)} & 可空 \\
 \code{phone} & 联系电话 & \code{VARCHAR(32)} & 可空 \\
@@ -335,7 +335,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{鉴定机构表 \code{t\_cert\_org} 的字段说明}\label{tab:f-t-cert-org}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -356,7 +356,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{入库记录/批次表 \code{t\_stock\_in} 的字段说明}\label{tab:f-t-stock-in}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -376,7 +376,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{货品档案表 \code{t\_goods} 的字段说明}\label{tab:f-t-goods}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -395,12 +395,12 @@
 \code{material} & 料种（自定义填写，无法穷举） & \code{VARCHAR(32)} & 非空 \\
 \code{origin} & 产地（自定义填写，鉴定证书不判产地，由老板凭眼力判断） & \code{VARCHAR(32)} & 非空 \\
 \code{shape} & 器型（自定义填写，无法穷举） & \code{VARCHAR(32)} & 非空 \\
-\code{form} & 产状：山料|籽料|山流水料|戈壁料 & \code{VARCHAR(16)} & 非空 \\
+\code{form} & 产状：山料、籽料、山流水料、戈壁料 & \code{VARCHAR(16)} & 非空 \\
 \code{weight\_g} & 克重 & \code{DECIMAL(10,2)} & 非空 \\
 \code{size} & 尺寸/圈口（如内径56mm） & \code{VARCHAR(64)} & 可空 \\
 \code{cert\_no} & 证书号（取最新一张证书的编号，完整证书见 t\_certificate） & \code{VARCHAR(64)} & 可空 \\
 \code{image} & 图片（文件路径/URL） & \code{VARCHAR(500)} & 可空 \\
-\code{src\_type} & 来源类型：采购|回收|调货|加工完工|寄售 & \code{VARCHAR(16)} & 非空 \\
+\code{src\_type} & 来源类型：采购、回收、调货、加工完工、寄售 & \code{VARCHAR(16)} & 非空 \\
 \code{src\_party} & 来源方（供应商/商户/师傅名） & \code{VARCHAR(128)} & 可空 \\
 \code{src\_doc} & 来源单据号 & \code{VARCHAR(64)} & 可空 \\
 \code{cost} & 成本（调货调入不记成本，只记往来） & \code{DECIMAL(12,2)} & 可空 \\
@@ -408,13 +408,13 @@
 \code{transfer\_price} & 调货价（UC-11 商户端调货价目，在柜时维护） & \code{DECIMAL(12,2)} & 可空 \\
 \code{in\_time} & 入库时间（系统时间） & \code{DATETIME} & 非空 \\
 \code{stock\_in\_id} & 入库批次，指向 t\_stock\_in（货品清单成员） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方，组合）、禁止删除 \\
-\code{status} & 状态：在柜|已送检|预留|已售|已订|已调出|代销中|待处理 & \code{VARCHAR(16)} & 非空 \\
+\code{status} & 状态：在柜、已送检、预留、已售、已订、已调出、代销中、待处理 & \code{VARCHAR(16)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{客户表 \code{t\_customer} 的字段说明}\label{tab:f-t-customer}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -431,7 +431,7 @@
 \code{name} & 姓名 & \code{VARCHAR(64)} & 非空 \\
 \code{phone} & 手机号 & \code{VARCHAR(32)} & 非空、唯一 \\
 \code{wechat} & 微信号 & \code{VARCHAR(64)} & 可空 \\
-\code{source\_channel} & 来源渠道：闲鱼|微信朋友圈|朋友介绍|线下|直播|老客户复购|其他 & \code{VARCHAR(16)} & 非空 \\
+\code{source\_channel} & 来源渠道：闲鱼、微信朋友圈、朋友介绍、线下、直播、老客户复购、其他 & \code{VARCHAR(16)} & 非空 \\
 \code{introducer\_id} & 介绍人，指向 t\_customer（来源渠道为朋友介绍时，UC-04） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、置空 \\
 \code{pref\_category} & 偏好品类 & \code{VARCHAR(64)} & 可空 \\
 \code{pref\_size} & 偏好圈口/尺寸 & \code{VARCHAR(32)} & 可空 \\
@@ -442,7 +442,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{预约看货表 \code{t\_reservation} 的字段说明}\label{tab:f-t-reservation}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -460,13 +460,13 @@
 \code{name} & 姓名 & \code{VARCHAR(64)} & 非空 \\
 \code{phone} & 手机号 & \code{VARCHAR(32)} & 非空 \\
 \code{expect\_slot} & 期望到店时段 & \code{VARCHAR(64)} & 非空 \\
-\code{status} & 状态：待确认|已到店|已取消 & \code{VARCHAR(16)} & 非空 \\
+\code{status} & 状态：待确认、已到店、已取消 & \code{VARCHAR(16)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{预定记录表 \code{t\_booking} 的字段说明}\label{tab:f-t-booking}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -486,13 +486,13 @@
 \code{customer\_id} & 客户，指向 t\_customer（散客可空） & \code{BIGINT UNSIGNED} & 可空、外键（非 1 方）、禁止删除 \\
 \code{submit\_time} & 提交时间 & \code{DATETIME} & 非空 \\
 \code{contact\_time} & 联系时间（UC-28 标记已联系时写入） & \code{DATETIME} & 可空 \\
-\code{status} & 状态：待到店|已联系|已达成|已爽约|已取消 & \code{VARCHAR(16)} & 非空 \\
+\code{status} & 状态：待到店、已联系、已达成、已爽约、已取消 & \code{VARCHAR(16)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{送检记录表 \code{t\_inspection} 的字段说明}\label{tab:f-t-inspection}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -513,7 +513,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{鉴定证书表 \code{t\_certificate} 的字段说明}\label{tab:f-t-certificate}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -537,7 +537,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{成交记录表 \code{t\_sale} 的字段说明}\label{tab:f-t-sale}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -554,7 +554,7 @@
 \code{goods\_id} & 货品，指向 t\_goods & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{sale\_time} & 成交发生时间（以系统时间为准） & \code{DATETIME} & 非空 \\
 \code{price} & 成交价（不得低于最低售价） & \code{DECIMAL(12,2)} & 非空 \\
-\code{pay\_method} & 支付方式：全款|定金 & \code{VARCHAR(8)} & 非空 \\
+\code{pay\_method} & 支付方式：全款、定金 & \code{VARCHAR(8)} & 非空 \\
 \code{received} & 已收金额（定金成交时为定金额） & \code{DECIMAL(12,2)} & 非空 \\
 \code{customer\_id} & 客户，指向 t\_customer（散客可空） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、禁止删除 \\
 \code{operator\_id} & 经手销售，指向 t\_user & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
@@ -563,7 +563,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{退货记录表 \code{t\_return} 的字段说明}\label{tab:f-t-return}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -578,14 +578,14 @@
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{return\_time} & 退货时间（成交后 7 天内） & \code{DATETIME} & 非空 \\
 \code{sale\_id} & 原成交记录，指向 t\_sale & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
-\code{reason} & 退货原因：真假存疑|质量问题 & \code{VARCHAR(16)} & 非空 \\
+\code{reason} & 退货原因：真假存疑、质量问题 & \code{VARCHAR(16)} & 非空 \\
 \code{refund} & 退款金额 & \code{DECIMAL(12,2)} & 非空 \\
 \code{operator\_id} & 经手人，指向 t\_user & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{调货记录表 \code{t\_transfer} 的字段说明}\label{tab:f-t-transfer}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -599,19 +599,19 @@
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{record\_no} & 记录编号 & \code{VARCHAR(32)} & 唯一、非空 \\
-\code{direction} & 方向：调入|调出 & \code{VARCHAR(8)} & 非空 \\
+\code{direction} & 方向：调入、调出 & \code{VARCHAR(8)} & 非空 \\
 \code{merchant\_id} & 合作商户，指向 t\_source\_party（类别=同行商户） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{goods\_id} & 货品，指向 t\_goods & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{quantity} & 数量 & \code{INT} & 非空 \\
-\code{status} & 状态：在调|已售|已退回 & \code{VARCHAR(8)} & 非空 \\
-\code{settled} & 已结算：否|是（UC-23 台账结算后置是） & \code{VARCHAR(4)} & 非空 \\
+\code{status} & 状态：在调、已售、已退回 & \code{VARCHAR(8)} & 非空 \\
+\code{settled} & 已结算：否、是（UC-23 台账结算后置是） & \code{VARCHAR(4)} & 非空 \\
 \code{record\_time} & 时间（鉴赏期结算时点见 UC-20 规则③） & \code{DATETIME} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{出让申请含审核表 \code{t\_transfer\_apply} 的字段说明}\label{tab:f-t-transfer-apply}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -626,13 +626,13 @@
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{apply\_no} & 申请编号 & \code{VARCHAR(32)} & 唯一、非空 \\
 \code{supplier\_id} & 供应商，指向 t\_source\_party（类别=供应商，含回流出让方） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
-\code{out\_type} & 出让类型：玉料|成品|回流 & \code{VARCHAR(8)} & 非空 \\
+\code{out\_type} & 出让类型：玉料、成品、回流 & \code{VARCHAR(8)} & 非空 \\
 \code{name} & 品名 & \code{VARCHAR(128)} & 非空 \\
 \code{quantity} & 数量 & \code{INT} & 非空 \\
 \code{expect\_price} & 期望出让价 & \code{DECIMAL(12,2)} & 非空 \\
 \code{description} & 描述 & \code{VARCHAR(500)} & 可空 \\
 \code{submit\_time} & 提交时间 & \code{DATETIME} & 非空 \\
-\code{status} & 状态：待审核|已通过|已驳回（状态机见 07b） & \code{VARCHAR(8)} & 非空 \\
+\code{status} & 状态：待审核、已通过、已驳回（状态机见 07b） & \code{VARCHAR(8)} & 非空 \\
 \code{audit\_opinion} & 审核意见（UC-18） & \code{VARCHAR(255)} & 可空 \\
 \code{audit\_time} & 审核时间（UC-18） & \code{DATETIME} & 可空 \\
 \code{auditor\_id} & 审核人，指向 t\_user（UC-18） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、禁止删除 \\
@@ -641,7 +641,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{上门预约表 \code{t\_visit\_appt} 的字段说明}\label{tab:f-t-visit-appt}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -659,7 +659,7 @@
 \code{matter} & 事项（上门交接内容） & \code{VARCHAR(255)} & 非空 \\
 \code{expect\_slot} & 期望时段 & \code{VARCHAR(64)} & 非空 \\
 \code{submit\_time} & 提交时间 & \code{DATETIME} & 非空 \\
-\code{status} & 状态：待上门|已完成|已取消 & \code{VARCHAR(8)} & 非空 \\
+\code{status} & 状态：待上门、已完成、已取消 & \code{VARCHAR(8)} & 非空 \\
 \code{transfer\_apply\_id} & 关联出让申请，指向 t\_transfer\_apply（UC-15 规则①，二选一必有其一） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、禁止删除 \\
 \code{delivery\_apply\_id} & 关联完工交付申请，指向 t\_delivery\_apply（UC-15 规则①，二选一必有其一） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、禁止删除 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
@@ -667,7 +667,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{加工任务表 \code{t\_process\_task} 的字段说明}\label{tab:f-t-process-task}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -686,13 +686,13 @@
 \code{requirement} & 加工要求 & \code{VARCHAR(500)} & 非空 \\
 \code{labor\_fee} & 工费 & \code{DECIMAL(12,2)} & 非空 \\
 \code{deadline} & 期限 & \code{DATE} & 非空 \\
-\code{status} & 状态：待加工|在加工|待交付|已交付 & \code{VARCHAR(8)} & 非空 \\
+\code{status} & 状态：待加工、在加工、待交付、已交付 & \code{VARCHAR(8)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{完工交付申请表 \code{t\_delivery\_apply} 的字段说明}\label{tab:f-t-delivery-apply}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -709,13 +709,13 @@
 \code{task\_id} & 任务编号，指向 t\_process\_task & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方，组合）、禁止删除 \\
 \code{note} & 完工说明 & \code{VARCHAR(500)} & 可空 \\
 \code{submit\_time} & 提交时间 & \code{DATETIME} & 非空 \\
-\code{status} & 状态：待确认|已确认（确认后安排入库） & \code{VARCHAR(8)} & 非空 \\
+\code{status} & 状态：待确认、已确认（确认后安排入库） & \code{VARCHAR(8)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{货款记录表 \code{t\_payment} 的字段说明}\label{tab:f-t-payment}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -729,18 +729,18 @@
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{record\_no} & 记录编号 & \code{VARCHAR(32)} & 唯一、非空 \\
-\code{biz\_type} & 业务类型：采购货款|调货货款|加工工费|寄售货款 & \code{VARCHAR(16)} & 非空 \\
+\code{biz\_type} & 业务类型：采购货款、调货货款、加工工费、寄售货款 & \code{VARCHAR(16)} & 非空 \\
 \code{related\_type} & 关联单据类型（入库批次/调货记录/加工任务/台账结算） & \code{VARCHAR(32)} & 非空 \\
 \code{related\_no} & 关联单据编号（逻辑引用，不建硬外键） & \code{VARCHAR(32)} & 非空 \\
 \code{amount} & 金额 & \code{DECIMAL(12,2)} & 非空 \\
-\code{direction} & 收付方向：支付|收取 & \code{VARCHAR(8)} & 非空 \\
+\code{direction} & 收付方向：支付、收取 & \code{VARCHAR(8)} & 非空 \\
 \code{operator\_id} & 经手人，指向 t\_user & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{pay\_time} & 时间 & \code{DATETIME} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{客户标签表 \code{t\_customer\_tag} 的字段说明}\label{tab:f-t-customer-tag}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -754,12 +754,12 @@
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{customer\_id} & 客户，指向 t\_customer & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、随主表级联删除 \\
-\code{tag} & 标签：大客户|懂行|爽快|要还价 & \code{VARCHAR(16)} & 非空 \\
+\code{tag} & 标签：大客户、懂行、爽快、要还价 & \code{VARCHAR(16)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{出让申请图片表 \code{t\_apply\_image} 的字段说明}\label{tab:f-t-apply-image}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -778,7 +778,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{完工交付过程图表 \code{t\_delivery\_image} 的字段说明}\label{tab:f-t-delivery-image}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -792,12 +792,12 @@
 \endlastfoot
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{apply\_id} & 完工交付申请，指向 t\_delivery\_apply & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、随主表级联删除 \\
-\code{stage} & 阶段：加工前|加工中|完工 & \code{VARCHAR(16)} & 非空 \\
+\code{stage} & 阶段：加工前、加工中、完工 & \code{VARCHAR(16)} & 非空 \\
 \code{image\_path} & 图片路径 & \code{VARCHAR(255)} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{寄售合同表 \code{t\_consignment} 的字段说明}\label{tab:f-t-consignment}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -814,15 +814,15 @@
 \code{supplier\_id} & 寄售供应商，指向 t\_source\_party（类别=供应商） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{sign\_time} & 签订时间 & \code{DATETIME} & 非空 \\
 \code{expire\_date} & 到期日（到期未终止即置已到期） & \code{DATE} & 非空 \\
-\code{settle\_cycle} & 结算方式：售出即结|按月结算 & \code{VARCHAR(16)} & 非空 \\
-\code{status} & 状态：生效|已终止|已到期（状态机见 07e） & \code{VARCHAR(8)} & 非空 \\
+\code{settle\_cycle} & 结算方式：售出即结、按月结算 & \code{VARCHAR(16)} & 非空 \\
+\code{status} & 状态：生效、已终止、已到期（状态机见 07e） & \code{VARCHAR(8)} & 非空 \\
 \code{remark} & 备注 & \code{VARCHAR(255)} & 可空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{寄售明细表 \code{t\_consignment\_item} 的字段说明}\label{tab:f-t-consignment-item}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -838,12 +838,12 @@
 \code{consignment\_id} & 寄售合同，指向 t\_consignment & \code{BIGINT UNSIGNED} & 非空、组合外键（非 1 方）、随主表级联删除 \\
 \code{goods\_id} & 货品，指向 t\_goods & \code{BIGINT UNSIGNED} & 非空、索引、外键（非 1 方）、禁止删除 \\
 \code{consign\_price} & 寄售价（售出后按此价与供应商结算） & \code{DECIMAL(12,2)} & 非空 \\
-\code{settle\_status} & 结算状态：未结算|已结算（UC-22） & \code{VARCHAR(8)} & 非空 \\
+\code{settle\_status} & 结算状态：未结算、已结算（UC-22） & \code{VARCHAR(8)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{台账结算表 \code{t\_settlement} 的字段说明}\label{tab:f-t-settlement}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -858,18 +858,18 @@
 \code{id} & 代理键 & \code{BIGINT UNSIGNED} & 主键、自增、非空 \\
 \code{settle\_no} & 结算编号 & \code{VARCHAR(32)} & 唯一、非空 \\
 \code{party\_id} & 结算往来方，指向 t\_source\_party & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
-\code{settle\_type} & 结算类型：调货|寄售 & \code{VARCHAR(8)} & 非空 \\
+\code{settle\_type} & 结算类型：调货、寄售 & \code{VARCHAR(8)} & 非空 \\
 \code{transfer\_id} & 调货记录，指向 t\_transfer（结算类型=调货时非空） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、禁止删除 \\
 \code{consign\_item\_id} & 寄售明细，指向 t\_consignment\_item（结算类型=寄售时非空） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、禁止删除 \\
 \code{amount} & 结算金额 & \code{DECIMAL(12,2)} & 非空 \\
-\code{settle\_method} & 结算方式：现金|转账|冲抵 & \code{VARCHAR(16)} & 非空 \\
+\code{settle\_method} & 结算方式：现金、转账、冲抵 & \code{VARCHAR(16)} & 非空 \\
 \code{settle\_time} & 结算时间 & \code{DATETIME} & 非空 \\
 \code{operator\_id} & 经手人，指向 t\_user & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{分期计划表 \code{t\_installment} 的字段说明}\label{tab:f-t-installment}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -889,13 +889,13 @@
 \code{paid\_amount} & 已还金额 & \code{DECIMAL(12,2)} & 非空 \\
 \code{next\_due\_date} & 下一期到期日（超过未结清即逾期） & \code{DATE} & 非空 \\
 \code{start\_date} & 计划生效日 & \code{DATE} & 非空 \\
-\code{status} & 状态：未还|逾期|已结清（状态机见 07f） & \code{VARCHAR(8)} & 非空 \\
+\code{status} & 状态：未还、逾期、已结清（状态机见 07f） & \code{VARCHAR(8)} & 非空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{库存流水表 \code{t\_stock\_log} 的字段说明}\label{tab:f-t-stock-log}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -919,7 +919,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{用户-角色表 \code{t\_user\_role} 的字段说明}\label{tab:f-t-user-role}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -937,7 +937,7 @@
 \end{longtable}
 
 \Needspace{8\baselineskip}
-\begin{longtable}{@{}p{3.1cm} p{4.5cm} p{2.4cm} p{4.5cm}@{}}
+\begin{longtable}{@{}L{3.5cm} L{4.1cm} L{2.9cm} L{4.0cm}@{}}
 \caption{角色-权限表 \code{t\_role\_permission} 的字段说明}\label{tab:f-t-role-permission}\\
 \toprule
 字段名称 & 中文描述 & 数据类型 & 约束条件 \\
@@ -985,7 +985,7 @@ Mapper 通过 MyBatis-Plus 封装为仓储（数据映射器）访问数据层�
 \small
 \caption{业务层服务划分与职责}
 \label{tab:services}
-\begin{tabularx}{\textwidth}{@{}l X l@{}}
+\begin{tabularx}{\textwidth}{@{}l Y l@{}}
 \toprule
 服务 & 职责 & 主要用例 \\
 \midrule
@@ -1028,7 +1028,7 @@ AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & 
 \small
 \caption{表示层功能模块划分}
 \label{tab:modules}
-\begin{tabularx}{\textwidth}{@{}l X@{}}
+\begin{tabularx}{\textwidth}{@{}l Y@{}}
 \toprule
 端 / 模块 & 功能 \\
 \midrule
@@ -1071,7 +1071,7 @@ AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & 
 \small
 \caption{成交登记页组件可用表}
 \label{tab:ui-deal}
-\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\begin{tabularx}{\textwidth}{@{}l l Y@{}}
 \toprule
 组件 & 类型 & 可用条件（其余状态置灰） \\
 \midrule
@@ -1093,7 +1093,7 @@ AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & 
 \small
 \caption{调货结算页组件可用表}
 \label{tab:ui-transfer}
-\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\begin{tabularx}{\textwidth}{@{}l l Y@{}}
 \toprule
 组件 & 类型 & 可用条件（其余状态置灰） \\
 \midrule
@@ -1122,7 +1122,7 @@ AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & 
 \small
 \caption{角色功能权限矩阵}
 \label{tab:perm}
-\begin{tabularx}{\textwidth}{@{}X c c c c c@{}}
+\begin{tabularx}{\textwidth}{@{}Y c c c c c@{}}
 \toprule
 用例（权限） & 老板 & 销售 & 合作商户 & 供应商 & 加工师傅 \\
 \midrule
