@@ -125,3 +125,56 @@
     \label{fig:#3}
   \end{figure}%
 }
+
+% ------------------------------------------------------------
+% 整页图：图与图注在版心内水平、垂直双向居中，独占一页，不随正文浮动
+% 用于本来就占一页的图，免得图贴页顶、下方空出一大片
+% ------------------------------------------------------------
+\newcommand{\figp}[3][1.0]{%
+  \clearpage
+  \setlength{\figw}{#1\textwidth}%
+  \noindent
+  \begin{minipage}[c][\textheight][c]{\textwidth}%
+    \centering
+    \IfFileExists{../figs/analysis/#3.png}{%
+        \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/analysis/#3.png}%
+      }{%
+      \IfFileExists{../figs/design/#3.png}{%
+          \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/design/#3.png}%
+        }{%
+        \fbox{\parbox[c][4.6cm][c]{0.8\textwidth}{\centering 【待插入图形】\ \texttt{../figs/#3}}}%
+      }%
+    }%
+    \par\vspace{6pt}%
+    \captionof{figure}{#2}\label{fig:#3}%
+  \end{minipage}%
+  \clearpage
+}
+
+\newcommand{\figpab}[3][0.86]{%
+  \clearpage
+  \noindent
+  \begin{minipage}[c][\textheight][c]{\textwidth}%
+    \centering
+    \IfFileExists{../figs/business-use-cases/#3}{%
+        \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/business-use-cases/#3}%
+      }{%
+      \IfFileExists{../figs/business-sequence/#3}{%
+          \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/business-sequence/#3}%
+        }{%
+        \IfFileExists{../figs/improved-business-sequence/#3}{%
+            \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/improved-business-sequence/#3}%
+          }{%
+          \IfFileExists{../figs/system-use-cases/#3}{%
+              \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/system-use-cases/#3}%
+            }{%
+            \fbox{\parbox[c][4.6cm][c]{0.8\textwidth}{\centering 【待插入图形】\ \texttt{../figs/#3}}}%
+          }%
+        }%
+      }%
+    }%
+    \par\vspace{6pt}%
+    \captionof{figure}{#2}\label{fig:#3}%
+  \end{minipage}%
+  \clearpage
+}

@@ -19,7 +19,7 @@
 边界类到控制类是转发关系，控制类到实体类是分配责任，前者见表~\ref{tab:b2c}，后者见各用例的分析序列图。
 两者的方向都是\textbf{依赖}：控制类不保存数据，也不调用实体类的取值/赋值操作。
 
-\fig{分析类图（一）：边界类与柜台端控制类}{05a-boundary-control-class}
+\figp{分析类图（一）：边界类与柜台端控制类}{05a-boundary-control-class}
 
 \fig{分析类图（二）：微信小程序边界类与控制类}{05a2-boundary-control-class}
 
@@ -56,21 +56,21 @@
 \textbf{普通关联}用于可共享、或同一对对象可多次发生的关系（如同一件货品的多次成交）；\textbf{组合}用于部分不可共享、且不能脱离整体存在的关系，共四处——证书挂货品、完工交付申请挂加工任务、货品入库批次、寄售明细挂寄售合同；控制类到实体类的\textbf{依赖}见分析类图（一）。\textbf{泛化}不采用：各类账户的差别只在权限与登录入口，核心属性完全一致，属于属性值差别；用户与角色为多对多、角色与权限也为多对多，角色与权限各自成类成表，不为五类角色各建子类。
 类之间的 33 条关联连同多重性与角色名见表~\ref{tab:rels}。
 
-\fig{实体类之间的关联（一）：货品与入库批次、证书}{05b1-entity-goods}
-\fig{实体类之间的关联（二）：货品与成交}{05b2-entity-deal}
+\figp{实体类之间的关联（一）：货品与入库批次、证书}{05b1-entity-goods}
+\figp{实体类之间的关联（二）：货品与成交}{05b2-entity-deal}
 \figtwoW{0.72}{实体类之间的关联（三）：送检与证书}{05b3-entity-inspect}{1.0}{实体类之间的关联（四）：预约、货品、预定与客户}{05b4-entity-book}
 \figtwo[0.60]{实体类之间的关联（五）：来源方、出让申请与上门预约}{05b5-entity-transfer}{实体类之间的关联（六）：货品、加工任务与来源方}{05b6-entity-process}
-\fig{实体类之间的关联（七）：货品类别与货品的分类关系}{05b8-entity-category}
-\fig{实体类之间的关联（八）：货品送检与送检单}{05b9-entity-goods-inspect}
-\fig{实体类之间的关联（九）：调货与来源方往来}{05b11-entity-money-partner}
+\figp{实体类之间的关联（七）：货品类别与货品的分类关系}{05b8-entity-category}
+\figp{实体类之间的关联（八）：货品送检与送检单}{05b9-entity-goods-inspect}
+\figp{实体类之间的关联（九）：调货与来源方往来}{05b11-entity-money-partner}
 \figtwo[0.72]{实体类之间的关联（十）：加工任务与完工交付申请}{05b12-entity-delivery}{实体类之间的关联（十一）：送检、鉴定机构与证书}{05b13-entity-cert-org}
-\fig{实体类之间的关联（十二）：货品的调拨}{05b14-entity-goods-transfer2}
+\figp{实体类之间的关联（十二）：货品的调拨}{05b14-entity-goods-transfer2}
 \figtwo[0.72]{实体类之间的关联（十三）：成交与客户下单}{05b15-entity-deal-customer}{实体类之间的关联（十四）：成交与退货}{05b16-entity-deal-return}
-\fig{实体类之间的关联（十五）：来源方、寄售合同、寄售明细与货品}{05b17-entity-consign}
-\fig{实体类之间的关联（十六）：来源方、台账结算、调货与寄售明细}{05b18-entity-settle}
-\fig{实体类之间的关联（十七）：成交与分期计划}{05b19-entity-installment}
-\fig{实体类之间的关联（十八）：货品、用户与库存流水}{05b20-entity-stocklog}
-\fig{实体类之间的关联（十九）：用户、角色与权限}{05b21-entity-rbac}
+\figp{实体类之间的关联（十五）：来源方、寄售合同、寄售明细与货品}{05b17-entity-consign}
+\figp{实体类之间的关联（十六）：来源方、台账结算、调货与寄售明细}{05b18-entity-settle}
+\figp{实体类之间的关联（十七）：成交与分期计划}{05b19-entity-installment}
+\figp{实体类之间的关联（十八）：货品、用户与库存流水}{05b20-entity-stocklog}
+\figp{实体类之间的关联（十九）：用户、角色与权限}{05b21-entity-rbac}
 
 \needspace{8\baselineskip}
 \begin{table}[H]
@@ -128,33 +128,33 @@
 消息代表责任分配而非数据流动，控制类只分配责任，不取存实体类的属性。
 28 个用例的基本路径逐一给出，如图~\ref{fig:06a-uc01-sale} 至图~\ref{fig:06aa-uc28-booking-follow}。
 
-\fig[1.0]{登记成交（UC-01）分析序列图}{06a-uc01-sale}
-\fig[1.0]{登记货品入库（UC-02）分析序列图}{06b-uc02-goods-in}
-\fig[1.0]{登记退货（UC-03）分析序列图}{06c-uc03-return}
-\fig[1.0]{维护客户信息（UC-04）分析序列图}{06i-uc04-customer}
-\fig[1.0]{登记送检与证书（UC-05）分析序列图}{06d-uc05-inspect}
-\fig[1.0]{查看销售与周转统计（UC-06）分析序列图}{06j-uc06-stats}
-\fig[1.0]{维护基础数据（UC-07）分析序列图}{06k-uc07-basicdata}
-\fig[1.0]{登录（UC-08）分析序列图}{06l-uc08-login}
-\fig[1.0]{浏览货品（UC-09）分析序列图}{06m-uc09-browse}
-\fig[1.0]{预约查看货品（UC-10）分析序列图}{06n-uc10-reserve}
-\fig[1.0]{查看调货价格（UC-11）分析序列图}{06o-uc11-transfer-price}
-\fig[1.0]{开通外部账户（UC-12）分析序列图}{06p-uc12-open-account}
-\fig[1.0]{预定商品（UC-13）分析序列图}{06e-uc13-book}
-\fig[1.0]{提交货品出让申请（UC-14）分析序列图}{06f-uc14-transfer-apply}
-\fig[1.0]{预约上门时间（UC-15）分析序列图}{06q-uc15-visit-appt}
-\fig[1.0]{查看加工任务（UC-16）分析序列图}{06r-uc16-process-task}
-\fig[1.0]{提交完工交付申请（UC-17）分析序列图}{06s-uc17-delivery}
-\fig[1.0]{审核出让申请（UC-18）分析序列图}{06g-uc18-transfer-review}
-\fig[1.0]{登记货款记录（UC-19）分析序列图}{06t-uc19-payment}
-\fig[1.0]{维护调货记录（UC-20）分析序列图}{06h-uc20-transfer-rec}
-\fig[1.0]{登记寄售合同（UC-21）分析序列图}{06t-uc21-consign}
-\fig[1.0]{结算寄售货款（UC-22）分析序列图}{06u-uc22-consign-settle}
-\fig[1.0]{结算调货台账（UC-23）分析序列图}{06v-uc23-transfer-settle}
-\fig[1.0]{登记分期计划（UC-24）分析序列图}{06w-uc24-installment}
-\fig[1.0]{记录分期还款（UC-25）分析序列图}{06x-uc25-installment-pay}
-\fig[1.0]{查看库存流水（UC-26）分析序列图}{06y-uc26-stock-log}
-\fig[1.0]{查询预约（UC-27）分析序列图}{06z-uc27-resv-query}
+\figp[1.0]{登记成交（UC-01）分析序列图}{06a-uc01-sale}
+\figp[1.0]{登记货品入库（UC-02）分析序列图}{06b-uc02-goods-in}
+\figp[1.0]{登记退货（UC-03）分析序列图}{06c-uc03-return}
+\figp[1.0]{维护客户信息（UC-04）分析序列图}{06i-uc04-customer}
+\figp[1.0]{登记送检与证书（UC-05）分析序列图}{06d-uc05-inspect}
+\figp[1.0]{查看销售与周转统计（UC-06）分析序列图}{06j-uc06-stats}
+\figp[1.0]{维护基础数据（UC-07）分析序列图}{06k-uc07-basicdata}
+\figp[1.0]{登录（UC-08）分析序列图}{06l-uc08-login}
+\figp[1.0]{浏览货品（UC-09）分析序列图}{06m-uc09-browse}
+\figp[1.0]{预约查看货品（UC-10）分析序列图}{06n-uc10-reserve}
+\figp[1.0]{查看调货价格（UC-11）分析序列图}{06o-uc11-transfer-price}
+\figp[1.0]{开通外部账户（UC-12）分析序列图}{06p-uc12-open-account}
+\figp[1.0]{预定商品（UC-13）分析序列图}{06e-uc13-book}
+\figp[1.0]{提交货品出让申请（UC-14）分析序列图}{06f-uc14-transfer-apply}
+\figp[1.0]{预约上门时间（UC-15）分析序列图}{06q-uc15-visit-appt}
+\figp[1.0]{查看加工任务（UC-16）分析序列图}{06r-uc16-process-task}
+\figp[1.0]{提交完工交付申请（UC-17）分析序列图}{06s-uc17-delivery}
+\figp[1.0]{审核出让申请（UC-18）分析序列图}{06g-uc18-transfer-review}
+\figp[1.0]{登记货款记录（UC-19）分析序列图}{06t-uc19-payment}
+\figp[1.0]{维护调货记录（UC-20）分析序列图}{06h-uc20-transfer-rec}
+\figp[1.0]{登记寄售合同（UC-21）分析序列图}{06t-uc21-consign}
+\figp[1.0]{结算寄售货款（UC-22）分析序列图}{06u-uc22-consign-settle}
+\figp[1.0]{结算调货台账（UC-23）分析序列图}{06v-uc23-transfer-settle}
+\figp[1.0]{登记分期计划（UC-24）分析序列图}{06w-uc24-installment}
+\figp[1.0]{记录分期还款（UC-25）分析序列图}{06x-uc25-installment-pay}
+\figp[1.0]{查看库存流水（UC-26）分析序列图}{06y-uc26-stock-log}
+\figp[1.0]{查询预约（UC-27）分析序列图}{06z-uc27-resv-query}
 \fig[1.0]{跟进预定到店（UC-28）分析序列图}{06aa-uc28-booking-follow}
 
 \section{分析状态机图（只画核心类）}
@@ -172,11 +172,11 @@
 调货与代销（图~\ref{fig:07a2-goods-transfer}）、送检与处置（图~\ref{fig:07a3-goods-inspect}）。
 各迁移及其规约来源见表~\ref{tab:goods-transitions}。
 
-\fig{货品生命周期状态机（八状态总览）}{07a-goods-state}
+\figp{货品生命周期状态机（八状态总览）}{07a-goods-state}
 
-\fig{货品状态机（一）：售出与预留}{07a1-goods-sale}
-\fig{货品状态机（二）：调货与代销}{07a2-goods-transfer}
-\fig{货品状态机（三）：送检与处置}{07a3-goods-inspect}
+\figp{货品状态机（一）：售出与预留}{07a1-goods-sale}
+\figp{货品状态机（二）：调货与代销}{07a2-goods-transfer}
+\figp{货品状态机（三）：送检与处置}{07a3-goods-inspect}
 
 \needspace{8\baselineskip}
 \begin{table}[H]
@@ -251,7 +251,7 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工/寄售
 到期日过仍有未还转“逾期”，还清全部转“已结清”；
 逾期不是终点，补清欠款后同样进入“已结清”。
 
-\fig{分期计划状态机（三状态）}{07f-installment-state}
+\figp{分期计划状态机（三状态）}{07f-installment-state}
 
 % ============================================================
 % D 阶段：设计
