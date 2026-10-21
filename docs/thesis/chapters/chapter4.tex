@@ -17,7 +17,7 @@
 \toprule
 层 & 技术选型 \\
 \midrule
-表示层（柜台电脑端） & Vue3 + Vite + Element-Plus + Pinia + Axios，门店本地部署 \\
+表示层（柜台电脑端） & Vue3 + Vite + Element-Plus + Pinia + Axios，门店本地部署（演示环境为云服务器单机） \\
 表示层（外部端） & 微信小程序（客户、供应商、加工师傅、合作商户） \\
 业务层 & SpringBoot 3 + MyBatis-Plus \\
 数据层 & MySQL 8.0 \\
@@ -34,6 +34,9 @@
 柜台端和小程序调的是同一套后端接口。
 
 \fig{总体架构：表示层 / 业务层 / 数据层}{08-architecture}
+
+部署方式上，演示环境采用云服务器单机部署，以 Docker 容器化方式运行，Nginx、SpringBoot 与 MySQL 同机；
+生产环境按门店局域网部署，柜台端数据留在门店内网。
 
 \section{数据层设计}
 
