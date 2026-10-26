@@ -129,6 +129,8 @@
     .kv{font-size:14px;padding:14px 0}
     .kv span:first-child{width:96px}
     .hint{padding:14px 0 0;font-size:12.5px}
+    /* 宽屏是两栏网格：提示语与按钮要跨两栏，否则被挤进左列，看着像停在中间 */
+    .detail-wrap .hint, .detail-wrap .bottom{grid-column:1 / -1}
     .bottom{position:static;max-width:none;margin:26px 0 0;padding:0;border:0;background:transparent;
       justify-content:flex-end}
     .bottom .btn{flex:none;min-width:164px;height:46px;font-size:15px;font-family:var(--serif);letter-spacing:2px}
@@ -164,19 +166,10 @@
   .dlg .row b{flex:none;width:4em;color:var(--text);font-weight:600}
   .dlg .hint{margin-top:14px;font-size:12px;color:var(--text-3)}
   .dlg .btn{margin:18px auto 0;max-width:180px}
-  /* 窄屏：底部抽屉；宽屏（≥720）改成右侧栏。两种都贴边，不做居中弹窗 */
-  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:#fff;
-    border-top:1px solid var(--line,#E6DECF);border-radius:12px 12px 0 0;
-    box-shadow:0 -12px 32px rgba(34,53,47,.14);
-    max-height:88vh;overflow-y:auto;padding:20px 18px calc(20px + env(safe-area-inset-bottom))}
-  /* 宽屏不用弹窗居中：贴右侧成侧栏，页面内容仍可见 */
-  @media (min-width: 720px){
-    .sheet{left:auto;right:0;top:0;bottom:0;transform:none;width:400px;max-height:none;
-      border-radius:0;border:0;border-left:1px solid var(--line,#E6DECF);box-shadow:-16px 0 40px rgba(34,53,47,.12);
-      padding:28px 26px}
-    /* 结果确认框同样靠右上，避免宽屏上出现两种位置的浮层 */
-    .dlg-mask{align-items:flex-start;justify-content:flex-end;padding:72px 28px}
-  }
+  .sheet{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:41;background:#fff;
+    border:1px solid var(--line,#E6DECF);border-radius:12px;box-shadow:0 18px 48px rgba(34,53,47,.18);
+    width:min(440px,calc(100vw - 32px));max-height:88vh;overflow-y:auto;
+    padding:22px 18px 18px}
   .sheet-h{font-family:var(--serif);font-size:17px;letter-spacing:2px;color:var(--jade-900,#22352F);
     margin-bottom:14px}
   .sheet-note{margin:10px 0 0;font-size:12px;line-height:1.8;color:var(--text-3,#8A948F)}
