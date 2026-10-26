@@ -90,7 +90,22 @@
     color:var(--text-2);font-size:12.5px;line-height:1.7}
 
   /* 商户价目 */
-  .pitem{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px;margin-bottom:10px}
+  .pitem{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px;margin-bottom:10px;
+    cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .pitem:active{background:var(--paper-2)}
+  /* 货品详情：点价目项打开，图片按原比例铺满卡片宽度，可看清细节 */
+  .pv-mask{position:fixed;inset:0;background:rgba(34,53,47,.55);z-index:70}
+  .pv{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:71;background:var(--card);
+    width:min(430px,calc(100vw - 24px));max-height:88vh;overflow-y:auto;border-radius:8px;padding:14px 14px 10px;
+    box-shadow:0 18px 48px rgba(34,53,47,.28)}
+  .pv .big{width:100%;max-height:42vh;object-fit:contain;background:var(--paper-2);border-radius:6px;display:block}
+  .pv .ph-big{width:100%;height:220px;display:flex;align-items:center;justify-content:center;
+    color:var(--text-3);background:var(--paper-2);border-radius:6px}
+  .pv .ttl{font-family:var(--serif);font-size:17px;margin:12px 0 2px}
+  .pv .sub{font-size:12px;color:var(--text-2)}
+  .pv .kv2{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+  .pv .kv2 span:first-child{color:var(--text-2);flex:none}
+  .pv .price{color:var(--cinnabar);font-family:var(--serif);font-size:16px}
   .pitem img,.pitem .ph{width:78px;height:78px;border-radius:4px;object-fit:cover;background:var(--paper-2);flex:none;
     display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:11px}
   .pitem .info{flex:1;min-width:0}
@@ -252,7 +267,7 @@
     <!-- 商户：调货价目 -->
     <template v-else-if="view==='merchant'">
       <p class="note">调货由门店登记，选定货品后前往门店调取。</p>
-      <div class="pitem" v-for="g in prices" :key="g.goodsNo">
+      <div class="pitem" v-for="g in prices" :key="g.goodsNo" @click="openPrice(g)">
         <img v-if="g.image" :src="g.image" alt="">
         <div class="ph" v-else>无图</div>
         <div class="info">
@@ -265,6 +280,24 @@
       <div class="empty" v-if="loading">加载中…</div>
       <div class="btn ghost" v-if="prices.length < total" @click="loadMore">加载更多</div>
       <div class="err" v-if="err">{{ err }}</div>
+
+      <div class="pv-mask" v-if="pv" @click="pv=null"></div>
+      <div class="pv" v-if="pv">
+        <img v-if="pv.image" class="big" :src="pv.image" :alt="pv.name">
+        <div v-else class="ph-big">暂无图片</div>
+        <div class="ttl">{{ pv.name }}</div>
+        <div class="sub">{{ pv.goodsNo }}</div>
+        <div class="kv2"><span>调货价</span><span class="price">{{ pv.transferPrice }} 元</span></div>
+        <div class="kv2"><span>类别</span><span>{{ pv.categoryName || '—' }}</span></div>
+        <div class="kv2"><span>料种</span><span>{{ pv.material || '—' }}</span></div>
+        <div class="kv2"><span>产地</span><span>{{ pv.origin || '—' }}</span></div>
+        <div class="kv2"><span>器型</span><span>{{ pv.shape || '—' }}</span></div>
+        <div class="kv2"><span>产状</span><span>{{ pv.form || '—' }}</span></div>
+        <div class="kv2"><span>克重</span><span>{{ pv.weightG ? pv.weightG + ' g' : '—' }}</span></div>
+        <div class="kv2"><span>尺寸</span><span>{{ pv.size || '—' }}</span></div>
+        <div class="kv2" v-if="pv.certNo"><span>证书号</span><span>{{ pv.certNo }}</span></div>
+        <div class="btn ghost mt16" @click="pv=null">关闭</div>
+      </div>
     </template>
 
     <!-- 上门预约 -->
@@ -383,6 +416,7 @@ createApp({
     let shotIdx = 0;
 
     const prices = ref([]);
+    const pv = ref(null);
     const total = ref(0);
     let page = 1;
 
@@ -537,6 +571,12 @@ createApp({
 
     /* 商户 */
     let pricesLoading = false;
+    // 打开详情：先用列表数据把卡片立起来，再去取完整字段（料种、产地、证书号等）
+    async function openPrice(g) {
+      pv.value = { ...g };
+      const r = await call('GET', '/api/merchant/price-list/' + encodeURIComponent(g.goodsNo));
+      if (r.code === 0 && pv.value) pv.value = r.data;
+    }
     async function loadPrices(p) {
       if (pricesLoading) return;
       pricesLoading = true;
@@ -630,7 +670,7 @@ createApp({
       role, roleName, title, subtitle, cards,
       submitLogin, logout, go, loadApplies, openSupList, submitApply,
       loadTasks, openDelivery, pick, onFile, submitDelivery,
-      loadMore, loadVisitApplies, submitVisit
+      loadMore, loadVisitApplies, submitVisit, pv, openPrice
     };
   }
 }).mount('#app');

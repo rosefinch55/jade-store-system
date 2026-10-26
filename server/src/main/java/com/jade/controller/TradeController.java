@@ -34,6 +34,7 @@ public class TradeController {
     private final SettlementMapper settlementMapper;
     private final ConsignmentMapper consignMapper;
     private final ConsignmentItemMapper itemMapper;
+    private final CategoryMapper categoryMapper;
     private final ProcessTaskMapper taskMapper;
     private final DeliveryApplyMapper deliveryMapper;
     private final DeliveryImageMapper deliveryImageMapper;
@@ -55,12 +56,13 @@ public class TradeController {
                            SourcePartyMapper partyMapper, SaleMapper saleMapper,
                            PaymentMapper paymentMapper, StockLogMapper stockLogMapper,
                            StockInMapper stockInMapper, UserMapper userMapper,
-                           ReservationMapper reservationMapper) {
+                           ReservationMapper reservationMapper, CategoryMapper categoryMapper) {
         this.transferMapper = transferMapper;
         this.applyMapper = applyMapper;
         this.settlementMapper = settlementMapper;
         this.consignMapper = consignMapper;
         this.itemMapper = itemMapper;
+        this.categoryMapper = categoryMapper;
         this.taskMapper = taskMapper;
         this.deliveryMapper = deliveryMapper;
         this.deliveryImageMapper = deliveryImageMapper;
@@ -108,6 +110,36 @@ public class TradeController {
         data.put("size", size);
         data.put("items", items);
         return Result.ok(data);
+    }
+
+    /** 商户看单件详情：只给对外可见的字段，成本、最低售价、参考价一律不出库 */
+    @GetMapping("/merchant/price-list/{goodsNo}")
+    @RequirePerm(value = "UC-11", roles = {"MERCHANT"})
+    public Result<Map<String, Object>> priceDetail(@PathVariable String goodsNo) {
+        Goods g = goodsMapper.selectOne(new QueryWrapper<Goods>().eq("goods_no", goodsNo));
+        if (g == null || !"在柜".equals(g.getStatus()) || g.getTransferPrice() == null) {
+            throw BizException.notFound("该货品当前不可调");
+        }
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("goodsNo", g.getGoodsNo());
+        m.put("name", g.getName());
+        m.put("categoryName", categoryName(g.getCategoryId()));
+        m.put("material", g.getMaterial());
+        m.put("origin", g.getOrigin());
+        m.put("shape", g.getShape());
+        m.put("form", g.getForm());
+        m.put("weightG", g.getWeightG());
+        m.put("size", g.getSize());
+        m.put("certNo", g.getCertNo());
+        m.put("image", g.getImage());
+        m.put("transferPrice", g.getTransferPrice());
+        return Result.ok(m);
+    }
+
+    private String categoryName(Long categoryId) {
+        if (categoryId == null) return null;
+        Category c = categoryMapper.selectById(categoryId);
+        return c == null ? null : c.getName();
     }
 
     // ==================== 供应商：出让申请 ====================
