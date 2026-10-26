@@ -397,7 +397,7 @@ const Detail = {
         <div class="row"><span class="lb">到店日期</span>
           <input class="inp" type="date" v-model="rf.date" :min="minDate" :max="maxDate"></div>
         <div class="row"><span class="lb">时段</span>
-          <input class="inp" type="time" v-model="rf.clock" step="1800"></div>
+          <input class="inp" type="time" v-model="rf.clock" step="1800" min="09:00" max="20:00"></div>
       </div>
       <p class="sheet-note">可约 {{ winMinText }} 至 {{ winMaxText }}（两小时内不接单）。</p>
       <p class="sheet-note">提交后会拿到预约编号，到店报编号即可。</p>
@@ -481,6 +481,7 @@ const Detail = {
     const submitReserve = async () => {
       if (submitting.value) return;
       if (!rf.name) return ElMessage.warning('请填姓名');
+      if (rf.clock < '09:00' || rf.clock > '20:00') return ElMessage.warning('门店接待时段为 09:00–20:00');
       if (rf.date && rf.clock) rf.slotTime = rf.date + ' ' + rf.clock;
       if (!/^\d{11}$/.test(rf.phone)) return ElMessage.warning('手机号需 11 位');
       if (!rf.slotTime) return ElMessage.warning('请选择日期与时间');
