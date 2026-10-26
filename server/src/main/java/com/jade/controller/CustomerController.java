@@ -39,6 +39,8 @@ public class CustomerController {
     /** 额度占用口径：只有「已达成」释放，见 specs/003-customer/data-model.md */
     private static final List<String> QUOTA_STATUS =
             List.of("待到店", "已联系", "已爽约", "已取消");
+    /** 预定保留时长：柜台建单后 72 小时不处理自动失效，释放货品 */
+    private static final int BOOKING_HOLD_HOURS = 72;
     /** 预约可约窗口：最早当前时间后 2 小时，最晚当前时间后 3 天（与客户侧日期表单一致） */
     private static final long RESERVE_LEAD_HOURS = 2;
     private static final long RESERVE_SPAN_DAYS = 3;
@@ -611,17 +613,8 @@ public class CustomerController {
         return Result.ok(out);
     }
 
-    // ==================== 公开：预定 ====================
-
-    @GetMapping("/public/bookings/quota")
-    public Result<Map<String, Object>> quota(@RequestParam String phone) {
-        long used = countQuota(phone);
-        Map<String, Object> m = new LinkedHashMap<>();
-        m.put("phone", maskPhone(phone));
-        m.put("used", used);
-        m.put("remaining", Math.max(0, 3 - used));
-        return Result.ok(m);
-    }
+    // ==================== 内部：预定（由店员在柜台端操作） ====================
+    // 客户侧不再开放预定：货品被锁 72 小时的代价由门店判断，散客自行预定容易把货占死。
 
     public static class BookingReq {
         public String goodsNo;
@@ -629,25 +622,19 @@ public class CustomerController {
         public String phone;
     }
 
-    @PostMapping("/public/bookings")
+    @PostMapping("/bookings")
+    @RequirePerm("UC-28")
     @Transactional
-    public Result<Map<String, Object>> book(@RequestBody BookingReq req, HttpServletRequest httpReq) {
+    public Result<Map<String, Object>> book(@RequestBody BookingReq req) {
         if (req.phone == null || !req.phone.matches("\\d{11}")) {
             throw BizException.badRequest("手机号格式不正确");
         }
+        if (req.name == null || req.name.isBlank()) throw BizException.badRequest("请填客户姓名");
         if (countQuota(req.phone) >= 3) {
-            throw BizException.unprocessable("预定额度已满，暂不可预定");
-        }
-        // 防刷：手机号可编造，光按号限流拦不住轮号灌库；与预约同口径按来源 IP 限有效预定数
-        String ip = clientIp(httpReq);
-        int heldByIp = bookingMapper.selectCount(new QueryWrapper<Booking>()
-                .eq("ip", ip).in("status", "待到店", "已联系")).intValue();
-        if (heldByIp >= MAX_ACTIVE_BOOKING_PER_IP) {
-            throw new BizException(429, "同一网络最多同时保留 " + MAX_ACTIVE_BOOKING_PER_IP
-                    + " 条预定，请到店或与门店联系");
+            throw BizException.unprocessable("该手机号已有 3 条有效预定，先处理旧的再建");
         }
         Goods g = goodsMapper.selectOne(new QueryWrapper<Goods>().eq("goods_no", req.goodsNo));
-        if (g == null || !"在柜".equals(g.getStatus())) throw BizException.notFound("货品不存在或已下架");
+        if (g == null || !"在柜".equals(g.getStatus())) throw BizException.notFound("货品不存在或不在柜");
         Long active = bookingMapper.selectCount(new QueryWrapper<Booking>()
                 .eq("goods_id", g.getId()).in("status", "待到店", "已联系"));
         if (active != null && active > 0) throw BizException.conflict("该货品已被预定");
@@ -658,22 +645,50 @@ public class CustomerController {
         b.setGoodsId(g.getId());
         b.setName(req.name);
         b.setPhone(req.phone);
-        b.setIp(ip);
+        // 柜台代订，没有来源 IP；ip 列留空
+        b.setIp(null);
         b.setCustomerId(c == null ? null : c.getId());
         b.setSubmitTime(LocalDateTime.now());
         b.setStatus("待到店");
         try {
             bookingMapper.insert(b);
         } catch (org.springframework.dao.DuplicateKeyException e) {
-            // uk_booking_goods_active 函数唯一索引兜底：两个请求同时穿过 check-then-insert 时，
-            // 库层只放行一条，另一条转成业务冲突而不是 500
+            // uk_booking_goods_active 函数唯一索引兜底，并发时库层只放行一条
             throw BizException.conflict("该货品已被预定");
         }
         Map<String, Object> data = new LinkedHashMap<>();
+        data.put("id", b.getId());
         data.put("bookingNo", b.getBookingNo());
-        data.put("status", b.getStatus());
-        data.put("remaining", Math.max(0, 3 - countQuota(req.phone)));
+        data.put("expireAt", b.getSubmitTime().plusHours(BOOKING_HOLD_HOURS));
         return Result.ok(data);
+    }
+
+    /** 有效预定清单（待到店/已联系），带剩余保留时间，供柜台端列表与倒计时 */
+    @GetMapping("/bookings")
+    @RequirePerm("UC-28")
+    public Result<List<Map<String, Object>>> activeBookings() {
+        List<Booking> bs = bookingMapper.selectList(new QueryWrapper<Booking>()
+                .in("status", "待到店", "已联系")
+                .orderByAsc("submit_time"));
+        List<Map<String, Object>> out = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        for (Booking b : bs) {
+            Goods g = goodsMapper.selectById(b.getGoodsId());
+            LocalDateTime expireAt = b.getSubmitTime().plusHours(BOOKING_HOLD_HOURS);
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("id", b.getId());
+            m.put("bookingNo", b.getBookingNo());
+            m.put("goodsNo", g == null ? null : g.getGoodsNo());
+            m.put("goodsName", g == null ? null : g.getName());
+            m.put("name", b.getName());
+            m.put("phone", b.getPhone());
+            m.put("status", b.getStatus());
+            m.put("submitTime", b.getSubmitTime());
+            m.put("expireAt", expireAt);
+            m.put("hoursLeft", Math.max(0, java.time.Duration.between(now, expireAt).toHours()));
+            out.add(m);
+        }
+        return Result.ok(out);
     }
 
     // ==================== 内部：到店跟进 ====================

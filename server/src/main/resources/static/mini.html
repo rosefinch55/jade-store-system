@@ -375,9 +375,10 @@ const Detail = {
       <div class="hint" v-if="g && g.reservable === false" style="color:#e6532d">该货品已被预约，暂不可约。若您是同一手机号，可在预约页把时间改早。</div>
       <div class="hint">参考价为对外报价上界，实际成交以到店面谈为准。</div>
 
+      <div class="hint">看好了想留货，跟店员说一声，由柜台登记预定，货保留三天。</div>
+
       <div class="bottom">
         <div class="btn ghost" :class="{disabled: g && g.reservable === false}" @click="openReserve">预约看货</div>
-        <div class="btn" @click="openBook">预定这件</div>
       </div>
     </div>
 
@@ -402,22 +403,6 @@ const Detail = {
       </div>
     </div>
 
-    <div class="mask" v-if="showBook" @click="showBook=false"></div>
-    <div class="sheet" v-if="showBook">
-      <div class="sheet-h">预定这件</div>
-      <div class="field">
-        <div class="row"><span class="lb">姓名</span>
-          <input class="inp" v-model="bf.name" placeholder="怎么称呼"></div>
-        <div class="row"><span class="lb">手机号</span>
-          <input class="inp" v-model="bf.phone" maxlength="11" inputmode="numeric"
-                 placeholder="11 位手机号" @blur="checkQuota"></div>
-      </div>
-      <div class="quota" v-if="quota">该号码已占用 {{ quota.used }} 次，剩余 {{ quota.remaining }} 次</div>
-      <p class="sheet-note">同一手机号最多同时占用 3 条预定；如约到店后释放。</p>
-      <div class="sheet-btns">
-        <div class="btn ghost" @click="showBook=false">取消</div>
-        <div class="btn" :class="{disabled: quota && quota.remaining<=0}" @click="submitBook">提交预定</div>
-      </div>
     </div>
 
     <div class="dlg-mask" v-if="dlg">
@@ -438,10 +423,9 @@ const Detail = {
   setup() {
     const g = ref(null);
     const loadFailed = ref(false);
-    const showReserve = ref(false), showBook = ref(false);
+    const showReserve = ref(false);
     const dlg = ref(null);
     const rf = reactive({ name: '', phone: '', slotTime: '', date: '', clock: '10:00' });
-    const bf = reactive({ name: '', phone: '' });
     const quota = ref(null);
 
     // 可约窗口 = 当前时间 +2 小时 至 +3 天。与后端 CustomerController 的
@@ -521,34 +505,8 @@ const Detail = {
         };
       } else ElMessage.error(r.message || '预约失败');
     };
-    const checkQuota = async () => {
-      if (!/^\d{11}$/.test(bf.phone)) return;
-      const r = await call('GET', '/public/bookings/quota' + qs({ phone: bf.phone }));
-      if (r.code === 0) quota.value = r.data;
-    };
-    const openBook = async () => { showBook.value = true; };
-    const submitBook = async () => {
-      if (submitting.value) return;
-      if (!bf.name) return ElMessage.warning('请填姓名');
-      if (!/^\d{11}$/.test(bf.phone)) return ElMessage.warning('手机号需 11 位');
-      submitting.value = true;
-      const r = await call('POST', '/public/bookings', {
-        goodsNo: g.value.goodsNo, name: bf.name, phone: bf.phone });
-      submitting.value = false;
-      if (r.code === 0) {
-        showBook.value = false;
-        ElMessage.success('预定成功，编号 ' + r.data.bookingNo + '，剩余额度 ' + r.data.remaining);
-        dlg.value = {
-          title: '预定成功', no: r.data.bookingNo,
-          rows: [{ k: '剩余额度', v: r.data.remaining + ' 次' },
-                 { k: '门店地址', v: '乌鲁木齐市新市区鲤鱼山南路 66 号（鲤鱼山公园东门旁）' }],
-          hint: '请截图保存，如约到店后释放额度。'
-        };
-      } else ElMessage.error(r.message || '预定失败');
-    };
     onMounted(load);
-    return { g, loadFailed, showReserve, showBook, dlg, rf, bf, quota, submitReserve, checkQuota, openBook, submitBook,
-      openReserve, back, winMinText, winMaxText, minDate, maxDate };
+    return { g, loadFailed, showReserve, dlg, rf, submitReserve, openReserve, back, winMinText, winMaxText, minDate, maxDate };
   }
 };
 

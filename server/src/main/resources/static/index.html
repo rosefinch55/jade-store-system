@@ -1834,13 +1834,88 @@ const Layout = {
     </el-container>
   </el-container>`,
   setup() {
-    const pages = {
+    const Bookings = {
+  template: `
+  <div>
+    <div class="toolbar">
+      <el-input v-model="f.goodsNo" placeholder="货品编号 JD…" clearable style="width:190px" />
+      <el-input v-model="f.name" placeholder="客户姓名" style="width:110px" />
+      <el-input v-model="f.phone" placeholder="手机号" maxlength="11" style="width:130px" />
+      <el-button type="primary" @click="create">登记预定</el-button>
+      <el-button @click="load">刷新</el-button>
+      <span style="margin-left:auto;font-size:12.5px;color:#6B7772">登记后货品为顾客保留 72 小时，到期自动失效并释放</span>
+    </div>
+    <el-table :data="rows" size="small" border stripe empty-text="当前没有生效中的预定">
+      <el-table-column prop="bookingNo" label="预定号" width="174" />
+      <el-table-column label="货品" min-width="210" show-overflow-tooltip>
+        <template #default="{row}">{{ row.goodsNo }} · {{ row.goodsName }}</template>
+      </el-table-column>
+      <el-table-column label="客户" width="144">
+        <template #default="{row}">{{ row.name }} · {{ row.phone }}</template>
+      </el-table-column>
+      <el-table-column label="登记时间" width="140">
+        <template #default="{row}">{{ (row.submitTime||'').replace('T',' ').slice(0,16) }}</template>
+      </el-table-column>
+      <el-table-column label="剩余 / 状态" width="128">
+        <template #default="{row}">
+          <el-tag size="small" :type="row.hoursLeft<=12?'danger':(row.hoursLeft<=36?'warning':'info')">{{ row.hoursLeft }}h</el-tag>
+          <span style="margin-left:6px;font-size:12px;color:#6B7772">{{ row.status }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="196" fixed="right">
+        <template #default="{row}">
+          <el-button v-if="row.status==='待到店'" link type="primary" @click="contact(row)">已联系</el-button>
+          <el-button link type="success" @click="result(row,true)">到店成交</el-button>
+          <el-button link type="info" @click="result(row,false)">爽约</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>`,
+  setup() {
+    const rows = ref([]);
+    const f = reactive({ goodsNo: '', name: '', phone: '' });
+    const load = async () => {
+      const r = await api.get('/bookings');
+      if (r.code === 0) rows.value = r.data;
+    };
+    const create = async () => {
+      if (!f.goodsNo || !f.name || !/^\d{11}$/.test(f.phone)) {
+        return ElMessage.warning('货品编号、姓名、11 位手机号都要填');
+      }
+      const r = await api.post('/bookings', { ...f });
+      if (r.code === 0) {
+        ElMessage.success('已登记，预定号 ' + r.data.bookingNo);
+        f.goodsNo = ''; f.name = ''; f.phone = '';
+        load();
+      } else ElMessage.error(r.message);
+    };
+    const contact = async (row) => {
+      const r = await api.post('/bookings/' + row.id + '/contact');
+      if (r.code === 0) { ElMessage.success('已标记联系'); load(); } else ElMessage.error(r.message);
+    };
+    const result = async (row, arrived) => {
+      try {
+        await ElMessageBox.confirm(
+          arrived ? '确认客户已到店？预定随之结束，成交请到「成交与退货」登记。'
+                  : '确认客户没来？该预定作废，货品立即释放。',
+          arrived ? '到店成交' : '标记爽约', { type: 'warning' });
+      } catch (e) { return; }
+      const r = await api.post('/bookings/' + row.id + '/result', { arrived });
+      if (r.code === 0) { ElMessage.success('已更新'); load(); } else ElMessage.error(r.message);
+    };
+    onMounted(load);
+    return { rows, f, load, create, contact, result };
+  }
+};
+
+const pages = {
       dashboard: { label: '概览', comp: Dashboard },
       goods: { label: '货品管理', comp: Goods },
       sales: { label: '成交与退货', comp: Sales },
       installments: { label: '分期管理', comp: Installments },
       stats: { label: '销售与周转', comp: Stats, perm: 'UC-06' },
       customers: { label: '客户档案', comp: Customers },
+      bookings: { label: '预定与留货', comp: Bookings, perm: 'UC-28' },
       transfers: { label: '同行调货', comp: Transfers },
       approval: { label: '审核与结算', comp: Approval },
       consign: { label: '寄售合同', comp: Consign },
@@ -1855,7 +1930,7 @@ const Layout = {
     const menuGroups = [
       { title: '概览', keys: ['dashboard'] },
       { title: '经营', keys: ['calendar', 'goods', 'sales', 'installments', 'stats'] },
-      { title: '客户', keys: ['customers'] },
+      { title: '客户', keys: ['customers', 'bookings'] },
       { title: '往来', keys: ['transfers', 'approval', 'consign', 'process'] },
       { title: '系统', keys: ['users', 'base', 'oplog'] },
     ];
