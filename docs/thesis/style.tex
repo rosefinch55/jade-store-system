@@ -43,7 +43,7 @@
 \xeCJKDeclareCharClass{CJK}{"2460 -> "24FF, "2014}
 
 % ------------------------------------------------------------
-% 图宏：依次在 ../figs/ 的分类子目录里找文件，都没有时给出提示方框
+% 图宏：依次在 figs/ 的分类子目录里找文件，都没有时给出提示方框
 % ------------------------------------------------------------
 \newlength{\figw}
 \newlength{\figmaxh}
@@ -54,21 +54,21 @@
   \clearpage
   \begin{figure}[H]
     \centering
-    \IfFileExists{../figs/analysis/#3.png}{%
-      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/analysis/#3.png}%
+    \IfFileExists{figs/analysis/#3.png}{%
+      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{figs/analysis/#3.png}%
     }{%
-    \IfFileExists{../figs/analysis/#3}{%
-      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/analysis/#3}%
+    \IfFileExists{figs/analysis/#3}{%
+      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{figs/analysis/#3}%
     }{%
-    \IfFileExists{../figs/design/#3.png}{%
-      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/design/#3.png}%
+    \IfFileExists{figs/design/#3.png}{%
+      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{figs/design/#3.png}%
     }{%
-    \IfFileExists{../figs/design/#3}{%
-      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/design/#3}%
+    \IfFileExists{figs/design/#3}{%
+      \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{figs/design/#3}%
     }{%
       \fbox{\parbox[c][4.6cm][c]{0.8\textwidth}{\centering
         【待插入图形】\vspace{6pt}
-        \texttt{../figs/#3}}}}}}}
+        \texttt{figs/#3}}}}}}}
     \caption{#2}
     \label{fig:#3}
   \end{figure}%
@@ -79,11 +79,11 @@
   \clearpage
   \begin{figure}[H]
     \centering
-    \IfFileExists{../figs/analysis/#3.png}{\includegraphics[width=\figw]{../figs/analysis/#3.png}}{%
-    \IfFileExists{../figs/design/#3.png}{\includegraphics[width=\figw]{../figs/design/#3.png}}{\fbox{【待插入图形】\texttt{#3}}}}%
+    \IfFileExists{figs/analysis/#3.png}{\includegraphics[width=\figw]{figs/analysis/#3.png}}{%
+    \IfFileExists{figs/design/#3.png}{\includegraphics[width=\figw]{figs/design/#3.png}}{\fbox{【待插入图形】\texttt{#3}}}}%
     \caption{#2}\label{fig:#3}\vspace{6pt}
-    \IfFileExists{../figs/analysis/#5.png}{\includegraphics[width=\figw]{../figs/analysis/#5.png}}{%
-    \IfFileExists{../figs/design/#5.png}{\includegraphics[width=\figw]{../figs/design/#5.png}}{\fbox{【待插入图形】\texttt{#5}}}}%
+    \IfFileExists{figs/analysis/#5.png}{\includegraphics[width=\figw]{figs/analysis/#5.png}}{%
+    \IfFileExists{figs/design/#5.png}{\includegraphics[width=\figw]{figs/design/#5.png}}{\fbox{【待插入图形】\texttt{#5}}}}%
     \caption{#4}\label{fig:#5}
   \end{figure}%
 }
@@ -93,11 +93,11 @@
   \clearpage
   \begin{figure}[H]
     \centering
-    \IfFileExists{../figs/analysis/#3.png}{\includegraphics[width=#1\textwidth]{../figs/analysis/#3.png}}{%
-    \IfFileExists{../figs/design/#3.png}{\includegraphics[width=#1\textwidth]{../figs/design/#3.png}}{\fbox{【待插入图形】\texttt{#3}}}}%
+    \IfFileExists{figs/analysis/#3.png}{\includegraphics[width=#1\textwidth]{figs/analysis/#3.png}}{%
+    \IfFileExists{figs/design/#3.png}{\includegraphics[width=#1\textwidth]{figs/design/#3.png}}{\fbox{【待插入图形】\texttt{#3}}}}%
     \caption{#2}\label{fig:#3}\vspace{6pt}
-    \IfFileExists{../figs/analysis/#6.png}{\includegraphics[width=#4\textwidth]{../figs/analysis/#6.png}}{%
-    \IfFileExists{../figs/design/#6.png}{\includegraphics[width=#4\textwidth]{../figs/design/#6.png}}{\fbox{【待插入图形】\texttt{#6}}}}%
+    \IfFileExists{figs/analysis/#6.png}{\includegraphics[width=#4\textwidth]{figs/analysis/#6.png}}{%
+    \IfFileExists{figs/design/#6.png}{\includegraphics[width=#4\textwidth]{figs/design/#6.png}}{\fbox{【待插入图形】\texttt{#6}}}}%
     \caption{#5}\label{fig:#6}
   \end{figure}%
 }
@@ -106,21 +106,21 @@
   \needspace{10\baselineskip}
   \begin{figure}[H]
     \centering
-    \IfFileExists{../figs/business-use-cases/#3}{%
-      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/business-use-cases/#3}%
+    \IfFileExists{figs/business-use-cases/#3}{%
+      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{figs/business-use-cases/#3}%
     }{%
-    \IfFileExists{../figs/business-sequence/#3}{%
-      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/business-sequence/#3}%
+    \IfFileExists{figs/business-sequence/#3}{%
+      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{figs/business-sequence/#3}%
     }{%
-    \IfFileExists{../figs/improved-business-sequence/#3}{%
-      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/improved-business-sequence/#3}%
+    \IfFileExists{figs/improved-business-sequence/#3}{%
+      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{figs/improved-business-sequence/#3}%
     }{%
-    \IfFileExists{../figs/system-use-cases/#3}{%
-      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/system-use-cases/#3}%
+    \IfFileExists{figs/system-use-cases/#3}{%
+      \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{figs/system-use-cases/#3}%
     }{%
       \fbox{\parbox[c][4.6cm][c]{0.8\textwidth}{\centering
         【待插入图形】\\[6pt]
-        \texttt{../figs/#3}}}}}}}
+        \texttt{figs/#3}}}}}}}
     \caption{#2}
     \label{fig:#3}
   \end{figure}%
@@ -136,13 +136,13 @@
   \noindent
   \begin{minipage}[c][\textheight][c]{\textwidth}%
     \centering
-    \IfFileExists{../figs/analysis/#3.png}{%
-        \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/analysis/#3.png}%
+    \IfFileExists{figs/analysis/#3.png}{%
+        \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{figs/analysis/#3.png}%
       }{%
-      \IfFileExists{../figs/design/#3.png}{%
-          \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{../figs/design/#3.png}%
+      \IfFileExists{figs/design/#3.png}{%
+          \includegraphics[width=\figw,height=\figmaxh,keepaspectratio]{figs/design/#3.png}%
         }{%
-        \fbox{\parbox[c][4.6cm][c]{0.8\textwidth}{\centering 【待插入图形】\ \texttt{../figs/#3}}}%
+        \fbox{\parbox[c][4.6cm][c]{0.8\textwidth}{\centering 【待插入图形】\ \texttt{figs/#3}}}%
       }%
     }%
     \par\vspace{6pt}%
@@ -156,19 +156,19 @@
   \noindent
   \begin{minipage}[c][\textheight][c]{\textwidth}%
     \centering
-    \IfFileExists{../figs/business-use-cases/#3}{%
-        \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/business-use-cases/#3}%
+    \IfFileExists{figs/business-use-cases/#3}{%
+        \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{figs/business-use-cases/#3}%
       }{%
-      \IfFileExists{../figs/business-sequence/#3}{%
-          \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/business-sequence/#3}%
+      \IfFileExists{figs/business-sequence/#3}{%
+          \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{figs/business-sequence/#3}%
         }{%
-        \IfFileExists{../figs/improved-business-sequence/#3}{%
-            \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/improved-business-sequence/#3}%
+        \IfFileExists{figs/improved-business-sequence/#3}{%
+            \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{figs/improved-business-sequence/#3}%
           }{%
-          \IfFileExists{../figs/system-use-cases/#3}{%
-              \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{../figs/system-use-cases/#3}%
+          \IfFileExists{figs/system-use-cases/#3}{%
+              \includegraphics[width=#1\textwidth,height=\figmaxh,keepaspectratio]{figs/system-use-cases/#3}%
             }{%
-            \fbox{\parbox[c][4.6cm][c]{0.8\textwidth}{\centering 【待插入图形】\ \texttt{../figs/#3}}}%
+            \fbox{\parbox[c][4.6cm][c]{0.8\textwidth}{\centering 【待插入图形】\ \texttt{figs/#3}}}%
           }%
         }%
       }%

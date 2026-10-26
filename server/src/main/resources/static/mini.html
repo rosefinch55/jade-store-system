@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>隆圭琢玉 · 选货</title>
+<link rel="icon" type="image/png" href="/logo.png?v=2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232c5f7a'/%3E%3Ctext x='16' y='23' font-size='20' fill='white' text-anchor='middle'%3E玉%3C/text%3E%3C/svg%3E">
+<script src="lib/vue.js"></script>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  /* 宣纸底 #FBF7F0 · 墨玉 #22352F · 哑金 #A9843F · 朱砂 #B23A2B */
+  :root{
+    --paper:#FBF7F0; --paper-2:#F4EEE3; --card:#FFFFFF;
+    --jade-900:#22352F; --jade-700:#2C4A41; --jade-300:#7C9A8E;
+    --gold:#A9843F; --gold-2:#8A6B2F; --gold-soft:#E8DCC4;
+    --cinnabar:#B23A2B;
+    --text:#2C3531; --text-2:#6B7772; --text-3:#8A948F;
+    --line:#E6DECF; --line-2:#F0E9DC;
+    --serif:"Songti SC","STSong","Source Han Serif SC","Noto Serif CJK SC","SimSun",serif;
+    --sans:"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Helvetica Neue",sans-serif;
+    --el-color-primary:#2C4A41; --el-color-primary-light-3:#6B807A; --el-color-primary-light-5:#96A5A0;
+    --el-color-primary-light-7:#C0C9C6; --el-color-primary-light-8:#D5DBD9; --el-color-primary-light-9:#EAEDEC;
+    --el-color-primary-dark-2:#233B34;
+    --el-border-radius-base:3px; --el-border-color:#E0D8C9; --el-text-color-regular:#2C3531;
+    --el-text-color-secondary:#6B7772; --el-font-family:var(--sans);
+  }
+  body{margin:0;font-family:var(--sans);background:var(--paper);color:var(--text)}
+  a{color:inherit;text-decoration:none}
+  #app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--paper);padding-bottom:64px}
+
+  /* 顶栏：宣纸底 + 金线 */
+  .hd{position:sticky;top:0;z-index:10;background:var(--paper);padding:14px 16px 12px;
+    border-bottom:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+  .hd h1{margin:0;font-family:var(--serif);font-size:19px;font-weight:600;letter-spacing:2px;color:var(--jade-900)}
+  .hd .ttl{display:flex;align-items:center;gap:9px}
+  .hd .ttl .logo{width:34px;height:34px;border-radius:50%;display:block;
+    box-shadow:0 0 0 1px var(--gold-soft), 0 0 0 2px var(--paper), 0 0 0 3px var(--gold-soft)}
+  .hd p{margin:5px 0 0;font-size:11.5px;color:var(--text-2);letter-spacing:.3px}
+  .hd-home{flex:none;font-size:12px;color:var(--gold-2);border-bottom:1px solid var(--gold-soft);
+    padding-bottom:1px;text-decoration:none;margin-bottom:2px}
+  .tabs{display:flex;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:63px;z-index:9}
+  .filter-bar{margin:10px 16px 0;padding:9px 12px;background:#F6EFE0;border:1px solid var(--gold-soft);
+    color:var(--gold-2);font-size:12px;border-radius:4px;display:flex;justify-content:space-between;gap:10px}
+  .tabs div{flex:1;text-align:center;padding:13px 0;font-size:14px;color:var(--text-2);position:relative;
+    font-family:var(--serif);letter-spacing:1px}
+  .tabs div.on{color:var(--jade-900);font-weight:600}
+  .tabs div.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:30px;height:2px;
+    background:var(--gold);border-radius:1px}
+  .sec-title{padding:18px 16px 10px;font-size:13px;color:var(--text-2);display:flex;justify-content:space-between;
+    align-items:center;letter-spacing:1px}
+  .sec-title a{color:var(--gold-2);font-size:12px;text-decoration:none}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 12px}
+  .grid.preview .card:nth-child(n+7){display:none}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .card .pic{width:100%;aspect-ratio:1/1;background:var(--paper-2);object-fit:cover;display:block}
+  .card .ph{width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+    color:var(--text-3);font-size:12px;background:var(--paper-2)}
+  .card .info{padding:10px 12px 12px}
+  .card .nm{font-family:var(--serif);font-size:14.5px;line-height:1.5;color:var(--text);
+    letter-spacing:.5px;height:43px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .card .mt{font-size:11.5px;color:var(--text-2);margin-top:5px;letter-spacing:.3px}
+  .card .pr{font-family:var(--serif);font-size:15px;color:var(--cinnabar);font-weight:600;margin-top:7px;letter-spacing:.5px}
+  .badge{display:inline-block;border:1px solid var(--gold);color:var(--gold-2);font-size:10px;
+    padding:0 4px;border-radius:2px;margin-right:5px;font-family:var(--serif);vertical-align:1px}
+  .scroll-x{display:flex;gap:12px;overflow-x:auto;padding:0 12px 4px;scrollbar-width:none}
+  .scroll-x::-webkit-scrollbar{display:none}
+  .scroll-x .card{flex:0 0 140px;border-top:2px solid var(--gold)}
+  .detail-pic{width:100%;background:var(--paper-2);display:block;max-height:420px;object-fit:contain}
+  .detail{padding:16px}
+  .detail h2{margin:0;font-family:var(--serif);font-size:19px;font-weight:600;letter-spacing:1px;line-height:1.5}
+  .detail .sub{color:var(--text-2);font-size:12px;margin-top:7px;letter-spacing:.5px}
+  .kv{display:flex;padding:11px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+  .kv span:first-child{width:76px;color:var(--text-2);flex:none}
+  .bottom{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--card);
+    border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:10px;z-index:20}
+  .bottom .btn{flex:1}
+  .nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--card);
+    border-top:1px solid var(--line);display:flex;z-index:20}
+  .nav div{flex:1;text-align:center;padding:10px 0 9px;font-size:11px;color:var(--text-2)}
+  .nav div.on{color:var(--jade-900);font-weight:600}
+  .nav div b{display:block;font-size:17px;font-weight:400;line-height:1.2;color:var(--gold-2)}
+  .backbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 0;
+    font-size:12.5px;color:var(--gold-2)}
+  .backbar a,.backbar a:visited{cursor:pointer;color:var(--gold-2);border-bottom:1px solid var(--gold-soft);padding-bottom:1px}
+  .backbar a:hover{color:var(--gold-2);border-color:var(--gold)}
+  @media (min-width:900px){
+    .backbar{padding:0 0 14px;font-size:13px}
+  }
+  .hint{padding:8px 16px;font-size:11.5px;color:var(--text-2);line-height:1.8}
+  .empty{padding:56px 20px;text-align:center;color:var(--text-3);font-size:13px;font-family:var(--serif);letter-spacing:1px}
+  .quota{font-size:12px;color:var(--text-2);margin-top:6px}
+
+  /* ---------- 电脑端（≥900px）：同一套 DOM，换桌面布局 ---------- */
+  @media (min-width:900px){
+    body{background:#F1EBDF}
+    #app{max-width:1180px;padding-bottom:0}
+    .hd{padding:26px 36px 22px;display:flex;flex-direction:row;align-items:flex-end;justify-content:space-between}
+    .hd h1{font-size:26px;letter-spacing:4px}
+    .hd p{font-size:12.5px;margin:0}
+    .tabs{position:sticky;top:0;justify-content:center;border-bottom:1px solid var(--line)}
+    .tabs div{flex:none;padding:16px 34px;font-size:16px;letter-spacing:2px}
+    .tabs div.on::after{width:38px}
+    .sec-title{padding:28px 36px 14px;font-size:14px;letter-spacing:2px}
+    .grid{grid-template-columns:repeat(4,1fr);gap:20px;padding:0 36px}
+    .card{border-radius:4px;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s}
+    .card:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(34,53,47,.14);border-color:var(--gold-soft)}
+    .card .nm{font-size:16px;height:auto;min-height:48px}
+    .card .mt{font-size:12px;margin-top:6px}
+    .card .pr{font-size:17px}
+    .scroll-x{display:grid;grid-template-columns:repeat(5,1fr);overflow:visible;padding:0 36px 6px;gap:20px}
+    .scroll-x .card{flex:none;width:auto}
+    .scroll-x .card:nth-child(n+6){display:none}
+    .scroll-x .card .nm{min-height:0}
+    .grid.preview .card:nth-child(n+7){display:block}
+    .nav{display:none}
+    .empty{padding:76px 20px;font-size:15px}
+    .detail-page{padding:30px 36px 52px}
+    .detail-wrap{display:grid;grid-template-columns:minmax(320px,520px) 1fr;gap:40px;
+      background:var(--card);border:1px solid var(--line);border-radius:4px;padding:26px;
+      box-shadow:0 2px 12px rgba(34,53,47,.06)}
+    .detail-pic{width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;background:var(--paper-2);
+      border-radius:3px;max-height:none}
+    .detail{padding:6px 0 0}
+    .detail h2{font-size:24px;letter-spacing:1.5px}
+    .detail .sub{font-size:13px;margin-top:9px}
+    .kv{font-size:14px;padding:14px 0}
+    .kv span:first-child{width:96px}
+    .hint{padding:14px 0 0;font-size:12.5px}
+    .bottom{position:static;max-width:none;margin:26px 0 0;padding:0;border:0;background:transparent;
+      justify-content:flex-end}
+    .bottom .btn{flex:none;min-width:164px;height:46px;font-size:15px;font-family:var(--serif);letter-spacing:2px}
+  }
+
+  /* ---- 自建控件（原来用 Element Plus，近 1.3MB，隧道上加载不出来） ---- */
+  .btn{display:flex;align-items:center;justify-content:center;height:44px;border-radius:4px;
+    background:var(--jade-700,#2C4A41);color:#F7F2E7;font-family:var(--serif);
+    font-size:15px;letter-spacing:2px;cursor:pointer;user-select:none;transition:.15s}
+  .btn:active{opacity:.86}
+  .btn.ghost{background:transparent;border:1px solid var(--gold,#A9843F);color:var(--gold-2,#8A6B2F)}
+  .btn.disabled{opacity:.5;pointer-events:none}
+
+  .field{background:#fff;border:1px solid var(--line,#E6DECF);border-radius:4px;overflow:hidden}
+  .row{display:flex;align-items:center;gap:12px;padding:0 14px;height:52px;border-bottom:1px solid var(--line-2,#F0E9DC)}
+  .row:last-child{border-bottom:0}
+  .lb{width:72px;flex:none;font-size:13px;color:var(--text-2,#6B7772)}
+  .inp{flex:1;min-width:0;border:1px solid var(--line,#E6DECF);border-radius:3px;outline:0;
+    background:#fff;font-size:15px;color:var(--text,#2C3531);height:38px;padding:0 10px;
+    font-family:var(--sans)}
+  .row .inp{border:0;padding:0;height:44px;background:transparent}
+  .inp::placeholder{color:#AEB6B1}
+
+  .mask{position:fixed;inset:0;background:rgba(34,53,47,.45);z-index:40}
+  /* 结果确认框：视口居中。原生 alert 在微信/手机浏览器里贴底弹出，位置不可控，故自建 */
+  .dlg-mask{position:fixed;inset:0;background:rgba(34,53,47,.45);z-index:60;
+    display:flex;align-items:center;justify-content:center;padding:0 26px}
+  .dlg{background:#fff;border-radius:12px;width:min(320px,100%);padding:24px 22px 20px;text-align:center}
+  .dlg .dt{font-family:var(--serif);font-size:17px;letter-spacing:2px;color:var(--jade-900)}
+  .dlg .no{margin-top:14px;font-family:var(--serif);font-size:21px;letter-spacing:1.5px;
+    color:var(--gold-2);padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .dlg .row{display:flex;gap:10px;margin-top:12px;font-size:13px;line-height:1.7;color:var(--text-2);text-align:left}
+  .dlg .row b{flex:none;width:4em;color:var(--text);font-weight:600}
+  .dlg .hint{margin-top:14px;font-size:12px;color:var(--text-3)}
+  .dlg .btn{margin:18px auto 0;max-width:180px}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:#fff;
+    border-top:1px solid var(--line,#E6DECF);border-radius:12px 12px 0 0;
+    padding:20px 16px calc(20px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto}
+  .sheet-h{font-family:var(--serif);font-size:17px;letter-spacing:2px;color:var(--jade-900,#22352F);
+    margin-bottom:14px}
+  .sheet-note{margin:10px 0 0;font-size:12px;line-height:1.8;color:var(--text-3,#8A948F)}
+  .sheet-btns{display:flex;gap:12px;margin-top:18px}
+  .sheet-btns .btn{flex:1}
+
+  .toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:60;
+    max-width:78vw;padding:12px 18px;border-radius:4px;background:rgba(34,53,47,.92);color:#fff;
+    font-size:13.5px;line-height:1.7;text-align:center;transition:opacity .5s;
+    box-shadow:0 8px 24px rgba(0,0,0,.18)}
+  .toast.warn{background:rgba(138,107,47,.95)}
+  .toast.err{background:rgba(178,58,43,.95)}
+  .toast.ok{background:rgba(44,74,65,.95)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const { createApp, ref, reactive, computed, onMounted } = Vue;
+const toast = (msg, kind) => {
+  const el = document.createElement('div');
+  el.className = 'toast ' + (kind || '');
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; }, 2000);
+  setTimeout(() => { el.remove(); }, 2600);
+};
+const ElMessage = {
+  warning: (m) => toast(m, 'warn'),
+  error: (m) => toast(m, 'err'),
+  success: (m) => toast(m, 'ok')
+};
+
+async function call(method, path, body) {
+  const opt = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opt.body = JSON.stringify(body);
+  try {
+    const r = await fetch(path.startsWith('/api') ? path : '/api' + path, opt);
+    return await r.json();
+  } catch (e) { return { code: -1, message: '网络异常' }; }
+}
+const qs = (o) => '?' + Object.entries(o).map(([k, v]) => k + '=' + encodeURIComponent(v)).join('&');
+
+/* ---------- 列表页 ---------- */
+const List = {
+  template: `
+  <div>
+    <div class="hd"><div><div class="ttl"><img class="logo" src="/logo.png?v=2" alt="隆圭琢玉"><h1>隆圭琢玉 · 在售</h1></div><p>一物一码，图与货对应；标价请到店咨询</p></div>
+      <a class="hd-home" href="/">首页</a></div>
+    <div class="tabs">
+      <div :class="{on: tab==='rec'}" @click="switchTab('rec')">推荐</div>
+      <div :class="{on: tab==='all'}" @click="switchTab('all')">全部在售</div>
+      <div :class="{on: tab==='query'}" @click="switchTab('query')">查预约</div>
+    </div>
+
+    <div class="filter-bar" v-if="onlyRes && tab!=='query'" @click="onlyRes=false;loadFeatured();loadAll(1)">
+      <span>只看可预约货品</span><span>看全部在售 ✕</span>
+    </div>
+
+    <div v-if="tab==='rec'">
+      <div class="sec-title">精选上柜</div>
+      <div class="scroll-x" v-if="featured.length">
+        <div class="card" v-for="g in featured" :key="g.goodsNo" @click="open(g)">
+          <img v-if="g.image" :src="g.image" class="pic" @error="e=>{e.target.style.display='none';e.target.nextElementSibling.style.display='flex'}"/>
+          <div class="ph" :style="{display: g.image ? 'none' : 'flex'}">暂无图片</div>
+          <div class="info"><div class="nm">{{ g.name }}</div>
+            <div class="mt">{{ g.categoryName }} · {{ g.weightG }}g</div>
+            <div class="pr" v-if="g.priceUpper">{{ $money(g.priceUpper) }} 以内</div></div>
+        </div>
+      </div>
+      <div class="empty" v-else>暂无推荐货品</div>
+      <div class="sec-title">全部在售 <a @click="switchTab('all')">查看全部 ›</a></div>
+      <div class="grid preview">
+        <div class="card" v-for="g in all.slice(0,8)" :key="g.goodsNo" @click="open(g)">
+          <img v-if="g.image" :src="g.image" class="pic" @error="e=>{e.target.style.display='none';e.target.nextElementSibling.style.display='flex'}"/>
+          <div class="ph" :style="{display: g.image ? 'none' : 'flex'}">暂无图片</div>
+          <div class="info"><div class="nm">{{ g.name }}</div>
+            <div class="mt">{{ g.categoryName }} · {{ g.weightG }}g</div>
+            <div class="pr" v-if="g.priceUpper">{{ $money(g.priceUpper) }} 以内</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="tab==='all'">
+      <div class="sec-title">
+        <span>共 {{ total }} 件在售</span>
+        <span style="display:flex;gap:6px">
+          <select v-model="catId" @change="loadAll(1)" style="font-size:12px;border:1px solid #E0D8C9;background:#fff;color:#2C3531;border-radius:3px;padding:4px 6px">
+            <option :value="null">全部类别</option>
+            <option v-for="c in cats" :key="c.id" :value="c.id">{{ c.name }}</option>
+          </select>
+        </span>
+      </div>
+      <div class="grid">
+        <div class="card" v-for="g in all" :key="g.goodsNo" @click="open(g)">
+          <img v-if="g.image" :src="g.image" class="pic" @error="e=>{e.target.style.display='none';e.target.nextElementSibling.style.display='flex'}"/>
+          <div class="ph" :style="{display: g.image ? 'none' : 'flex'}">暂无图片</div>
+          <div class="info">
+            <div class="nm"><span v-if="g.featured" class="badge">荐</span>{{ g.name }}</div>
+            <div class="mt">{{ g.categoryName }} · {{ g.weightG }}g</div>
+            <div class="pr" v-if="g.priceUpper">{{ $money(g.priceUpper) }} 以内</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:14px" v-if="all.length < total">
+        <div class="btn ghost" @click="loadAll(page+1)">加载更多</div>
+      </div>
+    </div>
+
+    <div v-if="tab==='query'">
+      <div style="padding:20px 16px">
+        <p style="font-size:13px;color:#6B7772;margin:0 0 14px">输入提交预约时用的手机号后四位</p>
+        <div style="display:flex;gap:8px">
+          <input class="inp" v-model="tail" maxlength="4" inputmode="numeric" placeholder="后四位" style="flex:1">
+          <div class="btn" style="width:88px" @click="query">查询</div>
+        </div>
+        <div v-if="queried" style="margin-top:20px">
+          <div v-if="!results.length" class="empty">没有找到待确认的预约</div>
+          <div v-for="r in results" :key="r.resvNo" class="card" style="margin-bottom:12px;padding:14px">
+            <div style="font-size:13px;font-family:var(--serif);letter-spacing:.5px"><b>{{ r.resvNo }}</b></div>
+            <div style="font-size:12px;color:#6B7772;margin-top:6px">
+              {{ r.goodsName }} · {{ r.expectSlot }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <div :class="{on: tab==='rec'}" @click="switchTab('rec')"><b>◈</b>推荐</div>
+      <div :class="{on: tab==='all'}" @click="switchTab('all')"><b>▤</b>全部</div>
+      <div :class="{on: tab==='query'}" @click="switchTab('query')"><b>⌕</b>查预约</div>
+    </div>
+  </div>`,
+  setup() {
+    const tab = ref('rec'), featured = ref([]), all = ref([]), cats = ref([]), catId = ref(null);
+    const total = ref(0), page = ref(1);
+    const tail = ref(''), results = ref([]), queried = ref(false);
+    // 门户「预约看货」入口：只看当前可约的货品（后端按有效预约占用过滤）
+    const entryParams = new URLSearchParams(location.search);
+    const onlyRes = ref(entryParams.get('entry') === 'reserve');
+
+    const emit = (g) => { location.hash = '#/detail/' + g.goodsNo; };
+    const open = (g) => emit(g);
+    const switchTab = (t) => {
+      tab.value = t;
+      if (t === 'all' && !all.value.length) loadAll(1);
+    };
+    const loadFeatured = async () => {
+      const r = await call('GET', '/public/goods' + qs({ featured: 'true', page: 1, size: 20,
+        ...(onlyRes.value ? { reservable: '1' } : {}) }));
+      if (r.code === 0) featured.value = r.data.items;
+    };
+    const loadAll = async (p) => {
+      page.value = p;
+      const params = { page: p, size: 20 };
+      if (catId.value) params.categoryId = catId.value;
+      if (onlyRes.value) params.reservable = '1';
+      const r = await call('GET', '/public/goods' + qs(params));
+      if (r.code === 0) {
+        all.value = p === 1 ? r.data.items : all.value.concat(r.data.items);
+        total.value = r.data.total;
+      }
+    };
+    const query = async () => {
+      if (!/^\d{4}$/.test(tail.value)) return ElMessage.warning('请输入 4 位数字');
+      const r = await call('GET', '/public/reservations' + qs({ phoneTail: tail.value }));
+      queried.value = true;
+      results.value = r.code === 0 ? r.data : [];
+    };
+    onMounted(async () => {
+      if (entryParams.get('tab') === 'query') tab.value = 'query';
+      else if (onlyRes.value) tab.value = 'all';
+      loadFeatured(); loadAll(1);
+      const c = await call('GET', '/public/categories');
+      if (c.code === 0) cats.value = c.data;
+    });
+    return { tab, featured, all, cats, catId, total, page, tail, results, queried, onlyRes,
+      open, switchTab, loadAll, loadFeatured, query };
+  }
+};
+
+/* ---------- 详情页 ---------- */
+const Detail = {
+  template: `
+  <div v-if="g" class="detail-page">
+    <div class="backbar">
+      <a @click="back">‹ 返回列表</a>
+      <a href="/">首页</a>
+    </div>
+    <div class="detail-wrap">
+    <img v-if="g.image" :src="g.image" class="detail-pic" @error="e=>e.target.style.display='none'"/>
+    <div class="detail">
+      <h2><span v-if="g.featured" class="badge">精选</span>{{ g.name }}</h2>
+      <div class="sub">{{ g.goodsNo }}</div>
+      <div style="margin-top:14px">
+        <div class="kv"><span>类别</span><span>{{ g.categoryName || '—' }}</span></div>
+        <div class="kv"><span>料种</span><span>{{ g.material || '—' }}</span></div>
+        <div class="kv"><span>产地</span><span>{{ g.origin || '—' }}</span></div>
+        <div class="kv"><span>器型</span><span>{{ g.shape || '—' }}</span></div>
+        <div class="kv"><span>产状</span><span>{{ g.form || '—' }}</span></div>
+        <div class="kv"><span>克重</span><span>{{ g.weightG }} g</span></div>
+        <div class="kv"><span>尺寸</span><span>{{ g.size || '—' }}</span></div>
+        <div class="kv" v-if="g.priceUpper"><span>参考价</span><span>不超过 {{ $money(g.priceUpper) }}</span></div>
+        <div class="kv" v-if="g.certNo"><span>证书号</span><span>{{ g.certNo }}</span></div>
+      </div>
+    </div>
+      <div class="hint" v-if="g && g.reservable === false" style="color:#e6532d">该货品已被预约，暂不可约。若您是同一手机号，可在预约页把时间改早。</div>
+      <div class="hint">参考价为对外报价上界，实际成交以到店面谈为准。</div>
+
+      <div class="bottom">
+        <div class="btn ghost" :class="{disabled: g && g.reservable === false}" @click="openReserve">预约看货</div>
+        <div class="btn" @click="openBook">预定这件</div>
+      </div>
+    </div>
+
+    <div class="mask" v-if="showReserve" @click="showReserve=false"></div>
+    <div class="sheet" v-if="showReserve">
+      <div class="sheet-h">预约看货</div>
+      <div class="field">
+        <div class="row"><span class="lb">姓名</span>
+          <input class="inp" v-model="rf.name" placeholder="怎么称呼"></div>
+        <div class="row"><span class="lb">手机号</span>
+          <input class="inp" v-model="rf.phone" maxlength="11" inputmode="numeric" placeholder="11 位手机号"></div>
+        <div class="row"><span class="lb">到店日期</span>
+          <input class="inp" type="date" v-model="rf.date" :min="minDate" :max="maxDate"></div>
+        <div class="row"><span class="lb">时段</span>
+          <input class="inp" type="time" v-model="rf.clock" step="1800"></div>
+      </div>
+      <p class="sheet-note">可约 {{ winMinText }} 至 {{ winMaxText }}（两小时内不接单）。</p>
+      <p class="sheet-note">提交后会拿到预约编号，到店报编号即可。</p>
+      <div class="sheet-btns">
+        <div class="btn ghost" @click="showReserve=false">取消</div>
+        <div class="btn" @click="submitReserve">提交预约</div>
+      </div>
+    </div>
+
+    <div class="mask" v-if="showBook" @click="showBook=false"></div>
+    <div class="sheet" v-if="showBook">
+      <div class="sheet-h">预定这件</div>
+      <div class="field">
+        <div class="row"><span class="lb">姓名</span>
+          <input class="inp" v-model="bf.name" placeholder="怎么称呼"></div>
+        <div class="row"><span class="lb">手机号</span>
+          <input class="inp" v-model="bf.phone" maxlength="11" inputmode="numeric"
+                 placeholder="11 位手机号" @blur="checkQuota"></div>
+      </div>
+      <div class="quota" v-if="quota">该号码已占用 {{ quota.used }} 次，剩余 {{ quota.remaining }} 次</div>
+      <p class="sheet-note">同一手机号最多同时占用 3 条预定；如约到店后释放。</p>
+      <div class="sheet-btns">
+        <div class="btn ghost" @click="showBook=false">取消</div>
+        <div class="btn" :class="{disabled: quota && quota.remaining<=0}" @click="submitBook">提交预定</div>
+      </div>
+    </div>
+
+    <div class="dlg-mask" v-if="dlg">
+      <div class="dlg">
+        <div class="dt">{{ dlg.title }}</div>
+        <div class="no">{{ dlg.no }}</div>
+        <div class="row" v-for="r in dlg.rows" :key="r.k"><b>{{ r.k }}</b>&ensp;{{ r.v }}</div>
+        <div class="hint">{{ dlg.hint }}</div>
+        <div class="btn" @click="dlg=null">已保存</div>
+      </div>
+    </div>
+  </div>
+  <div v-else-if="loadFailed" class="empty" style="padding:60px 20px">
+    货品不存在或已下架<br><a class="hd-home" style="display:inline-block;margin-top:14px" href="#"
+      onclick="location.hash='';return false">‹ 返回列表</a>
+  </div>
+  <div v-else class="empty">加载中…</div>`,
+  setup() {
+    const g = ref(null);
+    const loadFailed = ref(false);
+    const showReserve = ref(false), showBook = ref(false);
+    const dlg = ref(null);
+    const rf = reactive({ name: '', phone: '', slotTime: '', date: '', clock: '10:00' });
+    const bf = reactive({ name: '', phone: '' });
+    const quota = ref(null);
+
+    // 可约窗口 = 当前时间 +2 小时 至 +3 天。与后端 CustomerController 的
+    // RESERVE_LEAD_HOURS / RESERVE_SPAN_DAYS 保持一致；前端只做引导，最终以后端校验为准。
+    const pad2 = n => (n < 10 ? '0' + n : '' + n);
+    const fmtSlot = d => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate())
+      + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+    const winMin = ref(null), winMax = ref(null);
+    const winMinText = ref(''), winMaxText = ref('');
+    const minDate = ref(''), maxDate = ref(''); // 原生 date 输入的上下界
+    // 时间面板的默认钟点：取窗口起点向上取整到半小时，选完日期即落在可约范围内
+    const defaultSlotTime = ref(null);
+    // 每次打开弹窗重算，避免久坐后窗口过期
+    const refreshWindow = () => {
+      const mn = new Date(Date.now() + 2 * 3600 * 1000);
+      mn.setSeconds(0, 0);
+      winMin.value = mn;
+      winMax.value = new Date(Date.now() + 3 * 24 * 3600 * 1000);
+      winMinText.value = fmtSlot(mn);
+      winMaxText.value = fmtSlot(winMax.value);
+      minDate.value = fmtSlot(mn).slice(0, 10);
+      maxDate.value = fmtSlot(winMax.value).slice(0, 10);
+      const dm = new Date(mn);
+      dm.setMinutes(dm.getMinutes() <= 30 ? 30 : 60); // 超过 30 分则进位到下一个整点
+      defaultSlotTime.value = new Date(2000, 0, 1, dm.getHours(), dm.getMinutes());
+    };
+    // 日期粒度上拦掉今天之前与第 3 天之后；当天更早的钟点由提交校验兜住
+    // 只允许整点与半点
+    const disabledSlotMinute = (m) => m !== 0 && m !== 30;
+    const disabledSlotDate = (d) => !winMin.value
+      || d.getTime() < new Date().setHours(0, 0, 0, 0)
+      || d.getTime() > winMax.value.getTime();
+    const openReserve = () => {
+      refreshWindow();
+      // 默认钟点接到输入上：深夜打开不再默认 10:00 被窗口校验拦下
+      const d = defaultSlotTime.value;
+      if (d && !rf.date) rf.clock = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      showReserve.value = true;
+    };
+    // 详情是没有路由栈的，返回就是清掉 hash 回到列表
+    const back = () => { location.hash = ''; };
+
+    const load = async () => {
+      const no = (location.hash.split('/')[2] || '');
+      if (!no) return;
+      const r = await call('GET', '/public/goods/' + encodeURIComponent(no));
+      if (r.code === 0) g.value = r.data;
+      else { loadFailed.value = true; ElMessage.error(r.message || '货品不存在或已下架'); }
+    };
+    const submitting = ref(false);
+    const submitReserve = async () => {
+      if (submitting.value) return;
+      if (!rf.name) return ElMessage.warning('请填姓名');
+      if (rf.date && rf.clock) rf.slotTime = rf.date + ' ' + rf.clock;
+      if (!/^\d{11}$/.test(rf.phone)) return ElMessage.warning('手机号需 11 位');
+      if (!rf.slotTime) return ElMessage.warning('请选择日期与时间');
+      // 移动端 Safari 不认 "yyyy-MM-dd HH:mm"，换斜杠再解析
+      const t = new Date(rf.slotTime.replace(/-/g, '/')).getTime();
+      if (isNaN(t)) return ElMessage.warning('到店时间格式不正确');
+      if (t < winMin.value.getTime()) return ElMessage.warning('最早可约 ' + winMinText.value);
+      if (t > winMax.value.getTime()) return ElMessage.warning('最晚可约 ' + winMaxText.value);
+      submitting.value = true;
+      const r = await call('POST', '/public/reservations', {
+        goodsNo: g.value.goodsNo, name: rf.name, phone: rf.phone,
+        expectSlot: rf.slotTime });
+      submitting.value = false;
+      if (r.code === 0) {
+        showReserve.value = false;
+        rf.slotTime = '';
+        ElMessage.success('预约成功，编号 ' + r.data.resvNo);
+        // 结果用自建居中弹窗展示（编号可截图保存），不用原生 alert——微信里 alert 贴底弹出
+        dlg.value = {
+          title: '预约成功', no: r.data.resvNo,
+          rows: [{ k: '到店时间', v: r.data.expectSlot },
+                 { k: '门店地址', v: '乌鲁木齐市新市区鲤鱼山南路 66 号（鲤鱼山公园东门旁）' }],
+          hint: '请截图保存，到店报编号。'
+        };
+      } else ElMessage.error(r.message || '预约失败');
+    };
+    const checkQuota = async () => {
+      if (!/^\d{11}$/.test(bf.phone)) return;
+      const r = await call('GET', '/public/bookings/quota' + qs({ phone: bf.phone }));
+      if (r.code === 0) quota.value = r.data;
+    };
+    const openBook = async () => { showBook.value = true; };
+    const submitBook = async () => {
+      if (submitting.value) return;
+      if (!bf.name) return ElMessage.warning('请填姓名');
+      if (!/^\d{11}$/.test(bf.phone)) return ElMessage.warning('手机号需 11 位');
+      submitting.value = true;
+      const r = await call('POST', '/public/bookings', {
+        goodsNo: g.value.goodsNo, name: bf.name, phone: bf.phone });
+      submitting.value = false;
+      if (r.code === 0) {
+        showBook.value = false;
+        ElMessage.success('预定成功，编号 ' + r.data.bookingNo + '，剩余额度 ' + r.data.remaining);
+        dlg.value = {
+          title: '预定成功', no: r.data.bookingNo,
+          rows: [{ k: '剩余额度', v: r.data.remaining + ' 次' },
+                 { k: '门店地址', v: '乌鲁木齐市新市区鲤鱼山南路 66 号（鲤鱼山公园东门旁）' }],
+          hint: '请截图保存，如约到店后释放额度。'
+        };
+      } else ElMessage.error(r.message || '预定失败');
+    };
+    onMounted(load);
+    return { g, loadFailed, showReserve, showBook, dlg, rf, bf, quota, submitReserve, checkQuota, openBook, submitBook,
+      openReserve, back, winMinText, winMaxText, minDate, maxDate };
+  }
+};
+
+const App = {
+  template: `<component :is="view" />`,
+  setup() {
+    const view = ref(location.hash.startsWith('#/detail') ? Detail : List);
+    const onHash = () => { view.value = location.hash.startsWith('#/detail') ? Detail : List; };
+    window.addEventListener('hashchange', onHash);
+    return { view };
+  }
+};
+
+const app = createApp({ components: { App }, template: `<App />` });
+app.config.globalProperties.$money = (v) => {
+  if (v === null || v === undefined || v === '') return '';
+  const n = Number(v);
+  if (isNaN(n)) return '';
+  return '¥' + n.toLocaleString('zh-CN');
+};
+app.mount('#app');
+</script>
+</body>
+</html>

@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232c5f7a'/%3E%3Ctext x='16' y='23' font-size='20' fill='white' text-anchor='middle'%3E玉%3C/text%3E%3C/svg%3E">
+<title>隆圭琢玉经营管理系统</title>
+<link rel="icon" type="image/png" href="/logo.png?v=2">
+<link rel="stylesheet" href="lib/element-plus.css">
+<script src="lib/vue.js"></script>
+<script src="lib/element-plus.js"></script>
+<script src="lib/zh-cn.js"></script>
+<style>
+  *{box-sizing:border-box}
+  /* ============================================================
+     隆圭琢玉视觉规范（管理端）
+     底色 宣纸 #F5F0E6   主色 墨玉 #22352F   点缀 哑金 #A9843F
+     强调 朱砂 #B23A2B   正文 #2C3531   次要 #6B7772   分隔 #E6DECF
+     标题衬线（宋体系），正文无衬线；圆角 4px；阴影极浅
+     ============================================================ */
+  :root{
+    --paper:#F5F0E6; --paper-2:#FBF7F0; --card:#FFFFFF;
+    --jade-900:#22352F; --jade-700:#2C4A41; --jade-500:#48685C; --jade-300:#7C9A8E;
+    --gold:#A9843F; --gold-2:#8A6B2F; --gold-soft:#E8DCC4;
+    --cinnabar:#B23A2B;
+    --text:#2C3531; --text-2:#6B7772; --text-3:#8A948F;
+    --line:#E6DECF; --line-2:#F0E9DC;
+    --serif:"Songti SC","STSong","Source Han Serif SC","Noto Serif CJK SC","SimSun",serif;
+    --sans:"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Helvetica Neue",sans-serif;
+
+    --el-color-primary:#2C4A41; --el-color-primary-light-3:#6B807A; --el-color-primary-light-5:#96A5A0;
+    --el-color-primary-light-7:#C0C9C6; --el-color-primary-light-8:#D5DBD9; --el-color-primary-light-9:#EAEDEC;
+    --el-color-primary-dark-2:#233B34;
+    --el-color-danger:#B23A2B; --el-color-danger-light-9:#F7EAE7; --el-color-warning:#A9843F;
+    --el-color-success:#4E8A6B; --el-color-success-light-9:#EDF4F0; --el-color-info:#8A948F;
+    --el-border-radius-base:3px; --el-border-radius-small:2px;
+    --el-border-color:#E0D8C9; --el-border-color-light:#EDE6D9; --el-border-color-lighter:#F2ECE0;
+    --el-text-color-primary:#2C3531; --el-text-color-regular:#2C3531; --el-text-color-secondary:#6B7772;
+    --el-text-color-placeholder:#8F9893; --el-text-color-disabled:#A9B0AC;
+    --el-bg-color:#FFFFFF; --el-bg-color-overlay:#FFFFFF; --el-fill-color-blank:#FFFFFF;
+    --el-fill-color-light:#F7F3EA; --el-fill-color-lighter:#FBF8F1;
+    --el-font-family:var(--sans); --el-font-size-base:13.5px;
+    --el-table-border-color:#EFE8DB; --el-table-header-bg-color:#F5F0E4;
+    --el-table-header-text-color:#2C3531; --el-table-text-color:#2C3531;
+    --el-table-row-hover-bg-color:#FAF6EC;
+  }
+  body{margin:0;font-family:var(--sans);background:var(--paper);color:var(--text)}
+  #app{height:100vh}
+
+  /* ---------- 登录 ---------- */
+  .login-wrap{height:100vh;display:flex;background:var(--paper)}
+  .login-panel{flex:1;min-width:0;background:linear-gradient(160deg,#1B2A25,#22352F 55%,#2C4A41);
+    color:#F3EDE1;padding:56px 60px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+  .login-panel::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at 80% 0%,rgba(198,165,96,.16),transparent 55%),
+      radial-gradient(ellipse at 0% 100%,rgba(198,165,96,.10),transparent 50%)}
+  .login-panel .seal-logo{width:52px;height:52px;border-radius:50%;display:block;margin-bottom:26px;
+    box-shadow:0 0 0 1px rgba(198,165,96,.7), 0 0 0 4px rgba(198,165,96,.14)}
+  .login-panel .kicker-en{font-family:var(--serif);font-size:9.5px;letter-spacing:5px;color:rgba(198,165,96,.75);margin:-18px 0 24px}
+  .login-panel .kicker{font-size:12px;letter-spacing:6px;color:rgba(243,237,225,.7);margin-bottom:12px}
+  .login-panel h1{margin:0;font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:3px;color:#F7F2E7}
+  .login-panel .sub{margin-top:18px;font-size:13.5px;line-height:2;color:rgba(243,237,225,.72);
+    padding-left:14px;border-left:2px solid rgba(198,165,96,.55);max-width:420px}
+  .login-form{flex:none;width:420px;background:var(--card);display:flex;align-items:center;justify-content:center;
+    border-left:1px solid var(--line)}
+  .login-card{width:330px}
+  .login-card h2{margin:0 0 6px;font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:2px;color:var(--jade-900)}
+  .login-card p.sub{margin:0 0 28px;font-size:12.5px;color:var(--text-2)}
+  .login-card .el-button{font-family:var(--serif);letter-spacing:4px;font-size:15px;height:44px}
+  .login-card .tip{margin-top:18px;font-size:12px;color:var(--text-2);text-align:center}
+
+  /* ---------- 侧栏 ---------- */
+  .side{background:var(--jade-900);position:relative}
+  .side .el-menu{border-right:none;background:transparent}
+  .side .el-menu-item{color:#C6D2CC;height:42px;line-height:42px;font-size:13.5px;margin:1px 8px;border-radius:3px}
+  .side .el-menu-item:hover{background:rgba(255,255,255,.06);color:#F1EBDF}
+  .side .el-menu-item.is-active{background:rgba(255,255,255,.08)!important;color:#F7F2E7;font-weight:600}
+  .side .el-menu-item.is-active::before{content:'';position:absolute;left:0;top:9px;bottom:9px;width:2px;
+    background:var(--gold);border-radius:1px}
+  .side .el-menu-item-group__title{padding:16px 18px 6px!important;font-size:11px;letter-spacing:3px;color:#8FA69B}
+  .side .grp{color:#8FA69B;letter-spacing:3px}
+  .brandbar{height:60px;display:flex;align-items:center;gap:10px;padding:0 16px;color:#F3EDE1;
+    border-bottom:1px solid rgba(198,165,96,.22)}
+  .brandbar .seal-logo{width:30px;height:30px;border-radius:50%;display:block;
+    box-shadow:0 0 0 1px rgba(198,165,96,.7)}
+  .brandbar .name{font-family:var(--serif);font-size:15px;letter-spacing:2px}
+  .brandbar .ver{margin-left:auto;font-size:10.5px;color:#7E948A;letter-spacing:.5px}
+
+  /* ---------- 顶栏 ---------- */
+  .topbar{background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;
+    justify-content:space-between;padding:0 24px}
+  .topbar .title{font-family:var(--serif);font-size:17px;color:var(--jade-900);font-weight:600;letter-spacing:2px;
+    display:flex;align-items:center;gap:10px}
+  .topbar .title::before{content:'';width:3px;height:15px;background:var(--gold);border-radius:1px}
+  .page{padding:20px 24px 44px;overflow-y:auto;height:calc(100vh - 60px)}
+  .page-title{font-family:var(--serif);font-size:16px;color:var(--jade-900);letter-spacing:1.5px;
+    margin:2px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+
+  /* ---------- 统计卡 ---------- */
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+  .stat-card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:16px 18px 14px;
+    position:relative;overflow:hidden}
+  .stat-card::after{content:'';position:absolute;left:0;bottom:0;width:38px;height:2px;background:var(--gold)}
+  .stat-card .label{font-size:12px;color:var(--text-2);margin-bottom:8px;letter-spacing:.5px}
+  .stat-card .value{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--jade-900);letter-spacing:.5px}
+  .stat-card .unit{font-size:13px;color:var(--text-2);margin-left:4px;font-weight:400;font-family:var(--sans)}
+
+  /* ---------- 日历 ---------- */
+  .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+  .cal-col{background:var(--card);border:1px solid var(--line);border-radius:4px;min-height:320px;
+    display:flex;flex-direction:column}
+  .cal-hd{display:flex;justify-content:space-between;padding:9px 11px;font-size:12px;color:var(--text-2);
+    border-bottom:1px solid var(--line-2);font-family:var(--serif);letter-spacing:.5px}
+  .cal-hd.today{background:#F3EEE1;color:var(--gold-2);font-weight:600}
+  .cal-md{color:var(--text-3)}
+  .cal-body{flex:1;padding:9px;display:flex;flex-direction:column;gap:6px}
+  .cal-empty{color:var(--text-3);text-align:center;font-size:12px;padding-top:8px}
+  .ev{border-radius:3px;padding:6px 8px;font-size:12px;line-height:1.6;border-left:2px solid var(--jade-500);
+    background:#F1F5F3}
+  .ev-reserve{border-left-color:var(--jade-500);background:#F1F5F3}
+  .ev-visit{border-left-color:var(--gold);background:#F8F3E8}
+  .ev-task{border-left-color:#4E8A6B;background:#EFF5F1}
+  .ev-t{color:var(--text)}
+  .ev-s{color:var(--text-2);font-size:11px;margin-top:2px}
+
+  /* ---------- 报表条形 / 趋势 ---------- */
+  .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12px}
+  .bar-lb{width:96px;color:var(--text-2);flex:none}
+  .bar-track{flex:1;height:8px;background:#F1EBDF;border-radius:4px;overflow:hidden}
+  .bar-fill{display:block;height:8px;background:var(--jade-500);border-radius:4px}
+  .bar-val{width:96px;text-align:right;color:var(--text);flex:none}
+
+  /* ---------- 通用 ---------- */
+  .thumb{width:46px;height:46px;border-radius:3px;background:var(--paper-2);object-fit:cover;display:block}
+  .toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+  .pager{margin-top:16px;display:flex;justify-content:flex-end}
+  .empty-tip{padding:40px;text-align:center;color:var(--text-3);font-size:13px;font-family:var(--serif);letter-spacing:1px}
+  .tag-line{display:flex;gap:5px;flex-wrap:wrap}
+  .form-2col{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+  .hint{font-size:12px;color:var(--text-2);margin-top:4px}
+
+  /* ---------- Element Plus 组件微调 ---------- */
+  .el-card{border-color:var(--line)!important;border-radius:4px!important}
+  .el-card__header{padding:13px 18px!important;font-family:var(--serif);font-size:15px;font-weight:600;
+    color:var(--jade-900);letter-spacing:1px;border-bottom:1px solid var(--line-2)!important}
+  .el-card__body{padding:16px 18px!important}
+  .el-table th.el-table__cell{background:#F5F0E4!important;font-family:var(--serif);font-weight:600;letter-spacing:.5px}
+  .el-table .el-table__cell{padding:9px 0}
+  .el-table td.el-table__cell{font-size:13px}
+  .el-dialog{border-radius:4px!important}
+  .el-dialog__title{font-family:var(--serif);font-size:16px!important;letter-spacing:1px;color:var(--jade-900)!important}
+  .el-dialog__header{padding-bottom:14px!important;border-bottom:1px solid var(--line-2)}
+  .el-form-item__label{color:var(--text-2)!important;font-size:13px}
+  .el-button{font-weight:400}
+  .el-tag{border-radius:2px!important}
+  .el-message{border-radius:3px!important}
+  .el-tabs__item{font-family:var(--serif);letter-spacing:1px}
+  .el-pagination{font-size:13px}
+  @media (max-width:1080px){
+    .login-panel{padding:40px 36px}
+    .login-form{width:360px}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const { createApp, ref, reactive, computed, onMounted } = Vue;
+const { ElMessage, ElMessageBox } = ElementPlus;
+
+const api = {
+  token: () => localStorage.getItem('jade_token') || '',
+  async req(method, path, body) {
+    const opt = { method, headers: { 'Content-Type': 'application/json' } };
+    const t = api.token();
+    if (t) opt.headers.Authorization = 'Bearer ' + t;
+    if (body !== undefined) opt.body = JSON.stringify(body);
+    const url = path.startsWith('/api') ? path : '/api' + path;
+    let res, d;
+    try { res = await fetch(url, opt); d = await res.json(); }
+    catch (e) { return { code: -1, message: '网络错误，请稍后重试' }; }
+    // 登录接口自己的 401 是"用户名或口令错误"，要透给表单提示，不当会话失效处理
+    if (res.status === 401 && !url.includes('/auth/login')) {
+      localStorage.removeItem('jade_token'); localStorage.removeItem('jade_user');
+      ElMessage.error('登录已失效，请重新登录');
+      setTimeout(() => location.reload(), 800);
+    }
+    return d;
+  },
+  get: (p) => api.req('GET', p), post: (p, b) => api.req('POST', p, b),
+  put: (p, b) => api.req('PUT', p, b), del: (p) => api.req('DELETE', p),
+};
+const money = (v) => (Number(v || 0)).toLocaleString('zh-CN', { maximumFractionDigits: 2 });
+const fmtTime = (v) => (v ? String(v).replace('T', ' ') : '');
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+const monthStart = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`; };
+function tip(r, okMsg) {
+  if (r.code === 0) { if (okMsg) ElMessage.success(okMsg); return true; }
+  ElMessage.error(r.message || '操作失败'); return false;
+}
+
+const Login = {
+  template: `
+  <div class="login-wrap">
+    <div class="login-panel">
+      <img class="seal-logo" src="/logo.png?v=2" alt="隆圭琢玉">
+      <div class="kicker">隆 圭 琢 玉</div>
+      <div class="kicker-en">LONGGUI JADE</div>
+      <h1>顾客服务与经营管理系统</h1>
+      <div class="sub">单店玉器零售 · 一物一码 · 图与货对应<br>柜台端给老板与销售用：货品建档、成交与分期、客户档案、同行调货、寄售结算、加工上门。</div>
+    </div>
+    <div class="login-form"><div class="login-card">
+      <h2>登 录</h2>
+      <p class="sub">柜台端账号由门店管理员开通</p>
+      <el-form @submit.prevent="go">
+        <el-form-item><el-input v-model="f.username" placeholder="用户名" size="large" clearable /></el-form-item>
+        <el-form-item><el-input v-model="f.password" type="password" placeholder="口令" size="large" show-password @keyup.enter="go" /></el-form-item>
+        <el-button type="primary" size="large" style="width:100%" :loading="busy" @click="go">进 入 系 统</el-button>
+      </el-form>
+      <p class="tip">忘记口令请联系门店管理员</p>
+    </div></div>
+  </div>`,
+  setup() {
+    const f = reactive({ username: '', password: '' });
+    const busy = ref(false);
+    const go = async () => {
+      if (!f.username || !f.password) return ElMessage.warning('请输入用户名与口令');
+      busy.value = true;
+      const r = await api.post('/auth/login', { username: f.username, password: f.password });
+      busy.value = false;
+      if (r.code === 0) {
+        localStorage.setItem('jade_token', r.data.token);
+        localStorage.setItem('jade_user', JSON.stringify(r.data.user));
+        ElMessage.success('登录成功'); location.reload();
+      } else ElMessage.error(r.message || '登录失败');
+    };
+    return { f, busy, go };
+  }
+};
+
+const Dashboard = {
+  template: `
+  <div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="label">本月净销售额</div><div class="value">{{ money(s.netAmount) }}<span class="unit">元</span></div></div>
+      <div class="stat-card"><div class="label">本月成交</div><div class="value">{{ s.saleCount }}<span class="unit">笔</span></div></div>
+      <div class="stat-card"><div class="label">销售客户数</div><div class="value">{{ s.customerCount }}<span class="unit">人</span></div></div>
+      <div class="stat-card"><div class="label">加权周转周期</div><div class="value">{{ t.weightedDays || 0 }}<span class="unit">天</span></div></div>
+    </div>
+    <el-row :gutter="16">
+      <el-col :span="8"><el-card shadow="never" header="本月成交构成">
+        <div style="font-size:13px;line-height:2.1">
+          <div>成交金额 <b style="float:right">{{ money(s.amount) }}</b></div>
+          <div>退货冲减 <b style="float:right;color:#4E8A6B">{{ money(s.returnAmount) }}</b></div>
+          <div style="border-top:1px dashed #EFE8DB;margin-top:6px;padding-top:6px">净额 <b style="float:right">{{ money(s.netAmount) }}</b></div>
+        </div></el-card></el-col>
+      <el-col :span="8"><el-card shadow="never" header="待办">
+        <div style="font-size:13px;line-height:2.1">
+          <div>待审核出让申请 <b style="float:right">{{ todo.applies }}</b></div>
+          <div>待确认完工 <b style="float:right">{{ todo.deliveries }}</b></div>
+          <div>今日到店预定 <b style="float:right">{{ todo.bookings }}</b></div>
+        </div></el-card></el-col>
+      <el-col :span="8"><el-card shadow="never" header="周转最慢">
+        <div v-if="!t.slowest || !t.slowest.length" class="empty-tip">暂无数据</div>
+        <div v-for="g in (t.slowest||[]).slice(0,4)" :key="g.goodsNo"
+          style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px dashed #EFE8DB">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ g.name }}</span>
+          <span style="color:#6B7772;flex:none;margin-left:8px">{{ g.days }} 天</span></div>
+      </el-card></el-col>
+    </el-row>
+  </div>`,
+  setup() {
+    const s = reactive({ amount: 0, returnAmount: 0, netAmount: 0, customerCount: 0, saleCount: 0 });
+    const t = reactive({ weightedDays: 0, slowest: [] });
+    const todo = reactive({ applies: 0, deliveries: 0, bookings: 0 });
+    onMounted(async () => {
+      const f = monthStart(), to = today();
+      const [a, b, c, d, e] = await Promise.all([
+        api.get(`/stats/sales?from=${f}&to=${to}`), api.get(`/stats/turnover?from=${f}&to=${to}`),
+        api.get('/transfer-applies?status=' + encodeURIComponent('待审核')), api.get('/delivery-applies?status=' + encodeURIComponent('待确认')),
+        api.get('/bookings/today')]);
+      if (a.code === 0) Object.assign(s, a.data);
+      if (b.code === 0) Object.assign(t, b.data);
+      if (c.code === 0) todo.applies = c.data.length;
+      if (d.code === 0) todo.deliveries = d.data.length;
+      if (e.code === 0) todo.bookings = e.data.length;
+    });
+    return { s, t, todo, money };
+  }
+};
+
+const Goods = {
+  template: `
+  <div>
+    <div class="toolbar">
+      <el-input v-model="q.keyword" placeholder="编号或品名" clearable style="width:190px" @keyup.enter="load" />
+      <el-select v-model="q.status" placeholder="状态" clearable style="width:120px" @change="load">
+        <el-option v-for="x in statusList" :key="x" :label="x" :value="x" /></el-select>
+      <el-select v-model="q.categoryId" placeholder="类别" clearable style="width:120px" @change="load">
+        <el-option v-for="c in cats" :key="c.id" :label="c.name" :value="c.id" /></el-select>
+      <el-button type="primary" @click="load">查询</el-button>
+      <el-button type="success" @click="openCreate">登记入库</el-button>
+      <span style="margin-left:auto;font-size:13px;color:#6B7772">共 {{ total }} 件</span>
+    </div>
+    <el-table :data="rows" size="small" border stripe @row-click="openDetail">
+      <el-table-column label="图" width="60"><template #default="{row}">
+        <img v-if="row.image" :src="row.image" class="thumb" @error="e=>e.target.style.visibility='hidden'"/>
+        <div v-else class="thumb" style="display:flex;align-items:center;justify-content:center;color:#8A948F;font-size:11px">无图</div>
+      </template></el-table-column>
+      <el-table-column prop="goodsNo" label="编号" width="182" />
+      <el-table-column prop="name" label="品名" min-width="140" show-overflow-tooltip />
+      <el-table-column prop="categoryName" label="类别" width="86" />
+      <el-table-column prop="material" label="料种" width="110" show-overflow-tooltip />
+      <el-table-column prop="weightG" label="克重" width="76" align="right" />
+      <el-table-column label="最低售价" width="98" align="right"><template #default="{row}">{{ money(row.minPrice) }}</template></el-table-column>
+      <el-table-column label="状态" width="82"><template #default="{row}">
+        <el-tag :type="tagType(row.status)" size="small">{{ row.status }}</el-tag></template></el-table-column>
+      <el-table-column label="精选" width="64" align="center"><template #default="{row}">
+        <el-tag v-if="row.isFeatured===1" type="danger" size="small">荐</el-tag></template></el-table-column>
+    </el-table>
+    <div class="pager"><el-pagination v-model:current-page="q.page" :page-size="q.size" :total="total"
+      layout="prev,pager,next,total" @current-change="load" /></div>
+
+    <el-dialog v-model="dlgCreate" title="登记货品入库" width="760px" :close-on-click-modal="false">
+      <el-form :model="form" label-width="86px" size="small">
+        <div class="form-2col">
+          <el-form-item label="品名" required><el-input v-model="form.name" placeholder="如 和田玉籽料手镯" /></el-form-item>
+          <el-form-item label="类别" required><el-select v-model="form.categoryId" style="width:100%">
+            <el-option v-for="c in cats" :key="c.id" :label="c.name" :value="c.id" /></el-select></el-form-item>
+          <el-form-item label="料种"><el-input v-model="form.material" placeholder="和田玉 / 碧玉 …" /></el-form-item>
+          <el-form-item label="产地"><el-input v-model="form.origin" placeholder="新疆和田 …" /></el-form-item>
+          <el-form-item label="器型"><el-select v-model="form.shape" style="width:100%">
+            <el-option v-for="s in shapeList" :key="s" :label="s" :value="s" /></el-select></el-form-item>
+          <el-form-item label="产状"><el-select v-model="form.form" style="width:100%">
+            <el-option v-for="s in ['山料','籽料','山流水料','戈壁料']" :key="s" :label="s" :value="s" /></el-select></el-form-item>
+          <el-form-item label="克重(g)" required><el-input-number v-model="form.weightG" :min="0.1" :precision="2" style="width:100%" /></el-form-item>
+          <el-form-item label="尺寸"><el-input v-model="form.size" placeholder="圈口56 / 58-12-9mm" /></el-form-item>
+          <el-form-item label="来源类型" required><el-select v-model="form.srcType" style="width:100%" @change="onSrcChange">
+            <el-option v-for="s in srcTypes" :key="s" :label="s" :value="s" /></el-select></el-form-item>
+          <el-form-item label="来源方"><el-select v-model="form.srcParty" filterable allow-create clearable style="width:100%">
+            <el-option v-for="p in parties" :key="p.id" :label="p.name" :value="p.name" /></el-select></el-form-item>
+          <el-form-item label="成本"><el-input-number v-model="form.cost" :min="0" :precision="2" style="width:100%"
+            :disabled="form.srcType==='调货'" /></el-form-item>
+          <el-form-item label="最低售价" required><el-input-number v-model="form.minPrice" :min="0.01" :precision="2" style="width:100%" /></el-form-item>
+          <el-form-item label="调货价"><el-input-number v-model="form.transferPrice" :min="0" :precision="2" style="width:100%" /></el-form-item>
+          <el-form-item label="证书号"><el-input v-model="form.certNo" /></el-form-item>
+        </div>
+        <el-form-item label="图片路径"><el-input v-model="form.image" placeholder="/images/goods/xxx.jpg（留空则无图）" /></el-form-item>
+        <div class="hint">一件玉器一个编号，重件需拆成多条；调货调入不记成本（UC-02 规则③）。</div>
+      </el-form>
+      <template #footer>
+        <el-button @click="dlgCreate=false">取消</el-button>
+        <el-button type="primary" :loading="busy" @click="submitCreate">提交</el-button>
+      </template>
+    </el-dialog>
+
+    <el-drawer v-model="dlgDetail" size="560px" :title="cur ? cur.name : ''">
+      <div v-if="cur">
+        <img v-if="cur.image" :src="cur.image" style="width:100%;max-height:270px;object-fit:contain;background:#f7f8fa;border-radius:6px" />
+        <el-descriptions :column="2" border size="small" style="margin-top:12px">
+          <el-descriptions-item label="编号">{{ cur.goodsNo }}</el-descriptions-item>
+          <el-descriptions-item label="状态">{{ cur.status }}</el-descriptions-item>
+          <el-descriptions-item label="类别">{{ cur.categoryName }}</el-descriptions-item>
+          <el-descriptions-item label="器型">{{ cur.shape }}</el-descriptions-item>
+          <el-descriptions-item label="料种">{{ cur.material }}</el-descriptions-item>
+          <el-descriptions-item label="产状">{{ cur.form }}</el-descriptions-item>
+          <el-descriptions-item label="产地">{{ cur.origin }}</el-descriptions-item>
+          <el-descriptions-item label="克重">{{ cur.weightG }} g</el-descriptions-item>
+          <el-descriptions-item label="尺寸">{{ cur.size || '—' }}</el-descriptions-item>
+          <el-descriptions-item label="来源">{{ cur.srcType }}</el-descriptions-item>
+          <el-descriptions-item label="成本">{{ cur.cost ? money(cur.cost) : '—' }}</el-descriptions-item>
+          <el-descriptions-item label="最低售价">{{ money(cur.minPrice) }}</el-descriptions-item>
+          <el-descriptions-item label="证书号">{{ cur.certNo || '—' }}</el-descriptions-item>
+          <el-descriptions-item label="入库时间">{{ fmtTime(cur.inTime) }}</el-descriptions-item>
+        </el-descriptions>
+        <div style="margin:14px 0">
+          <el-button v-if="cur.status==='在柜'" size="small" @click="reserve(cur)">置预留</el-button>
+          <el-button v-if="cur.status==='预留'" size="small" @click="unreserve(cur)">取消预留</el-button>
+          <el-button v-if="cur.status==='在柜'" size="small" @click="dlgInspect=true">送检</el-button>
+        </div>
+        <h4 style="margin:12px 0 8px;font-size:14px">状态流水</h4>
+        <el-timeline>
+          <el-timeline-item v-for="(l,i) in logs" :key="i" :timestamp="l.logTime" size="small">
+            {{ l.fromStatus || '入库' }} → <b>{{ l.toStatus }}</b>
+            <span style="color:#6B7772">（{{ l.refType }}{{ l.refNo ? ' ' + l.refNo : '' }}）</span>
+          </el-timeline-item>
+        </el-timeline>
+      </div>
+    </el-drawer>
+
+    <el-dialog v-model="dlgInspect" title="送检登记" width="440px">
+      <el-form :model="insp" label-width="86px" size="small">
+        <el-form-item label="鉴定机构"><el-select v-model="insp.orgId" style="width:100%">
+          <el-option v-for="o in orgs" :key="o.id" :label="o.name" :value="o.id" /></el-select></el-form-item>
+        <el-form-item label="鉴定结论"><el-input v-model="insp.conclusion" placeholder="留空则只送检不出证" /></el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dlgInspect=false">取消</el-button>
+        <el-button type="primary" @click="doInspect">提交</el-button>
+      </template>
+    </el-dialog>
+  </div>`,
+  setup() {
+    const q = reactive({ keyword: '', status: '', categoryId: null, page: 1, size: 15 });
+    const rows = ref([]), total = ref(0), cats = ref([]), parties = ref([]), orgs = ref([]);
+    const dlgCreate = ref(false), dlgDetail = ref(false), dlgInspect = ref(false);
+    const cur = ref(null), logs = ref([]), busy = ref(false);
+    const statusList = ['在柜', '已送检', '预留', '已售', '已订', '已调出', '代销中', '待处理'];
+    const shapeList = ['手镯','手串','挂件','吊坠','戒指','把件','摆件','项链','平安扣','貔貅','牌子','其他'];
+    const srcTypes = ['采购', '回收', '调货', '加工完工', '寄售'];
+    const form = reactive({ name: '', categoryId: null, material: '', origin: '', shape: '手镯', form: '山料',
+      weightG: null, size: '', certNo: '', image: '', srcType: '采购', srcParty: '', cost: null,
+      minPrice: null, transferPrice: null });
+    const insp = reactive({ orgId: null, conclusion: '' });
+    const tagType = (s) => s === '在柜' ? 'success' : (s === '已售' ? 'info' : (s === '已订' || s === '预留' ? 'warning' : 'info'));
+
+    const load = async () => {
+      const p = new URLSearchParams({ page: q.page, size: q.size });
+      if (q.keyword) p.set('keyword', q.keyword);
+      if (q.status) p.set('status', q.status);
+      if (q.categoryId) p.set('categoryId', q.categoryId);
+      const r = await api.get('/goods?' + p);
+      if (r.code === 0) { rows.value = r.data.items; total.value = r.data.total; }
+    };
+    const openCreate = () => {
+      Object.assign(form, { name: '', categoryId: null, material: '', origin: '', shape: '手镯', form: '山料',
+        weightG: null, size: '', certNo: '', image: '', srcType: '采购', srcParty: '', cost: null,
+        minPrice: null, transferPrice: null });
+      dlgCreate.value = true;
+    };
+    const onSrcChange = () => { if (form.srcType === '调货') form.cost = null; };
+    const submitCreate = async () => {
+      if (!form.name || !form.categoryId || !form.weightG || !form.minPrice)
+        return ElMessage.warning('品名、类别、克重、最低售价必填');
+      if (form.srcType !== '调货' && (form.cost === null || form.cost === undefined))
+        return ElMessage.warning('该来源类型必须填成本');
+      if (form.srcType === '调货' && form.cost !== null)
+        return ElMessage.warning('调货调入不记成本，请清空成本');
+      busy.value = true;
+      const r = await api.post('/stock-ins', { remark: '手工建档', items: [form] });
+      busy.value = false;
+      if (tip(r, '入库成功')) { dlgCreate.value = false; load(); }
+    };
+    const openDetail = async (row) => {
+      cur.value = row; dlgDetail.value = true;
+      const r = await api.get('/goods/' + row.id + '/logs');
+      logs.value = r.code === 0 ? r.data : [];
+    };
+    const reserve = async (g) => {
+      const r = await api.post('/goods/' + g.id + '/reserve');
+      if (tip(r, '已置预留')) { g.status = '预留'; openDetail(g); load(); }
+    };
+    const unreserve = async (g) => {
+      const r = await api.post('/goods/' + g.id + '/unreserve');
+      if (tip(r, '已取消预留')) { g.status = '在柜'; openDetail(g); load(); }
+    };
+    const doInspect = async () => {
+      if (!insp.orgId) return ElMessage.warning('请选择鉴定机构');
+      const r = await api.post('/inspections', { goodsNo: cur.value.goodsNo, orgId: insp.orgId, conclusion: insp.conclusion });
+      if (tip(r, '送检已登记')) { dlgInspect.value = false; load(); }
+    };
+    onMounted(async () => {
+      const [c, p, o] = await Promise.all([api.get('/categories'), api.get('/source-parties'), api.get('/cert-orgs')]);
+      if (c.code === 0) cats.value = c.data;
+      if (p.code === 0) parties.value = p.data;
+      if (o.code === 0) orgs.value = o.data;
+      load();
+    });
+    return { q, rows, total, cats, parties, orgs, dlgCreate, dlgDetail, dlgInspect, cur, logs, busy,
+      statusList, shapeList, srcTypes, form, insp, tagType, load, openCreate, onSrcChange, submitCreate,
+      openDetail, reserve, unreserve, doInspect, money, fmtTime };
+  }
+};
+
+const Sales = {
+  template: `
+  <div>
+    <div class="toolbar">
+      <el-input v-model="keyword" placeholder="成交号 / 品名" clearable style="width:190px" @keyup.enter="load" />
+      <el-button type="primary" @click="load">查询</el-button>
+      <el-button type="success" @click="openCreate">登记成交</el-button>
+      <span style="margin-left:auto;font-size:13px;color:#6B7772">共 {{ total }} 笔</span>
+    </div>
+    <el-table :data="rows" size="small" border stripe @row-click="detail">
+      <el-table-column prop="saleNo" label="成交号" width="182" />
+      <el-table-column prop="goodsNo" label="货品编号" width="182" />
+      <el-table-column prop="goodsName" label="品名" min-width="140" show-overflow-tooltip />
+      <el-table-column label="成交价" width="100" align="right"><template #default="{row}">{{ money(row.price) }}</template></el-table-column>
+      <el-table-column prop="payMethod" label="支付" width="72" />
+      <el-table-column label="已收" width="100" align="right"><template #default="{row}">{{ money(row.received) }}</template></el-table-column>
+      <el-table-column label="成交时间" width="160"><template #default="{row}">{{ fmtTime(row.saleTime) }}</template></el-table-column>
+      <el-table-column label="退货" width="70" align="center"><template #default="{row}">
+        <el-tag v-if="row.returned" type="warning" size="small">已退</el-tag></template></el-table-column>
+    </el-table>
+    <div class="pager"><el-pagination v-model:current-page="page" :page-size="size" :total="total"
+      layout="prev,pager,next,total" @current-change="load" /></div>
+
+    <el-dialog v-model="dlg" title="登记成交" width="620px" :close-on-click-modal="false">
+      <el-form :model="f" label-width="96px" size="small">
+        <el-form-item label="货品编号" required>
+          <el-input v-model="f.goodsNo" placeholder="输入编号后按回车带出" @keyup.enter="lookup" /></el-form-item>
+        <div v-if="found">
+          <el-alert :closable="false" type="info" style="margin-bottom:12px"
+            :title="found.name + ' · ' + found.material + ' · ' + found.weightG + 'g · 最低售价 ' + money(found.minPrice)" />
+          <el-form-item label="成交价" required>
+            <el-input-number v-model="f.price" :min="0.01" :precision="2" style="width:100%" @change="checkPrice" /></el-form-item>
+          <el-form-item v-if="belowMin" label="授权说明" required>
+            <el-input v-model="f.authNote" placeholder="低于底价的原因，如 老板同意清货" /></el-form-item>
+          <el-form-item label="支付方式" required>
+            <el-radio-group v-model="f.payMethod"><el-radio label="全款" /><el-radio label="定金" /></el-radio-group></el-form-item>
+          <el-form-item v-if="f.payMethod==='定金'" label="定金金额" required>
+            <el-input-number v-model="f.received" :min="0.01" :precision="2" style="width:100%" /></el-form-item>
+          <el-form-item label="客户">
+            <el-select v-model="f.customerId" filterable clearable style="width:100%" placeholder="散客可不选">
+              <el-option v-for="c in customers" :key="c.id" :label="c.name + ' · ' + c.phone" :value="c.id" /></el-select></el-form-item>
+        </div>
+        <div v-else-if="notFound" class="hint" style="color:#f56c6c">未找到该货品，或状态不在「在柜」</div>
+      </el-form>
+      <template #footer>
+        <el-button @click="dlg=false">取消</el-button>
+        <el-button type="primary" :loading="busy" :disabled="!found" @click="submit">提交</el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="dlgDetail" title="成交详情" width="660px">
+      <div v-if="cur">
+        <el-descriptions :column="2" border size="small">
+          <el-descriptions-item label="成交号">{{ cur.saleNo }}</el-descriptions-item>
+          <el-descriptions-item label="货品">{{ cur.goodsName }}</el-descriptions-item>
+          <el-descriptions-item label="成交价">{{ money(cur.price) }}</el-descriptions-item>
+          <el-descriptions-item label="支付方式">{{ cur.payMethod }}</el-descriptions-item>
+          <el-descriptions-item label="成交时间">{{ fmtTime(cur.saleTime) }}</el-descriptions-item>
+          <el-descriptions-item label="距今天数">{{ cur.daysSinceSale }} 天</el-descriptions-item>
+        </el-descriptions>
+        <div v-if="cur.returnRecord" style="margin-top:12px"><el-alert type="warning" :closable="false"
+          :title="'已退货 · ' + cur.returnRecord.reason + ' · 退款 ' + money(cur.returnRecord.refund)" /></div>
+        <div v-if="cur.installment" style="margin-top:12px"><el-alert type="info" :closable="false"
+          :title="'分期 ' + cur.installment.periods + ' 期，已还 ' + money(cur.installment.paidAmount) + ' / ' + money(cur.installment.totalAmount) + '，' + cur.installment.displayStatus" /></div>
+        <div style="margin-top:16px" v-if="!cur.returnRecord && cur.returnable">
+          <el-button type="warning" size="small" @click="dlgReturn=true">登记退货</el-button>
+          <el-button v-if="!cur.installment" size="small" @click="dlgInst=true">建分期计划</el-button>
+          <el-button v-if="cur.installment && cur.installment.displayStatus!=='已结清'" size="small" type="primary" @click="dlgPay=true">记录还款</el-button>
+        </div>
+        <div v-else-if="!cur.returnRecord" class="hint">已超过成交后 7 天，不可退货（UC-03 规则②）</div>
+      </div>
+    </el-dialog>
+
+    <el-dialog v-model="dlgReturn" title="登记退货" width="460px">
+      <el-form :model="ret" label-width="86px" size="small">
+        <el-form-item label="退货原因" required><el-radio-group v-model="ret.reason">
+          <el-radio label="真假存疑" /><el-radio label="质量问题" /></el-radio-group></el-form-item>
+        <el-form-item label="退款金额"><el-input-number v-model="ret.refund" :min="0" :precision="2" style="width:100%" /></el-form-item>
+        <el-form-item label="差额说明"><el-input v-model="ret.note" placeholder="退款与原价不一致时必填" /></el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dlgReturn=false">取消</el-button>
+        <el-button type="warning" @click="submitReturn">确认退货</el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="dlgInst" title="建分期计划" width="400px">
+      <el-form label-width="86px" size="small">
+        <el-form-item label="分期期数"><el-input-number v-model="inst.periods" :min="1" :max="36" style="width:100%" /></el-form-item>
+        <el-form-item label="首期到期"><el-date-picker v-model="inst.firstDueDate" type="date" value-format="YYYY-MM-DD" style="width:100%" /></el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dlgInst=false">取消</el-button>
+        <el-button type="primary" @click="submitInst">创建</el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="dlgPay" title="记录还款" width="400px">
+      <el-form label-width="86px" size="small">
+        <el-form-item label="还款金额"><el-input-number v-model="pay.amount" :min="0.01" :precision="2" style="width:100%" /></el-form-item>
+        <div class="hint">未还余额 {{ cur && cur.installment ? money(cur.installment.remaining) : '' }} 元</div>
+      </el-form>
+      <template #footer>
+        <el-button @click="dlgPay=false">取消</el-button>
+        <el-button type="primary" @click="submitPay">提交</el-button>
+      </template>
+    </el-dialog>
+  </div>`,
+  setup() {
+    const rows = ref([]), total = ref(0), page = ref(1), size = ref(15), keyword = ref('');
+    const dlg = ref(false), dlgDetail = ref(false), dlgReturn = ref(false), dlgInst = ref(false), dlgPay = ref(false);
+    const cur = ref(null), found = ref(null), notFound = ref(false), belowMin = ref(false), busy = ref(false);
+    const customers = ref([]);
+    const f = reactive({ goodsNo: '', price: null, payMethod: '全款', received: null, customerId: null, authNote: '' });
+    const ret = reactive({ reason: '质量问题', refund: null, note: '' });
+    const inst = reactive({ periods: 6, firstDueDate: '' });
+    const pay = reactive({ amount: null });
+
+    const load = async () => {
+      const p = new URLSearchParams({ page: page.value, size: size.value });
+      if (keyword.value) p.set('keyword', keyword.value);
+      const r = await api.get('/sales?' + p);
+      if (r.code === 0) { rows.value = r.data.items; total.value = r.data.total; }
+    };
+    const openCreate = () => {
+      f.goodsNo = ''; f.price = null; f.payMethod = '全款'; f.received = null; f.customerId = null; f.authNote = '';
+      found.value = null; notFound.value = false; belowMin.value = false; dlg.value = true;
+    };
+    const lookup = async () => {
+      if (!f.goodsNo) return;
+      const r = await api.get('/goods?keyword=' + encodeURIComponent(f.goodsNo) + '&size=5');
+      const hit = r.code === 0 ? r.data.items.find(x => x.goodsNo === f.goodsNo) : null;
+      if (hit && hit.status === '在柜') {
+        found.value = hit; notFound.value = false;
+        f.price = hit.minPrice; f.received = hit.minPrice;
+      } else { found.value = null; notFound.value = true; }
+    };
+    const checkPrice = () => { belowMin.value = !!(found.value && f.price < found.value.minPrice); };
+    const submit = async () => {
+      if (busy.value) return;
+      if (belowMin.value && !f.authNote) return ElMessage.warning('低于底价，请填授权说明');
+      if (f.payMethod === '定金' && (f.received == null || f.received <= 0)) {
+        return ElMessage.warning('定金成交必须填写实收定金金额');
+      }
+      busy.value = true;
+      const r = await api.post('/sales', {
+        goodsNo: f.goodsNo, price: f.price, payMethod: f.payMethod,
+        received: f.payMethod === '定金' ? f.received : f.price,
+        customerId: f.customerId, authorizedBy: belowMin.value ? 1 : null,
+        authNote: belowMin.value ? f.authNote : null });
+      busy.value = false;
+      if (tip(r, '成交已登记')) { dlg.value = false; load(); }
+    };
+    const resetReturnForm = () => { ret.reason = ''; ret.note = ''; };
+    const detail = async (row) => {
+      const r = await api.get('/sales/' + row.id);
+      if (r.code === 0) { cur.value = r.data; ret.refund = (r.data.received == null ? r.data.price : r.data.received); dlgDetail.value = true; }
+      resetReturnForm();
+    };
+    const submitReturn = async () => {
+      if (busy.value) return;
+      busy.value = true;
+      let r;
+      try {
+        r = await api.post('/sales/' + cur.value.id + '/returns', { reason: ret.reason, refund: ret.refund, note: ret.note });
+      } finally {
+        busy.value = false;
+      }
+      if (tip(r, '退货已登记')) { dlgReturn.value = false; dlgDetail.value = false; load(); }
+    };
+    const submitInst = async () => {
+      if (busy.value) return;
+      busy.value = true;
+      let r;
+      try {
+        r = await api.post('/sales/' + cur.value.id + '/installment',
+          { periods: inst.periods, firstDueDate: inst.firstDueDate || null });
+      } finally {
+        busy.value = false;
+      }
+      if (tip(r, '分期计划已创建')) { dlgInst.value = false; dlgDetail.value = false; load(); }
+    };
+    const submitPay = async () => {
+      if (busy.value) return;
+      busy.value = true;
+      let r;
+      try {
+        r = await api.post('/installments/' + cur.value.installment.id + '/payments', { amount: pay.amount });
+      } finally {
+        busy.value = false;
+      }
+      if (tip(r, '还款已记录')) { dlgPay.value = false; dlgDetail.value = false; load(); }
+    };
+    onMounted(async () => {
+      const c = await api.get('/customers?size=100');
+      if (c.code === 0) customers.value = c.data.items;
+      load();
+    });
+    return { rows, total, page, size, keyword, dlg, dlgDetail, dlgReturn, dlgInst, dlgPay, cur,
+      found, notFound, belowMin, busy, customers, f, ret, inst, pay,
+      load, openCreate, lookup, checkPrice, submit, detail, submitReturn, submitInst, submitPay, money, fmtTime };
+  }
+};
+
+const Installments = {
+  template: `
+  <div>
+    <div class="toolbar">
+      <el-select v-model="status" placeholder="状态" clearable style="width:130px" @change="load">
+        <el-option label="未还" value="未还" />
+        <el-option label="逾期" value="逾期" /><el-option label="已结清" value="已结清" /></el-select>
+      <el-checkbox v-model="overdueOnly" @change="load">只看逾期</el-checkbox>
+      <el-button type="primary" @click="load">查询</el-button>
+      <span style="margin-left:auto;font-size:13px;color:#6B7772">共 {{ total }} 份计划</span>
+    </div>
+    <el-table :data="rows" size="small" border stripe>
+      <el-table-column prop="planNo" label="计划号" width="182" />
+      <el-table-column prop="saleNo" label="成交号" width="182" />
+      <el-table-column prop="periods" label="期数" width="70" align="center" />
+      <el-table-column label="总额" width="100" align="right"><template #default="{row}">{{ money(row.totalAmount) }}</template></el-table-column>
+      <el-table-column label="已还" width="100" align="right"><template #default="{row}">{{ money(row.paidAmount) }}</template></el-table-column>
+      <el-table-column label="剩余" width="100" align="right"><template #default="{row}">{{ money(row.remaining) }}</template></el-table-column>
+      <el-table-column prop="nextDueDate" label="下一期到期" width="120" />
+      <el-table-column label="状态" width="90"><template #default="{row}">
+        <el-tag :type="row.displayStatus==='逾期'?'danger':(row.displayStatus==='已结清'?'success':'warning')" size="small">
+          {{ row.displayStatus }}</el-tag></template></el-table-column>
+      <el-table-column label="逾期" width="80" align="right"><template #default="{row}">
+        <span :style="{color: row.overdueDays>0?'#f56c6c':'#6B7772'}">{{ row.overdueDays || 0 }}</span></template></el-table-column>
+      <el-table-column label="" width="80"><template #default="{row}">
+        <el-button v-if="row.displayStatus!=='已结清'" link type="primary" size="small" @click="openPay(row)">还款</el-button>
+      </template></el-table-column>
+    </el-table>
+    <div class="pager"><el-pagination v-model:current-page="page" :page-size="size" :total="total"
+      layout="prev,pager,next,total" @current-change="load" /></div>
+
+    <el-dialog v-model="dlg" title="记录还款" width="400px">
+      <el-form label-width="86px" size="small">
+        <el-form-item label="计划号">{{ cur && cur.planNo }}</el-form-item>
+        <el-form-item label="未还余额">{{ cur && money(cur.remaining) }} 元</el-form-item>
+        <el-form-item label="还款金额"><el-input-number v-model="amount" :min="0.01" :precision="2" style="width:100%" /></el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dlg=false">取消</el-button>
+        <el-button type="primary" @click="submit">提交</el-button>
+      </template>
+    </el-dialog>
+  </div>`,
+  setup() {
+    const rows = ref([]), total = ref(0), page = ref(1), size = ref(15), status = ref(''), overdueOnly = ref(false);
+    const dlg = ref(false), cur = ref(null), amount = ref(null);
+    const load = async () => {
+      const p = new URLSearchParams({ page: page.value, size: size.value });
+      if (status.value) p.set('status', status.value);
+      if (overdueOnly.value) p.set('overdueOnly', 'true');
+      const r = await api.get('/installments?' + p);
+      if (r.code === 0) { rows.value = r.data.items; total.value = r.data.total; }
+    };
+    const openPay = (row) => { cur.value = row; amount.value = row.remaining; dlg.value = true; };
+    const submit = async () => {
+      const r = await api.post('/installments/' + cur.value.id + '/payments', { amount: amount.value });
+      if (tip(r, '还款已记录')) { dlg.value = false; load(); }
+    };
+    onMounted(load);
+    return { rows, total, page, size, status, overdueOnly, dlg, cur, amount, load, openPay, submit, money };
+  }
+};
+
+const Stats = {
+  template: `
+  <div>
+    <div class="toolbar">
+      <el-date-picker v-model="range" type="daterange" value-format="YYYY-MM-DD" style="width:260px"
+        start-placeholder="开始" end-placeholder="结束" @change="load" />
+      <el-radio-group v-model="quick" @change="setQuick">
+        <el-radio-button label="month">本月</el-radio-button>
+        <el-radio-button label="quarter">近三月</el-radio-button>
+        <el-radio-button label="year">今年</el-radio-button>
+      </el-radio-group>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="label">销售额</div><div class="value">{{ money(s.amount) }}<span class="unit">元</span></div></div>
+      <div class="stat-card"><div class="label">退货冲减</div><div class="value" style="color:#4E8A6B">{{ money(s.returnAmount) }}<span class="unit">元</span></div></div>
+      <div class="stat-card"><div class="label">净销售额</div><div class="value">{{ money(s.netAmount) }}<span class="unit">元</span></div></div>
+      <div class="stat-card"><div class="label">加权周转</div><div class="value">{{ t.weightedDays || 0 }}<span class="unit">天</span></div></div>
+    </div>
+    <div class="stat-grid" style="margin-top:14px">
+      <div class="stat-card"><div class="label">日均成交</div><div class="value">{{ money(dailyNet) }}<span class="unit">元</span></div></div>
+      <div class="stat-card"><div class="label">平均客单</div><div class="value">{{ money(avgTicket) }}<span class="unit">元 / {{ s.saleCount }} 单</span></div></div>
+      <div class="stat-card"><div class="label">逾期分期</div><div class="value" style="color:#B23A2B">{{ ov.overdueCount }}<span class="unit">笔 · {{ money(ov.overdueAmount) }} 元</span></div></div>
+      <div class="stat-card"><div class="label">往来货款</div><div class="value">{{ money(ov.collected) }}<span class="unit">元 / {{ ov.paymentCount }} 笔</span></div></div>
+    </div>
+    <el-row :gutter="16" style="margin-top:16px">
+      <el-col :span="10"><el-card shadow="never" header="往来货款构成">
+        <div class="bar-row" v-for="x in ov.byType" :key="x.type">
+          <span class="bar-lb">{{ x.type }}</span>
+          <span class="bar-track"><span class="bar-fill" :style="{width: barW(x.amount)}"></span></span>
+          <span class="bar-val">{{ money(x.amount) }}</span>
+        </div>
+        <div class="hint" v-if="!ov.byType.length">区间内没有往来货款记录</div>
+        <div class="hint">只统计采购、调货、加工、寄售四类往来；零售成交计入上方销售额，不在这里重复计算。</div>
+      </el-card></el-col>
+      <el-col :span="14"><el-card shadow="never" header="往来货款趋势">
+        <svg viewBox="0 0 600 140" preserveAspectRatio="none" style="width:100%;height:140px">
+          <polyline :points="trendPoints" fill="none" stroke="#2C4A41" stroke-width="2" />
+        </svg>
+        <div class="hint">{{ trendHint }}</div>
+      </el-card></el-col>
+    </el-row>
+    <el-row :gutter="16">
+      <el-col :span="12"><el-card shadow="never" header="指标口径">
+        <div style="font-size:13px;line-height:2.1">
+          <div>成交笔数 <b style="float:right">{{ s.saleCount }}</b></div>
+          <div>销售客户数（去重，散客不计） <b style="float:right">{{ s.customerCount }}</b></div>
+          <div>参与周转计算的货品 <b style="float:right">{{ t.sampleCount }}</b></div>
+        </div>
+        <div class="hint" style="margin-top:10px">
+          销售额按成交时间归属，退货按退货时间冲减（UC-06 规则①②）。周转按最低售价加权，调货货品成本为空不影响加权。
+        </div>
+      </el-card></el-col>
+      <el-col :span="12"><el-card shadow="never" header="周转最慢的货品">
+        <el-table :data="t.slowest || []" size="small" max-height="300">
+          <el-table-column prop="goodsNo" label="编号" width="176" />
+          <el-table-column prop="name" label="品名" />
+          <el-table-column prop="days" label="在库天数" width="90" align="right" />
+        </el-table>
+      </el-card></el-col>
+    </el-row>
+  </div>`,
+  setup() {
+    const range = ref([]), quick = ref('month');
+    const s = reactive({ amount: 0, returnAmount: 0, netAmount: 0, customerCount: 0, saleCount: 0 });
+    const t = reactive({ weightedDays: 0, sampleCount: 0, slowest: [] });
+    const ov = reactive({ collected: 0, paymentCount: 0, dailyAvg: 0, avgTicket: 0,
+      overdueCount: 0, overdueAmount: 0, byType: [], trend: [] });
+    const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const setQuick = () => {
+      const now = new Date(); let from;
+      if (quick.value === 'month') from = new Date(now.getFullYear(), now.getMonth(), 1);
+      else if (quick.value === 'quarter') from = new Date(now.getFullYear(), now.getMonth()-2, 1);
+      else from = new Date(now.getFullYear(), 0, 1);
+      range.value = [fmt(from), fmt(now)]; load();
+    };
+    const load = async () => {
+      if (!range.value || range.value.length !== 2) return;
+      const [f, to] = range.value;
+      const [a, b, c] = await Promise.all([
+        api.get(`/stats/sales?from=${f}&to=${to}`), api.get(`/stats/turnover?from=${f}&to=${to}`),
+        api.get(`/stats/overview?from=${f}&to=${to}`)]);
+      if (a.code === 0) Object.assign(s, a.data);
+      if (b.code === 0) Object.assign(t, b.data);
+      if (c.code === 0) Object.assign(ov, c.data);
+    };
+    onMounted(setQuick);
+    const maxType = computed(() => {
+      let m = 0;
+      ov.byType.forEach(x => { m = Math.max(m, Number(x.amount) || 0); });
+      return m || 1;
+    });
+    const barW = (v) => Math.round((Number(v) || 0) / maxType.value * 100) + '%';
+    const trendPoints = computed(() => {
+      const arr = ov.trend || [];
+      if (!arr.length) return '';
+      let max = 0;
+      arr.forEach(x => { max = Math.max(max, Number(x.amount) || 0); });
+      max = max || 1;
+      const step = arr.length > 1 ? 600 / (arr.length - 1) : 0;
+      return arr.map((x, i) => `${(i * step).toFixed(1)},${(130 - (Number(x.amount) || 0) / max * 110).toFixed(1)}`).join(' ');
+    });
+    const rangeDays = computed(() => {
+      if (!range.value || range.value.length !== 2) return 1;
+      const a = new Date(range.value[0]).getTime();
+      const b = new Date(range.value[1]).getTime();
+      return Math.max(1, Math.round((b - a) / 86400000) + 1);
+    });
+    const dailyNet = computed(() => (Number(s.netAmount) || 0) / rangeDays.value);
+    const avgTicket = computed(() => (Number(s.saleCount) || 0) ? (Number(s.netAmount) || 0) / s.saleCount : 0);
+    const trendHint = computed(() => {
+      const arr = ov.trend || [];
+      if (!arr.length) return '区间内没有收款记录';
+      const sum = arr.reduce((a, x) => a + (Number(x.amount) || 0), 0);
+      return `${arr.length} 个有收款的日子，合计 ${money(sum)} 元，峰值 ${money(Math.max(...arr.map(x => Number(x.amount) || 0)))} 元`;
+    });
+    return { range, quick, s, t, ov, setQuick, load, money, barW, trendPoints, trendHint, dailyNet, avgTicket };
+  }
+};
+
+const Customers = {
+  template: `
+  <div>
+    <div class="toolbar">
+      <el-input v-model="keyword" placeholder="姓名/手机号/编号" clearable style="width:190px" @keyup.enter="load" />
+      <el-select v-model="tag" placeholder="标签" clearable style="width:120px" @change="load">
+        <el-option v-for="t in tagList" :key="t" :label="t" :value="t" /></el-select>
+      <el-button type="primary" @click="load">查询</el-button>
+      <el-button type="success" @click="openCreate">新增客户</el-button>
+      <span style="margin-left:auto;font-size:13px;color:#6B7772">共 {{ total }} 位</span>
+    </div>
+    <el-table :data="rows" size="small" border stripe @row-click="open">
+      <el-table-column prop="customerNo" label="编号" width="130" />
+      <el-table-column prop="name" label="姓名" width="96" />
+      <el-table-column prop="phone" label="手机号" width="126" />
+      <el-table-column prop="sourceChannel" label="来源" width="110" />
+      <el-table-column label="标签" min-width="150"><template #default="{row}">
+        <div class="tag-line"><el-tag v-for="t in row.tags" :key="t" size="small" type="info">{{ t }}</el-tag></div>
+      </template></el-table-column>
+      <el-table-column prop="prefCategory" label="偏好" min-width="110" show-overflow-tooltip />
+      <el-table-column prop="remark" label="备注" min-width="130" show-overflow-tooltip />
+    </el-table>
+    <div class="pager"><el-pagination v-model:current-page="page" :page-size="size" :total="total"
+      layout="prev,pager,next,total" @current-change="load" /></div>
+
+    <el-dialog v-model="dlg" :title="editing ? '编辑客户' : '新增客户'" width="620px" :close-on-click-modal="false">
+      <el-form :model="f" label-width="86px" size="small">
+        <div class="form-2col">
+          <el-form-item label="姓名" required><el-input v-model="f.name" /></el-form-item>
+          <el-form-item label="手机号" required><el-input v-model="f.phone" :disabled="editing" placeholder="11 位" /></el-form-item>
+          <el-form-item label="微信号"><el-input v-model="f.wechat" /></el-form-item>
+          <el-form-item label="来源渠道" required><el-select v-model="f.sourceChannel" style="width:100%">
+            <el-option v-for="c in channels" :key="c" :label="c" :value="c" /></el-select></el-form-item>
+          <el-form-item label="介绍人" v-if="!editing"><el-select v-model="f.introducerId" filterable clearable style="width:100%">
+            <el-option v-for="c in rows" :key="c.id" :label="c.name" :value="c.id" /></el-select></el-form-item>
+          <el-form-item label="偏好品类"><el-input v-model="f.prefCategory" /></el-form-item>
+          <el-form-item label="偏好圈口"><el-input v-model="f.prefSize" /></el-form-item>
+          <el-form-item label="偏好预算"><el-input-number v-model="f.prefBudget" :min="0" :precision="0" style="width:100%" /></el-form-item>
+        </div>
+        <el-form-item label="标签"><el-checkbox-group v-model="f.tags">
+          <el-checkbox v-for="t in tagList" :key="t" :label="t">{{ t }}</el-checkbox></el-checkbox-group></el-form-item>
+        <el-form-item label="备注"><el-input v-model="f.remark" type="textarea" :rows="2" /></el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dlg=false">取消</el-button>
+        <el-button type="primary" @click="submit">保存</el-button>
+      </template>
+    </el-dialog>
+
+    <el-drawer v-model="dlgDetail" size="520px" :title="cur ? cur.name : ''">
+      <div v-if="cur">
+        <el-descriptions :column="2" border size="small">
+          <el-descriptions-item label="编号">{{ cur.customerNo }}</el-descriptions-item>
+          <el-descriptions-item label="手机号">{{ cur.phone }}</el-descriptions-item>
+          <el-descriptions-item label="微信">{{ cur.wechat || '—' }}</el-descriptions-item>
+          <el-descriptions-item label="来源">{{ cur.sourceChannel }}</el-descriptions-item>
+          <el-descriptions-item label="偏好品类">{{ cur.prefCategory || '—' }}</el-descriptions-item>
+          <el-descriptions-item label="偏好预算">{{ cur.prefBudget ? money(cur.prefBudget) : '—' }}</el-descriptions-item>
+        </el-descriptions>
+        <div style="margin:14px 0">
+          <el-button size="small" @click="edit(cur)">编辑</el-button>
+          <el-button size="small" @click="copyPhone(cur.phone)">复制手机号</el-button>
+        </div>
+        <h4 style="margin:12px 0 8px;font-size:14px">购买记录（{{ purchases.length }}）</h4>
+        <div v-if="!purchases.length" class="empty-tip">暂无成交</div>
+        <div v-for="p in purchases" :key="p.saleNo"
+          style="display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px dashed #EFE8DB">
+          <span>{{ p.goodsName }}</span><span style="color:#6B7772">{{ money(p.price) }}</span></div>
+      </div>
+    </el-drawer>
+  </div>`,
+  setup() {
+    const rows = ref([]), total = ref(0), page = ref(1), size = ref(15);
+    const keyword = ref(''), tag = ref('');
+    const tagList = ['大客户', '懂行', '爽快', '要还价'];
+    const channels = ['闲鱼', '微信朋友圈', '朋友介绍', '线下', '直播', '老客户复购', '其他'];
+    const dlg = ref(false), dlgDetail = ref(false), editing = ref(false), cur = ref(null), purchases = ref([]);
+    const f = reactive({ name: '', phone: '', wechat: '', sourceChannel: '线下', introducerId: null,
+      prefCategory: '', prefSize: '', prefBudget: null, tags: [], remark: '' });
+
+    const load = async () => {
+      const p = new URLSearchParams({ page: page.value, size: size.value });
+      if (keyword.value) p.set('keyword', keyword.value);
+      if (tag.value) p.set('tag', tag.value);
+      const r = await api.get('/customers?' + p);
+      if (r.code === 0) { rows.value = r.data.items; total.value = r.data.total; }
+    };
+    const openCreate = () => {
+      Object.assign(f, { name: '', phone: '', wechat: '', sourceChannel: '线下', introducerId: null,
+        prefCategory: '', prefSize: '', prefBudget: null, tags: [], remark: '' });
+      editing.value = false; dlg.value = true;
+    };
+    const edit = (c) => {
+      Object.assign(f, { name: c.name, phone: c.phone, wechat: c.wechat, sourceChannel: c.sourceChannel,
+        introducerId: null, prefCategory: c.prefCategory, prefSize: c.prefSize, prefBudget: c.prefBudget,
+        tags: [...(c.tags || [])], remark: c.remark });
+      cur.value = c; editing.value = true; dlg.value = true; dlgDetail.value = false;
+    };
+    const submit = async () => {
+      if (!f.name) return ElMessage.warning('姓名不能为空');
+      if (!editing.value && !/^\d{11}$/.test(f.phone)) return ElMessage.warning('手机号需 11 位');
+      if (!editing.value && f.sourceChannel === '朋友介绍' && !f.introducerId) return ElMessage.warning('朋友介绍需选介绍人');
+      const r = editing.value ? await api.put('/customers/' + cur.value.id, f) : await api.post('/customers', f);
+      if (r.code === 0) { ElMessage.success('已保存'); dlg.value = false; load(); }
+      else if (r.code === 409 && r.data) {
+        ElMessage.warning('该手机号已建档，已跳转到原客户');
+        dlg.value = false; open(r.data);
+      } else ElMessage.error(r.message || '保存失败');
+    };
+    const open = async (row) => {
+      cur.value = row; dlgDetail.value = true;
+      const r = await api.get('/customers/' + row.id + '/purchases');
+      purchases.value = r.code === 0 ? r.data : [];
+    };
+    const copyPhone = async (p) => {
+      try { await navigator.clipboard.writeText(p); ElMessage.success('已复制'); }
+      catch (e) { ElMessage.warning('复制失败，请手动选择'); }
+    };
+    onMounted(load);
+    return { rows, total, page, size, keyword, tag, tagList, channels, dlg, dlgDetail, editing, cur,
+      purchases, f, load, openCreate, edit, submit, open, copyPhone, money };
+  }
+};
+
+const Transfers = {
+  template: `
+  <div>
+    <el-alert type="info" :closable="false" style="margin-bottom:12px"
+      title="调出：本店货品放到同行处代销，货品转「代销中」；调入：同行货品放到本店。鉴赏期（7 天）届满后结算。" />
+    <div class="toolbar">
+      <el-select v-model="merchantId" placeholder="按商户筛" clearable filterable style="width:200px" @change="load">
+        <el-option v-for="m in merchants" :key="m.id" :label="m.name" :value="m.id" /></el-select>
+      <el-select v-model="settled" placeholder="结算状态" clearable style="width:130px" @change="load">
+        <el-option label="未结算" value="否" /><el-option label="已结算" value="是" /></el-select>
+      <el-button type="primary" @click="load">查询</el-button>
+      <el-button type="success" @click="openCreate">登记调货</el-button>
+      <span style="margin-left:auto;font-size:13px;color:#6B7772">共 {{ total }} 条</span>
+    </div>
+    <el-table :data="rows" size="small" border stripe>
+      <el-table-column prop="recordNo" label="记录号" width="182" />
+      <el-table-column prop="direction" label="方向" width="76" />
+      <el-table-column prop="merchantName" label="合作商户" min-width="180" show-overflow-tooltip />
+      <el-table-column prop="goodsName" label="货品" min-width="140" show-overflow-tooltip />
+      <el-table-column label="金额" width="100" align="right"><template #default="{row}">{{ money(row.amount) }}</template></el-table-column>
+      <el-table-column prop="status" label="状态" width="86" />
+      <el-table-column label="结算" width="76" align="center"><template #default="{row}">
+        <el-tag :type="row.settled==='是'?'success':'info'" size="small">{{ row.settled==='是'?'已结':'未结' }}</el-tag>
+      </template></el-table-column>
+      <el-table-column label="时间" width="160"><template #default="{row}">{{ fmtTime(row.recordTime) }}</template></el-table-column>
+      <el-table-column label="" width="130"><template #default="{row}">
+        <el-button v-if="row.status==='在调' && row.settled==='否'" link type="primary" size="small" @click="setStatus(row,'已售')">转已售</el-button>
+        <el-button v-if="row.status==='在调' && row.settled==='否'" link type="warning" size="small" @click="setStatus(row,'已退回')">退回</el-button>
+      </template></el-table-column>
+    </el-table>
+    <div class="pager"><el-pagination v-model:current-page="page" :page-size="size" :total="total"
+      layout="prev,pager,next,total" @current-change="load" /></div>
+
+    <el-dialog v-model="dlg" title="登记调货" width="480px">
+      <el-form :model="f" label-width="86px" size="small">
+        <el-form-item label="方向" required><el-radio-group v-model="f.direction">
+          <el-radio label="调出" /><el-radio label="调入" /></el-radio-group></el-form-item>
+        <el-form-item label="合作商户" required><el-select v-model="f.merchantId" filterable style="width:100%">
+          <el-option v-for="m in merchants" :key="m.id" :label="m.name" :value="m.id" /></el-select></el-form-item>
+        <el-form-item label="货品编号" required><el-input v-model="f.goodsNo" placeholder="JD..." /></el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dlg=false">取消</el-button>
+        <el-button type="primary" @click="submit">提交</el-button>
+      </template>
+    </el-dialog>
+  </div>`,
+  setup() {
+    const rows = ref([]), total = ref(0), page = ref(1), size = ref(15);
+    const merchants = ref([]), merchantId = ref(null), settled = ref('');
+    const dlg = ref(false);
+    const f = reactive({ direction: '调出', merchantId: null, goodsNo: '' });
+    const load = async () => {
+      const p = new URLSearchParams({ page: page.value, size: size.value });
+      if (merchantId.value) p.set('merchantId', merchantId.value);
+      if (settled.value) p.set('settled', settled.value);
+      const r = await api.get('/transfers?' + p);
+      if (r.code === 0) { rows.value = r.data.items; total.value = r.data.total; }
+    };
+    const openCreate = () => { f.direction = '调出'; f.merchantId = null; f.goodsNo = ''; dlg.value = true; };
+    const submit = async () => {
+      if (!f.merchantId || !f.goodsNo) return ElMessage.warning('商户与货品必填');
+      const r = await api.post('/transfers', f);
+      if (tip(r, '调货已登记')) { dlg.value = false; load(); }
+    };
+    const setStatus = async (row, s) => {
+      const r = await api.put('/transfers/' + row.id + '/status', { status: s });
+      if (tip(r, '状态已更新')) load();
+    };
+    onMounted(async () => {
+      const p = await api.get('/source-parties?partyType=' + encodeURIComponent('同行商户'));
+      if (p.code === 0) merchants.value = p.data;
+      load();
+    });
+    return { rows, total, page, size, merchants, merchantId, settled, dlg, f, load, openCreate, submit, setStatus, money, fmtTime };
+  }
+};
+
+const Approval = {
+  template: `
+  <div>
+    <el-tabs v-model="tab" @tab-change="onTab">
+      <el-tab-pane label="待审核出让申请" name="apply">
+        <el-table :data="applies" size="small" border stripe>
+          <el-table-column prop="applyNo" label="申请号" width="182" />
+          <el-table-column prop="supplierName" label="供应商" min-width="170" show-overflow-tooltip />
+          <el-table-column prop="outType" label="类型" width="80" />
+          <el-table-column prop="name" label="品名" min-width="150" show-overflow-tooltip />
+          <el-table-column prop="quantity" label="数量" width="70" align="center" />
+          <el-table-column label="期望价" width="100" align="right"><template #default="{row}">{{ money(row.expectPrice) }}</template></el-table-column>
+          <el-table-column label="提交时间" width="160"><template #default="{row}">{{ fmtTime(row.submitTime) }}</template></el-table-column>
+          <el-table-column label="操作" width="150"><template #default="{row}">
+            <el-button link type="success" size="small" @click="audit(row,true)">通过</el-button>
+            <el-button link type="danger" size="small" @click="audit(row,false)">驳回</el-button>
+          </template></el-table-column>
+        </el-table>
+        <div v-if="!applies.length" class="empty-tip">没有待审核的申请</div>
+      </el-tab-pane>
+
+      <el-tab-pane label="调货台账结算" name="settle">
+        <div class="toolbar">
+          <el-select v-model="merchantId" placeholder="选择合作商户" filterable style="width:260px" @change="loadPending">
+            <el-option v-for="m in merchants" :key="m.id" :label="m.name" :value="m.id" /></el-select>
+          <el-select v-model="method" style="width:120px">
+            <el-option label="现金" value="现金" /><el-option label="转账" value="转账" /><el-option label="冲抵" value="冲抵" /></el-select>
+          <span v-if="pending.length" style="font-size:13px;color:#6B7772">已选 {{ selected.length }} 条，合计 {{ money(selectedSum) }} 元</span>
+          <el-button type="primary" :disabled="!selected.length" @click="settle">确认结算</el-button>
+        </div>
+        <el-table :data="pending" size="small" border @selection-change="v => selected = v">
+          <el-table-column type="selection" width="44" />
+          <el-table-column prop="recordNo" label="记录号" width="182" />
+          <el-table-column prop="goodsName" label="货品" min-width="150" show-overflow-tooltip />
+          <el-table-column prop="direction" label="方向" width="76" />
+          <el-table-column prop="status" label="状态" width="80" />
+          <el-table-column label="金额" width="100" align="right"><template #default="{row}">{{ money(row.amount) }}</template></el-table-column>
+          <el-table-column label="鉴赏期" width="110"><template #default="{row}">
+            <span :style="{color: row.overdueDays>0?'#f56c6c':'#4E8A6B'}">
+              {{ row.overdueDays > 0 ? '已过 ' + row.overdueDays + ' 天' : '期内' }}</span></template></el-table-column>
+          <el-table-column label="调货时间" width="160"><template #default="{row}">{{ fmtTime(row.recordTime) }}</template></el-table-column>
+        </el-table>
+        <div v-if="!pending.length" class="empty-tip">{{ merchantId ? '该商户往来已结清' : '请先选择商户' }}</div>
+      </el-tab-pane>
+
+      <el-tab-pane label="结算历史" name="history">
+        <el-table :data="history" size="small" border stripe>
+          <el-table-column prop="settleNo" label="结算号" width="182" />
+          <el-table-column prop="partyName" label="往来方" min-width="180" show-overflow-tooltip />
+          <el-table-column prop="settleType" label="类型" width="80" />
+          <el-table-column label="金额" width="110" align="right"><template #default="{row}">{{ money(row.amount) }}</template></el-table-column>
+          <el-table-column prop="settleMethod" label="方式" width="80" />
+          <el-table-column prop="settleTime" label="结算时间" width="160" />
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
+  </div>`,
+  setup() {
+    const tab = ref('apply');
+    const applies = ref([]), merchants = ref([]), pending = ref([]), selected = ref([]);
+    const merchantId = ref(null), method = ref('转账'), history = ref([]);
+    const selectedSum = computed(() => selected.value.reduce((a, b) => a + Number(b.amount || 0), 0));
+
+    const loadApplies = async () => {
+      const r = await api.get('/transfer-applies?status=' + encodeURIComponent('待审核'));
+      applies.value = r.code === 0 ? r.data : [];
+    };
+    const loadPending = async () => {
+      if (!merchantId.value) { pending.value = []; return; }
+      const r = await api.get('/settlements/pending?merchantId=' + merchantId.value);
+      pending.value = r.code === 0 ? r.data.items : [];
+    };
+    const loadHistory = async () => {
+      const r = await api.get('/settlements');
+      history.value = r.code === 0 ? r.data : [];
+    };
+    const onTab = (name) => {
+      if (name === 'apply') loadApplies();
+      if (name === 'settle') loadPending();
+      if (name === 'history') loadHistory();
+    };
+    const audit = async (row, pass) => {
+      let opinion = '';
+      const title = pass ? '通过申请' : '驳回申请';
+      const opts = {
+        inputPlaceholder: pass ? '审核意见（可留空）' : '驳回原因（必填）',
+        confirmButtonText: pass ? '通过' : '驳回',
+        cancelButtonText: '取消',
+      };
+      if (!pass) opts.inputValidator = v => (!!v && v.trim()) || '必须填写原因';
+      const res = await ElMessageBox.prompt(pass ? '审核意见（可留空）' : '驳回原因（必填）', title, opts)
+        .catch(() => null);
+      if (res === null) return;
+      opinion = res.value || '';
+      const r = await api.post('/transfer-applies/' + row.id + '/audit', { pass, opinion });
+      if (tip(r, pass ? '已通过' : '已驳回')) loadApplies();
+    };
+    const settle = async () => {
+      const r = await api.post('/settlements/batch', {
+        merchantId: merchantId.value, transferIds: selected.value.map(x => x.transferId), settleMethod: method.value });
+      if (tip(r, '结算完成')) { selected.value = []; loadPending(); loadHistory(); }
+    };
+    onMounted(async () => {
+      const m = await api.get('/source-parties?partyType=' + encodeURIComponent('同行商户'));
+      if (m.code === 0) merchants.value = m.data;
+      loadApplies();
+    });
+    return { tab, applies, merchants, pending, selected, merchantId, method, history, selectedSum,
+      loadPending, onTab, audit, settle, money, fmtTime };
+  }
+};
+
+const Consign = {
+  template: `
+  <div>
+    <div class="toolbar">
+      <el-button type="success" @click="openCreate">登记寄售合同</el-button>
+      <el-button @click="openSettle">结算寄售货款</el-button>
+    </div>
+    <el-table :data="rows" size="small" border stripe @row-click="open">
+      <el-table-column prop="consignNo" label="合同号" width="200" />
+      <el-table-column prop="supplierName" label="供应商" min-width="190" show-overflow-tooltip />
+      <el-table-column prop="signTime" label="签订时间" width="160" />
+      <el-table-column prop="expireDate" label="到期日" width="116" />
+      <el-table-column prop="settleCycle" label="结算方式" width="106" />
+      <el-table-column prop="itemCount" label="件数" width="70" align="center" />
+      <el-table-column label="结清" width="90" align="center"><template #default="{row}">
+        <el-tag :type="row.allSettled?'success':'warning'" size="small">{{ row.allSettled?'已结清':'结算中' }}</el-tag>
+      </template></el-table-column>
+      <el-table-column prop="status" label="合同状态" width="90" />
+    </el-table>
+
+    <el-dialog v-model="dlg" title="登记寄售合同" width="780px" :close-on-click-modal="false">
+      <el-form :model="f" label-width="86px" size="small">
+        <div class="form-2col">
+          <el-form-item label="供应商" required><el-select v-model="f.supplierId" filterable style="width:100%">
+            <el-option v-for="s in suppliers" :key="s.id" :label="s.name" :value="s.id" /></el-select></el-form-item>
+          <el-form-item label="结算方式"><el-select v-model="f.settleCycle" style="width:100%">
+            <el-option label="售出即结" value="售出即结" /><el-option label="按月结算" value="按月结算" /></el-select></el-form-item>
+          <el-form-item label="签订时间"><el-date-picker v-model="f.signTime" type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss" style="width:100%" /></el-form-item>
+          <el-form-item label="到期日"><el-date-picker v-model="f.expireDate" type="date"
+            value-format="YYYY-MM-DD" style="width:100%" /></el-form-item>
+        </div>
+        <el-divider content-position="left">寄售货品</el-divider>
+        <div v-for="(it,i) in f.items" :key="i" style="border:1px solid #EFE8DB;border-radius:6px;padding:10px;margin-bottom:10px">
+          <div class="form-2col">
+            <el-form-item label="品名" required><el-input v-model="it.name" /></el-form-item>
+            <el-form-item label="类别"><el-select v-model="it.categoryId" style="width:100%">
+              <el-option v-for="c in cats" :key="c.id" :label="c.name" :value="c.id" /></el-select></el-form-item>
+            <el-form-item label="克重"><el-input-number v-model="it.weightG" :min="0.1" :precision="2" style="width:100%" /></el-form-item>
+            <el-form-item label="寄售价" required><el-input-number v-model="it.consignPrice" :min="0.01" :precision="2" style="width:100%" /></el-form-item>
+            <el-form-item label="料种"><el-input v-model="it.material" /></el-form-item>
+            <el-form-item label="器型"><el-select v-model="it.shape" style="width:100%">
+              <el-option v-for="s in shapeList" :key="s" :label="s" :value="s" /></el-select></el-form-item>
+          </div>
+          <el-button size="small" type="danger" plain @click="f.items.splice(i,1)">删除这件</el-button>
+        </div>
+        <el-button size="small" @click="addItem">+ 添加货品</el-button>
+        <div class="hint" style="margin-top:8px">寄售价作为成本，最低售价按寄售价上浮 25% 自动生成（UC-21 规则②）。</div>
+      </el-form>
+      <template #footer>
+        <el-button @click="dlg=false">取消</el-button>
+        <el-button type="primary" @click="submit">提交</el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="dlgSettle" title="结算寄售货款" width="720px">
+      <div class="toolbar">
+        <el-select v-model="method" style="width:120px">
+          <el-option label="现金" value="现金" /><el-option label="转账" value="转账" /><el-option label="冲抵" value="冲抵" /></el-select>
+        <span style="font-size:13px;color:#6B7772">已选 {{ sel.length }} 条，合计 {{ money(selSum) }} 元</span>
+        <el-button type="primary" :disabled="!sel.length" @click="doSettle">确认结算</el-button>
+      </div>
+      <el-table :data="settleable" size="small" border @selection-change="v => sel = v">
+        <el-table-column type="selection" width="44" />
+        <el-table-column prop="consignNo" label="合同号" width="182" />
+        <el-table-column prop="supplierName" label="供应商" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="goodsName" label="货品" min-width="140" show-overflow-tooltip />
+        <el-table-column label="寄售价" width="100" align="right"><template #default="{row}">{{ money(row.consignPrice) }}</template></el-table-column>
+      </el-table>
+      <div v-if="!settleable.length" class="empty-tip">没有已售出未结算的寄售货品</div>
+    </el-dialog>
+
+    <el-drawer v-model="dlgDetail" size="620px" :title="cur ? cur.consignNo : ''">
+      <div v-if="cur">
+        <el-descriptions :column="3" border size="small">
+          <el-descriptions-item label="供应商">{{ cur.supplierName }}</el-descriptions-item>
+          <el-descriptions-item label="签订">{{ cur.signTime }}</el-descriptions-item>
+          <el-descriptions-item label="到期">{{ cur.expireDate }}</el-descriptions-item>
+          <el-descriptions-item label="件数">{{ cur.itemCount }}</el-descriptions-item>
+          <el-descriptions-item label="已售">{{ cur.soldCount }}</el-descriptions-item>
+          <el-descriptions-item label="已结算">{{ cur.settledCount }}</el-descriptions-item>
+        </el-descriptions>
+        <div style="margin:12px 0">
+          <el-button v-if="cur.status==='生效'" size="small" type="danger" plain @click="terminate">终止合同</el-button>
+        </div>
+        <el-table :data="cur.items" size="small" border max-height="400">
+          <el-table-column prop="goodsNo" label="编号" width="182" />
+          <el-table-column prop="name" label="品名" min-width="120" show-overflow-tooltip />
+          <el-table-column prop="status" label="货品状态" width="86" />
+          <el-table-column label="寄售价" width="96" align="right"><template #default="{row}">{{ money(row.consignPrice) }}</template></el-table-column>
+          <el-table-column prop="settleStatus" label="结算" width="80" />
+        </el-table>
+      </div>
+    </el-drawer>
+  </div>`,
+  setup() {
+    const rows = ref([]), suppliers = ref([]), cats = ref([]);
+    const dlg = ref(false), dlgSettle = ref(false), dlgDetail = ref(false), cur = ref(null);
+    const settleable = ref([]), sel = ref([]), method = ref('转账');
+    const selSum = computed(() => sel.value.reduce((a, b) => a + Number(b.consignPrice || 0), 0));
+    const shapeList = ['手镯','手串','挂件','吊坠','戒指','把件','摆件','项链','平安扣','貔貅','牌子','其他'];
+    const f = reactive({ supplierId: null, signTime: '', expireDate: '', settleCycle: '售出即结', items: [] });
+
+    const load = async () => {
+      const r = await api.get('/consignments');
+      if (r.code === 0) rows.value = r.data;
+    };
+    const addItem = () => f.items.push({ name: '', categoryId: null, weightG: null, consignPrice: null, material: '', shape: '手镯' });
+    const openCreate = () => {
+      f.supplierId = null; f.signTime = ''; f.expireDate = ''; f.settleCycle = '售出即结'; f.items = [];
+      addItem(); dlg.value = true;
+    };
+    const submit = async () => {
+      if (!f.supplierId) return ElMessage.warning('请选择供应商');
+      if (!f.items.length) return ElMessage.warning('至少录入一件寄售货品');
+      for (const it of f.items) if (!it.name || !it.consignPrice) return ElMessage.warning('每件货品都要填品名与寄售价');
+      const body = { supplierId: f.supplierId, settleCycle: f.settleCycle, items: f.items };
+      if (f.signTime) body.signTime = f.signTime;
+      if (f.expireDate) body.expireDate = f.expireDate;
+      const r = await api.post('/consignments', body);
+      if (tip(r, '合同已登记')) { dlg.value = false; load(); }
+    };
+    const open = async (row) => {
+      const r = await api.get('/consignments/' + row.id);
+      if (r.code === 0) { cur.value = r.data; dlgDetail.value = true; }
+    };
+    const terminate = async () => {
+      try { await ElMessageBox.confirm('终止后未结算的寄售货品会退回供应商，确认？', '终止合同', { type: 'warning' }); }
+      catch (e) { return; }
+      const r = await api.post('/consignments/' + cur.value.id + '/terminate');
+      if (tip(r, '合同已终止')) { dlgDetail.value = false; load(); }
+    };
+    const openSettle = async () => {
+      const r = await api.get('/consignments/settleable');
+      settleable.value = r.code === 0 ? r.data.items : [];
+      sel.value = []; dlgSettle.value = true;
+    };
+    const doSettle = async () => {
+      const r = await api.post('/consignments/settlements', { itemIds: sel.value.map(x => x.itemId), settleMethod: method.value });
+      if (tip(r, '结算完成')) { dlgSettle.value = false; load(); }
+    };
+    onMounted(async () => {
+      const [s, c] = await Promise.all([api.get('/source-parties?partyType=' + encodeURIComponent('供应商')), api.get('/categories')]);
+      if (s.code === 0) suppliers.value = s.data;
+      if (c.code === 0) cats.value = c.data;
+      load();
+    });
+    return { rows, suppliers, cats, dlg, dlgSettle, dlgDetail, cur, settleable, sel, method, selSum,
+      shapeList, f, addItem, openCreate, submit, open, terminate, openSettle, doSettle, load, money };
+  }
+};
+
+const Process = {
+  template: `
+  <div>
+    <el-tabs v-model="tab" @tab-change="onTab">
+      <el-tab-pane label="加工任务" name="task">
+        <div class="toolbar">
+          <el-select v-model="status" placeholder="状态" clearable style="width:120px" @change="loadTasks">
+            <el-option v-for="s in statusList" :key="s" :label="s" :value="s" /></el-select>
+          <el-checkbox v-model="overdueOnly" @change="page=1;loadTasks()">只看逾期</el-checkbox>
+          <el-button type="primary" @click="loadTasks">查询</el-button>
+          <span style="margin-left:auto;font-size:13px;color:#6B7772">共 {{ total }} 个任务<span
+            v-if="overdueCount" style="color:#B23A2B"> · 逾期 {{ overdueCount }} 个待催</span></span>
+        </div>
+        <el-table :data="tasks" size="small" border stripe>
+          <el-table-column prop="taskNo" label="任务号" width="182" />
+          <el-table-column prop="goodsName" label="货品" min-width="140" show-overflow-tooltip />
+          <el-table-column prop="craftsmanName" label="师傅" width="150" show-overflow-tooltip />
+          <el-table-column prop="requirement" label="加工要求" min-width="170" show-overflow-tooltip />
+          <el-table-column label="工费" width="86" align="right"><template #default="{row}">{{ money(row.laborFee) }}</template></el-table-column>
+          <el-table-column label="期限" width="150"><template #default="{row}">
+            {{ row.deadline }}<el-tag v-if="row.overdue" type="danger" size="small" style="margin-left:6px">逾期 {{ row.overdueDays }} 天</el-tag>
+          </template></el-table-column>
+          <el-table-column label="状态" width="90"><template #default="{row}">
+            <el-tag :type="row.status==='已交付'?'success':(row.status==='待交付'?'warning':'info')" size="small">
+              {{ row.status }}</el-tag></template></el-table-column>
+          <el-table-column label="" width="130"><template #default="{row}">
+            <el-button v-if="row.status==='待加工'" link type="primary" size="small" @click="start(row)">开始加工</el-button>
+            <el-button v-if="row.overdue" link type="danger" size="small" @click="urge(row)">催办</el-button>
+            <span v-if="row.urgeCount" style="font-size:12px;color:#8A948F">已催 {{ row.urgeCount }} 次</span>
+          </template></el-table-column>
+        </el-table>
+        <div class="pager"><el-pagination v-model:current-page="page" :page-size="size" :total="total"
+          layout="prev,pager,next,total" @current-change="loadTasks" /></div>
+      </el-tab-pane>
+
+      <el-tab-pane label="待确认完工" name="delivery">
+        <el-table :data="deliveries" size="small" border stripe>
+          <el-table-column prop="applyNo" label="申请号" width="182" />
+          <el-table-column prop="taskNo" label="任务号" width="182" />
+          <el-table-column prop="goodsName" label="货品" min-width="140" show-overflow-tooltip />
+          <el-table-column prop="note" label="完工说明" min-width="170" show-overflow-tooltip />
+          <el-table-column label="提交时间" width="160"><template #default="{row}">{{ fmtTime(row.submitTime) }}</template></el-table-column>
+          <el-table-column label="操作" width="150"><template #default="{row}">
+            <el-button link type="success" size="small" @click="confirm(row,true)">接受</el-button>
+            <el-button link type="danger" size="small" @click="confirm(row,false)">退回</el-button>
+          </template></el-table-column>
+        </el-table>
+        <div v-if="!deliveries.length" class="empty-tip">没有待确认的完工申请</div>
+      </el-tab-pane>
+
+      <el-tab-pane label="上门预约" name="visit">
+        <el-table :data="visits" size="small" border stripe>
+          <el-table-column prop="apptNo" label="预约号" width="182" />
+          <el-table-column prop="apptParty" label="预约方" width="150" />
+          <el-table-column prop="matter" label="事项" min-width="150" />
+          <el-table-column label="期望时段" width="180"><template #default="{row}">
+            {{ row.expectDate }} {{ row.startTime }}–{{ row.endTime }}</template></el-table-column>
+          <el-table-column prop="status" label="状态" width="90" />
+          <el-table-column label="提交时间" width="160"><template #default="{row}">{{ fmtTime(row.submitTime) }}</template></el-table-column>
+          <el-table-column label="操作" width="130"><template #default="{row}">
+            <el-button v-if="row.status==='待上门'" link type="success" size="small" @click="visit(row,'confirm')">确认</el-button>
+            <el-button v-if="row.status==='待上门'" link type="danger" size="small" @click="visit(row,'cancel')">取消</el-button>
+          </template></el-table-column>
+        </el-table>
+        <div v-if="!visits.length" class="empty-tip">没有上门预约</div>
+      </el-tab-pane>
+    </el-tabs>
+  </div>`,
+  setup() {
+    const tab = ref('task'), status = ref(''), total = ref(0), page = ref(1), size = ref(15);
+    const overdueOnly = ref(false), overdueCount = ref(0);
+    const tasks = ref([]), deliveries = ref([]), visits = ref([]);
+    const statusList = ['待加工', '在加工', '待交付', '已交付'];
+    const loadTasks = async () => {
+      const p = new URLSearchParams({ page: page.value, size: size.value });
+      if (status.value) p.set('status', status.value);
+      if (overdueOnly.value) p.set('overdueOnly', 'true');
+      const r = await api.get('/process-tasks?' + p);
+      if (r.code === 0) {
+        tasks.value = r.data.items; total.value = r.data.total;
+        overdueCount.value = r.data.overdueCount || 0;
+      }
+    };
+    const loadDeliveries = async () => {
+      const r = await api.get('/delivery-applies?status=' + encodeURIComponent('待确认'));
+      deliveries.value = r.code === 0 ? r.data : [];
+    };
+    const loadVisits = async () => {
+      const r = await api.get('/visit-appts');
+      visits.value = r.code === 0 ? r.data : [];
+    };
+    const onTab = (n) => { if (n === 'task') loadTasks(); if (n === 'delivery') loadDeliveries(); if (n === 'visit') loadVisits(); };
+    const start = async (row) => {
+      const r = await api.post('/process-tasks/' + row.id + '/start');
+      if (tip(r, '已开始加工')) loadTasks();
+    };
+    const urge = async (row) => {
+      const r = await api.post('/process-tasks/' + row.id + '/urge');
+      if (r.code === 0) { ElMessage.success('已催办，师傅端任务上会显示第 ' + r.data.urgeCount + ' 次'); loadTasks(); }
+      else ElMessage.warning(r.message || '催办失败');
+    };
+    const confirm = async (row, accepted) => {
+      let opinion = '';
+      if (!accepted) {
+        const res = await ElMessageBox.prompt('退回原因', '退回完工申请', {
+          inputValidator: v => (!!v && v.trim()) || '必须填写原因',
+          confirmButtonText: '退回', cancelButtonText: '取消' }).catch(() => null);
+        if (res === null) return;
+        opinion = res.value;
+      }
+      const r = await api.post('/delivery-applies/' + row.id + '/confirm', { accepted, opinion });
+      if (tip(r, accepted ? '已接受，任务置已交付' : '已退回')) loadDeliveries();
+    };
+    const visit = async (row, act) => {
+      const r = await api.post('/visit-appts/' + row.id + '/' + act);
+      if (tip(r, act === 'confirm' ? '已确认交接' : '已取消')) loadVisits();
+    };
+    onMounted(loadTasks);
+    return { tab, status, total, page, size, tasks, deliveries, visits, statusList,
+      overdueOnly, overdueCount,
+      loadTasks, loadDeliveries, loadVisits, onTab, start, urge, confirm, visit, money, fmtTime };
+  }
+};
+
+const Base = {
+  template: `
+  <div>
+    <el-tabs v-model="tab">
+      <el-tab-pane label="货品类别" name="cat">
+        <div class="toolbar">
+          <el-input v-model="newCat" placeholder="新类别名称" style="width:200px" />
+          <el-input v-model="newCatRemark" placeholder="备注" style="width:220px" />
+          <el-button type="primary" @click="addCat">新增</el-button>
+        </div>
+        <el-table :data="cats" size="small" border>
+          <el-table-column prop="id" label="ID" width="66" />
+          <el-table-column prop="name" label="类别名称" min-width="160" />
+          <el-table-column prop="remark" label="备注" />
+          <el-table-column label="" width="80"><template #default="{row}">
+            <el-button link type="danger" size="small" @click="delCat(row)">删除</el-button></template></el-table-column>
+        </el-table>
+      </el-tab-pane>
+
+      <el-tab-pane label="来源方" name="party">
+        <div class="toolbar">
+          <el-select v-model="np.partyType" style="width:130px">
+            <el-option label="供应商" value="供应商" /><el-option label="同行商户" value="同行商户" />
+            <el-option label="加工师傅" value="加工师傅" /></el-select>
+          <el-input v-model="np.name" placeholder="名称" style="width:220px" />
+          <el-input v-model="np.phone" placeholder="电话" style="width:150px" />
+          <el-button type="primary" @click="addParty">新增</el-button>
+        </div>
+        <el-table :data="parties" size="small" border max-height="560">
+          <el-table-column prop="partyType" label="类型" width="106" />
+          <el-table-column prop="name" label="名称" min-width="230" show-overflow-tooltip />
+          <el-table-column prop="phone" label="电话" width="150" />
+        </el-table>
+      </el-tab-pane>
+
+      <el-tab-pane label="鉴定机构" name="org">
+        <div class="toolbar">
+          <el-input v-model="no.name" placeholder="机构名称" style="width:260px" />
+          <el-input v-model="no.phone" placeholder="电话" style="width:150px" />
+          <el-button type="primary" @click="addOrg">新增</el-button>
+        </div>
+        <el-table :data="orgs" size="small" border>
+          <el-table-column prop="name" label="机构名称" />
+          <el-table-column prop="phone" label="电话" width="160" />
+          <el-table-column label="" width="80"><template #default="{row}">
+            <el-button link type="danger" size="small" @click="delOrg(row)">删除</el-button></template></el-table-column>
+        </el-table>
+      </el-tab-pane>
+
+      <el-tab-pane label="账号" name="user">
+        <div class="toolbar">
+          <el-input v-model="nu.username" placeholder="用户名" style="width:170px" />
+          <el-input v-model="nu.name" placeholder="姓名" style="width:130px" />
+          <el-input v-model="nu.password" placeholder="初始口令（≥8位含字母数字）" style="width:240px" />
+          <el-select v-model="nu.roleIds" multiple placeholder="角色" style="width:220px">
+            <el-option v-for="r in roles" :key="r.id" :label="r.roleName" :value="r.id" /></el-select>
+          <el-button type="primary" @click="addUser">开通</el-button>
+        </div>
+        <el-table :data="users" size="small" border>
+          <el-table-column prop="username" label="用户名" width="180" />
+          <el-table-column prop="name" label="姓名" width="120" />
+          <el-table-column label="角色" min-width="150"><template #default="{row}">
+            {{ (row.roles||[]).map(r=>r.name).join('、') }}</template></el-table-column>
+          <el-table-column prop="status" label="状态" width="90" />
+          <el-table-column label="" width="100"><template #default="{row}">
+            <el-button link :type="row.status==='启用'?'danger':'success'" size="small" @click="toggleUser(row)">
+              {{ row.status==='启用'?'停用':'启用' }}</el-button></template></el-table-column>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
+  </div>`,
+  setup() {
+    const tab = ref('cat');
+    const cats = ref([]), parties = ref([]), orgs = ref([]), users = ref([]), roles = ref([]);
+    const newCat = ref(''), newCatRemark = ref('');
+    const np = reactive({ partyType: '供应商', name: '', phone: '' });
+    const no = reactive({ name: '', phone: '' });
+    const nu = reactive({ username: '', name: '', password: '', roleIds: [] });
+
+    const reload = async () => {
+      const [a, b, c, d, e] = await Promise.all([
+        api.get('/categories'), api.get('/source-parties'), api.get('/cert-orgs'),
+        api.get('/users'), api.get('/roles')]);
+      if (a.code === 0) cats.value = a.data;
+      if (b.code === 0) parties.value = b.data;
+      if (c.code === 0) orgs.value = c.data;
+      if (d.code === 0) users.value = d.data.items;
+      if (e.code === 0) roles.value = e.data;
+    };
+    const addCat = async () => {
+      if (!newCat.value) return ElMessage.warning('请输入名称');
+      const r = await api.post('/categories', { name: newCat.value, remark: newCatRemark.value });
+      if (tip(r, '已新增')) { newCat.value = ''; newCatRemark.value = ''; reload(); }
+    };
+    const delCat = async (row) => {
+      const r = await api.del('/categories/' + row.id);
+      if (r.code === 409) return ElMessage.warning(r.message);
+      if (tip(r, '已删除')) reload();
+    };
+    const addParty = async () => {
+      if (!np.name) return ElMessage.warning('请输入名称');
+      const r = await api.post('/source-parties', np);
+      if (tip(r, '已新增')) { np.name = ''; np.phone = ''; reload(); }
+    };
+    const addOrg = async () => {
+      if (!no.name) return ElMessage.warning('请输入机构名称');
+      const r = await api.post('/cert-orgs', no);
+      if (tip(r, '已新增')) { no.name = ''; no.phone = ''; reload(); }
+    };
+    const delOrg = async (row) => {
+      const r = await api.del('/cert-orgs/' + row.id);
+      if (r.code === 409) return ElMessage.warning(r.message);
+      if (tip(r, '已删除')) reload();
+    };
+    const addUser = async () => {
+      if (!nu.username || !nu.name || !nu.password) return ElMessage.warning('用户名、姓名、口令必填');
+      if (nu.password.length < 8 || !/[A-Za-z]/.test(nu.password) || !/[0-9]/.test(nu.password)) return ElMessage.warning('口令至少 8 位且同时含字母与数字');
+      const r = await api.post('/users', nu);
+      if (tip(r, '账号已开通')) { nu.username = ''; nu.name = ''; nu.password = ''; nu.roleIds = []; reload(); }
+    };
+    const toggleUser = async (row) => {
+      const next = row.status === '启用' ? '停用' : '启用';
+      const r = await api.put('/users/' + row.id, { status: next });
+      if (tip(r, '已' + next)) reload();
+    };
+    onMounted(reload);
+    return { tab, cats, parties, orgs, users, roles, newCat, newCatRemark, np, no, nu,
+      addCat, delCat, addParty, addOrg, delOrg, addUser, toggleUser };
+  }
+};
+
+const Users = {
+  template: `
+  <div>
+    <el-tabs v-model="tab">
+      <el-tab-pane label="账号与角色" name="users">
+        <div class="toolbar">
+          <el-input v-model="kw" placeholder="用户名或姓名" style="width:190px" clearable @keyup.enter="load" />
+          <el-select v-model="st" style="width:120px" clearable placeholder="状态">
+            <el-option label="启用" value="启用" /><el-option label="停用" value="停用" /></el-select>
+          <el-button type="primary" @click="load">查询</el-button>
+          <el-button @click="openNew">开通账号</el-button>
+        </div>
+        <el-table :data="rows" size="small" border v-loading="loading">
+          <el-table-column prop="username" label="用户名" width="130" />
+          <el-table-column prop="name" label="姓名" width="120" />
+          <el-table-column label="角色" min-width="160">
+            <template #default="{row}">
+              <el-tag v-for="r in row.roles" :key="r.code" size="small" style="margin-right:4px">{{ r.name }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态" width="80">
+            <template #default="{row}">
+              <el-tag :type="row.status==='启用' ? 'success' : 'info'" size="small">{{ row.status }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="200">
+            <template #default="{row}">
+              <el-button link type="primary" size="small" @click="resetPwd(row)">重置口令</el-button>
+              <el-button link :type="row.status==='启用' ? 'danger' : 'success'" size="small" @click="toggle(row)">
+                {{ row.status==='启用' ? '停用' : '启用' }}</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+
+      <el-tab-pane label="预约限制" name="limits">
+        <div class="toolbar">
+          <span style="font-size:12px;color:#6B7772">同一网络累计预约未到店满 10 次即被限制；解除后重新计数，历史记录保留</span>
+          <el-button style="margin-left:auto" @click="loadLimits">刷新</el-button>
+        </div>
+        <el-table :data="limits" size="small" border>
+          <el-table-column prop="ip" label="来源 IP" width="180" />
+          <el-table-column prop="violations" label="违约次数" width="110" />
+          <el-table-column prop="lastSlot" label="最近一次预约时间" width="180" />
+          <el-table-column label="操作" width="110">
+            <template #default="{row}">
+              <el-button link type="primary" size="small" @click="release(row)">解除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div style="padding:24px;text-align:center;color:#6B7772;font-size:13px" v-if="!limits.length">没有被限制的来源 IP</div>
+      </el-tab-pane>
+    </el-tabs>
+
+    <el-dialog v-model="show" title="开通账号" width="460px">
+      <el-form label-width="86px">
+        <el-form-item label="用户名"><el-input v-model="nf.username" placeholder="登录名" /></el-form-item>
+        <el-form-item label="姓名"><el-input v-model="nf.name" /></el-form-item>
+        <el-form-item label="初始口令"><el-input v-model="nf.password" placeholder="至少 8 位，含字母与数字" show-password /></el-form-item>
+        <el-form-item label="角色">
+          <el-select v-model="nf.roleIds" multiple style="width:100%" placeholder="选择角色">
+            <el-option v-for="r in roles" :key="r.id" :label="r.roleName" :value="r.id" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="show=false">取消</el-button>
+        <el-button type="primary" @click="create">开通</el-button>
+      </template>
+    </el-dialog>
+  </div>`,
+  setup() {
+    const tab = ref('users'), rows = ref([]), roles = ref([]), limits = ref([]);
+    const loading = ref(false), kw = ref(''), st = ref('');
+    const show = ref(false);
+    const nf = reactive({ username: '', name: '', password: '', roleIds: [] });
+
+    const load = async () => {
+      loading.value = true;
+      const qs = [];
+      if (kw.value) qs.push('keyword=' + encodeURIComponent(kw.value));
+      if (st.value) qs.push('status=' + encodeURIComponent(st.value));
+      const r = await api.get('/users' + (qs.length ? '?' + qs.join('&') : ''));
+      loading.value = false;
+      if (r.code === 0) rows.value = r.data.items; else ElMessage.error(r.message);
+    };
+    const loadRoles = async () => { const r = await api.get('/roles'); if (r.code === 0) roles.value = r.data; };
+    const loadLimits = async () => { const r = await api.get('/reservations/limits'); if (r.code === 0) limits.value = r.data; else ElMessage.error(r.message); };
+    const openNew = () => { nf.username = ''; nf.name = ''; nf.password = ''; nf.roleIds = []; show.value = true; };
+    const create = async () => {
+      if (!nf.username || !nf.name || !nf.password) return ElMessage.warning('用户名、姓名、口令都要填');
+      if (nf.password.length < 8 || !/[A-Za-z]/.test(nf.password) || !/[0-9]/.test(nf.password)) {
+        return ElMessage.warning('口令至少 8 位且同时含字母与数字');
+      }
+      const r = await api.post('/users', { username: nf.username, name: nf.name, password: nf.password, roleIds: nf.roleIds });
+      if (r.code === 0) { ElMessage.success('已开通'); show.value = false; load(); } else ElMessage.error(r.message);
+    };
+    const resetPwd = async (row) => {
+      try {
+        const { value } = await ElMessageBox.prompt('给 ' + row.username + ' 设置新口令', '重置口令', { inputType: 'password', inputPlaceholder: '至少 8 位，含字母与数字' });
+        if (!value || value.length < 8 || !/[A-Za-z]/.test(value) || !/[0-9]/.test(value)) {
+          return ElMessage.warning('口令至少 8 位且同时含字母与数字');
+        }
+        const r = await api.put('/users/' + row.id, { password: value });
+        if (r.code === 0) ElMessage.success('已重置'); else ElMessage.error(r.message);
+      } catch (e) { }
+    };
+    const toggle = async (row) => {
+      const next = row.status === '启用' ? '停用' : '启用';
+      const r = await api.put('/users/' + row.id, { status: next });
+      if (r.code === 0) { ElMessage.success('已' + next); load(); } else ElMessage.error(r.message);
+    };
+    const release = async (row) => {
+      try {
+        await ElMessageBox.confirm('解除后该 IP 可重新预约，历史违约记录保留但不再计数。确认解除 ' + row.ip + '？', '解除限制', { type: 'warning' });
+        const r = await api.post('/reservations/limits/' + encodeURIComponent(row.ip) + '/release');
+        if (r.code === 0) { ElMessage.success('已解除 ' + r.data.released + ' 条违约'); loadLimits(); } else ElMessage.error(r.message);
+      } catch (e) { }
+    };
+    onMounted(() => { load(); loadRoles(); loadLimits(); });
+    return { tab, rows, roles, limits, loading, kw, st, show, nf, load, loadLimits, openNew, create, resetPwd, toggle, release };
+  }
+};
+
+const Calendar = {
+  template: `
+  <div>
+    <div class="toolbar">
+      <el-button @click="shift(-1)">上一周</el-button>
+      <el-button @click="thisWeek">本周</el-button>
+      <el-button @click="shift(1)">下一周</el-button>
+      <span style="margin-left:10px;color:#6B7772;font-size:13px">{{ from }} ~ {{ to }}</span>
+      <span style="margin-left:auto;font-size:12px;color:#6B7772">
+        到店 {{ counts.reserve }} · 上门 {{ counts.visit }} · 加工到期 {{ counts.task }}</span>
+    </div>
+    <div class="cal">
+      <div class="cal-col" v-for="d in days" :key="d.date">
+        <div class="cal-hd" :class="{today: d.isToday}">
+          <span>{{ d.label }}</span><span class="cal-md">{{ d.md }}</span>
+        </div>
+        <div class="cal-body">
+          <div class="ev" :class="'ev-' + e.type" v-for="e in d.events" :key="e.type + e.ref">
+            <div class="ev-t">{{ e.at.slice(11) }} {{ e.title }}</div>
+            <div class="ev-s">{{ e.sub }}</div>
+          </div>
+          <div class="cal-empty" v-if="!d.events.length">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="hint" style="padding:12px 2px 0">
+      到店预约取到店时间；上门取预约时段；加工按期限日排。加工已完成或已取消的不再占日历。
+    </div>
+  </div>`,
+  setup() {
+    const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const monday = (d) => { const x = new Date(d); const w = (x.getDay() + 6) % 7; x.setDate(x.getDate() - w); x.setHours(0,0,0,0); return x; };
+    const start = ref(monday(new Date()));
+    const from = ref(fmt(start.value));
+    const to = ref('');
+    const events = ref([]);
+    const days = computed(() => {
+      const out = [];
+      const names = ['周一','周二','周三','周四','周五','周六','周日'];
+      const today = fmt(new Date());
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(start.value); d.setDate(d.getDate() + i);
+        const key = fmt(d);
+        out.push({
+          date: key,
+          label: names[i],
+          md: key.slice(5),
+          isToday: key === today,
+          events: events.value.filter(e => String(e.at).slice(0, 10) === key)
+        });
+      }
+      return out;
+    });
+    const counts = computed(() => {
+      const c = { reserve: 0, visit: 0, task: 0 };
+      events.value.forEach(e => { if (c[e.type] !== undefined) c[e.type]++; });
+      return c;
+    });
+    const load = async () => {
+      const end = new Date(start.value); end.setDate(end.getDate() + 6);
+      from.value = fmt(start.value);
+      to.value = fmt(end);
+      const r = await api.get(`/calendar?from=${from.value}&to=${to.value}`);
+      if (r.code === 0) events.value = r.data; else ElMessage.error(r.message);
+    };
+    const shift = (n) => { const d = new Date(start.value); d.setDate(d.getDate() + n * 7); start.value = d; load(); };
+    const thisWeek = () => { start.value = monday(new Date()); load(); };
+    onMounted(load);
+    return { from, to, days, counts, shift, thisWeek };
+  }
+};
+
+const OpLog = {
+  template: `
+  <div>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <el-input v-model="keyword" placeholder="按路径或账号搜" style="width:260px" clearable @keyup.enter="load(1)" />
+      <el-button type="primary" @click="load(1)">查 询</el-button>
+    </div>
+    <el-table :data="rows" size="small" border stripe>
+      <el-table-column label="时间" width="170"><template #default="{row}">{{ fmtTime(row.time) }}</template></el-table-column>
+      <el-table-column label="操作人" width="200"><template #default="{row}">{{ row.name || '—' }}<span style="color:#8A948F">（{{ row.username || '匿名' }}）</span></template></el-table-column>
+      <el-table-column prop="method" label="动作" width="80" align="center" />
+      <el-table-column prop="path" label="对象（路径含单据号）" min-width="300" show-overflow-tooltip />
+      <el-table-column label="结果" width="100" align="center"><template #default="{row}"><span :style="{color: row.status<400?'#4E8A6B':'#B23A2B'}">{{ row.status<400 ? '成功' : '失败 ' + row.status }}</span></template></el-table-column>
+    </el-table>
+    <div class="pager"><el-pagination v-model:current-page="page" :page-size="size" :total="total" layout="prev, pager, next" @current-change="p => load(p)" /></div>
+  </div>`,
+  setup() {
+    const rows = ref([]), total = ref(0), page = ref(1), size = ref(20), keyword = ref('');
+    const load = async (p) => {
+      page.value = p;
+      const q = new URLSearchParams({ page: p, size: size.value });
+      if (keyword.value) q.set('keyword', keyword.value);
+      const r = await api.get('/op-logs?' + q.toString());
+      if (tip(r)) { rows.value = r.data.items; total.value = r.data.total; }
+    };
+    onMounted(() => load(1));
+    return { rows, total, page, size, keyword, load, fmtTime };
+  }
+};
+
+const Layout = {
+  template: `
+  <el-container style="height:100vh">
+    <el-aside width="208px" class="side">
+      <div class="brandbar">
+        <img class="seal-logo" src="/logo.png?v=2" alt="隆圭琢玉">
+        <span class="name">隆圭琢玉</span>
+        <span class="ver">v1.0</span>
+      </div>
+      <el-menu :default-active="page" @select="go">
+        <el-menu-item-group v-for="g in visibleGroups" :key="g.title">
+          <template #title><span class="grp">{{ g.title }}</span></template>
+          <el-menu-item v-for="k in g.keys" :key="k" :index="k">{{ pages[k].label }}</el-menu-item>
+        </el-menu-item-group>
+      </el-menu>
+      <div style="position:absolute;bottom:12px;left:0;width:208px;text-align:center;font-size:11px;color:#6E857B">隆圭琢玉</div>
+    </el-aside>
+    <el-container>
+      <el-header class="topbar" height="60px">
+        <div class="title">{{ currentLabel }}</div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <span style="font-size:13px;color:#6B7772">{{ displayName }}（{{ roleNames }}）</span>
+          <el-button link type="primary" size="small" @click="logout">退出</el-button>
+        </div>
+      </el-header>
+      <div class="page"><component :is="view" :key="page" /></div>
+    </el-container>
+  </el-container>`,
+  setup() {
+    const pages = {
+      dashboard: { label: '概览', comp: Dashboard },
+      goods: { label: '货品管理', comp: Goods },
+      sales: { label: '成交与退货', comp: Sales },
+      installments: { label: '分期管理', comp: Installments },
+      stats: { label: '销售与周转', comp: Stats, perm: 'UC-06' },
+      customers: { label: '客户档案', comp: Customers },
+      transfers: { label: '同行调货', comp: Transfers },
+      approval: { label: '审核与结算', comp: Approval },
+      consign: { label: '寄售合同', comp: Consign },
+      process: { label: '加工与上门', comp: Process },
+      calendar: { label: '经营日历', comp: Calendar },
+      users: { label: '账号与角色', comp: Users, perm: 'UC-12' },
+      base: { label: '基础数据', comp: Base },
+      oplog: { label: '操作日志', comp: OpLog, perm: 'UC-12' },
+    };
+    const page = ref('dashboard');
+    // 菜单按业务域分组，不再 11 项平铺
+    const menuGroups = [
+      { title: '概览', keys: ['dashboard'] },
+      { title: '经营', keys: ['calendar', 'goods', 'sales', 'installments', 'stats'] },
+      { title: '客户', keys: ['customers'] },
+      { title: '往来', keys: ['transfers', 'approval', 'consign', 'process'] },
+      { title: '系统', keys: ['users', 'base', 'oplog'] },
+    ];
+    const user = JSON.parse(localStorage.getItem('jade_user') || '{}');
+    const roleNames = (user.roles || []).map(r => r.name).join('、') || '—';
+    // 姓名里已带"（老板）"这类后缀时不再叠一遍角色名
+    const displayName = String(user.name || '').replace(/（[^）]*）$/, '');
+    // 菜单按登录账号的权限裁剪：缺对应权限码的页直接不出现（接口层另有 @RequirePerm 兜底）
+    const perms = new Set(user.permissions || []);
+    const canSee = (k) => !pages[k].perm || perms.has(pages[k].perm);
+    const visibleGroups = menuGroups
+      .map(g => ({ ...g, keys: g.keys.filter(canSee) }))
+      .filter(g => g.keys.length);
+    const view = computed(() => pages[page.value].comp);
+    const currentLabel = computed(() => pages[page.value].label);
+    const go = (k) => { if (!pages[k] || !canSee(k)) return; page.value = k; };
+    const logout = async () => {
+      await api.post('/auth/logout');
+      localStorage.removeItem('jade_token'); localStorage.removeItem('jade_user'); location.reload();
+    };
+    return { page, pages, visibleGroups, view, currentLabel, user, displayName, roleNames, go, logout };
+  }
+};
+
+const app = createApp({
+  components: { Login, Layout },
+  template: `<component :is="page" />`,
+  setup() {
+    // 柜台端只给老板与销售用：外部角色（供应商/师傅/商户）的会话在这页按未登录处理，
+    // 不清 storage（别把外部端自己的会话连带杀掉），接口层另有 @RequirePerm 兜底
+    const page = computed(() => {
+      if (!api.token()) return 'Login';
+      try {
+        const u = JSON.parse(localStorage.getItem('jade_user') || '{}');
+        const roles = (u.roles || []).map(r => r.code);
+        if (!roles.includes('BOSS') && !roles.includes('SALE')) return 'Login';
+      } catch (e) { return 'Login'; }
+      return 'Layout';
+    });
+    return { page };
+  }
+});
+app.use(ElementPlus, { locale: ElementPlusLocaleZhCn });
+app.mount('#app');
+</script>
+</body>
+</html>

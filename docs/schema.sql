@@ -1,3 +1,7 @@
+-- ⚠️ 初始化脚本：第 12-14 行含 DROP DATABASE db_jade，只能对空实例跑！
+-- ⚠️ 绝不能导入运行中的 MySQL（2026-10-26 事故：误导入线上导致演示库被清空，靠 binlog 回放恢复）。
+-- ⚠️ 要对比结构请用临时库：CREATE DATABASE x; mysql x < schema.sql
+
 -- =====================================================================
 -- 玉器门店顾客服务与经营管理系统  数据库设计（D 阶段·数据层）
 -- 数据库：db_jade    版本：MySQL 8.0
@@ -17,6 +21,10 @@
 --   * 金额 DECIMAL(12,2)；克重 DECIMAL(10,2)；尺寸/圈口/料种等枚举用 VARCHAR 并存注释
 --   * 每个表、每列均带中文 COMMENT；状态字段注释里列全取值
 -- =====================================================================
+
+-- 客户端连接字符集必须显式声明：mysql 命令行默认 latin1 读文件，
+-- 中文默认值会被当作多字节乱码，VARCHAR(n) 长度校验超限（如 status VARCHAR(8) DEFAULT '待审核'）
+SET NAMES utf8mb4;
 
 DROP DATABASE IF EXISTS db_jade;
 CREATE DATABASE db_jade DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -43,6 +51,7 @@ CREATE TABLE t_user (
   name          VARCHAR(64)  NOT NULL COMMENT '姓名',
   password_hash VARCHAR(128) NOT NULL COMMENT '口令（加密保存，禁止明文）',
   status        VARCHAR(8)   NOT NULL DEFAULT '启用' COMMENT '状态：启用|停用',
+  party_id      BIGINT UNSIGNED NULL COMMENT '外部账号绑定的往来方 -> t_source_party（供应商/师傅/商户），内部账号为空（应用层校验，未加外键）',
   created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   updated_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (id),
@@ -136,6 +145,7 @@ CREATE TABLE t_goods (
   in_time       DATETIME      NOT NULL COMMENT '入库时间（系统时间）',
   stock_in_id   BIGINT UNSIGNED NOT NULL COMMENT '入库批次 -> t_stock_in（货品清单成员）',
   status        VARCHAR(16)   NOT NULL DEFAULT '在柜' COMMENT '状态：在柜|已送检|预留|已售|已订|已调出|代销中|待处理',
+  is_featured   TINYINT(1)    NOT NULL DEFAULT 0 COMMENT '精选上柜位（门户/客户端推荐位展示）',
   created_at    DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   updated_at    DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (id),
@@ -143,6 +153,7 @@ CREATE TABLE t_goods (
   KEY idx_goods_category (category_id),
   KEY idx_goods_stock_in (stock_in_id),
   KEY idx_goods_status (status),
+  KEY idx_goods_featured (is_featured),
   CONSTRAINT fk_goods_category  FOREIGN KEY (category_id)  REFERENCES t_category (id)  ON DELETE RESTRICT,
   CONSTRAINT fk_goods_stock_in  FOREIGN KEY (stock_in_id)  REFERENCES t_stock_in (id)  ON DELETE RESTRICT
 ) ENGINE=InnoDB COMMENT='货品档案（UC-01/UC-02，状态机见 07a；状态变更流水见 t_stock_log）';
@@ -180,13 +191,22 @@ CREATE TABLE t_reservation (
   goods_id     BIGINT UNSIGNED NOT NULL COMMENT '货品 -> t_goods（预约查看的目标）',
   name         VARCHAR(64)  NOT NULL COMMENT '姓名',
   phone        VARCHAR(32)  NOT NULL COMMENT '手机号',
-  expect_slot  VARCHAR(64)  NOT NULL COMMENT '期望到店时段',
-  status       VARCHAR(16)  NOT NULL DEFAULT '待确认' COMMENT '状态：待确认|已到店|已取消',
+  ip           VARCHAR(45)  NULL COMMENT '提交来源 IP（限流与审计）',
+  expect_slot  DATETIME     NOT NULL COMMENT '到店时间（半小时对齐）',
+  status       VARCHAR(16)  NOT NULL DEFAULT '待确认' COMMENT '状态：待确认|已到店|已取消|已失效',
+  exempt       TINYINT      NOT NULL DEFAULT 0 COMMENT '违约是否已豁免：0 否 1 是',
+  exempt_by    BIGINT UNSIGNED NULL COMMENT '解除操作人 -> t_user',
+  exempt_at    DATETIME     NULL COMMENT '解除时间',
   created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   updated_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (id),
   UNIQUE KEY uk_reservation_no (resv_no),
+  -- 部分唯一索引：只在「待确认」时生效，同时兜住「整件货独占」与「同一时段独占」
+  UNIQUE KEY uk_resv_slot_active ((CASE WHEN status = '待确认' THEN expect_slot END)),
+  UNIQUE KEY uk_resv_goods_active ((CASE WHEN status = '待确认' THEN goods_id END)),
   KEY idx_reservation_goods (goods_id),
+  KEY idx_resv_slot (expect_slot),
+  KEY idx_resv_ip (ip),
   CONSTRAINT fk_reservation_goods FOREIGN KEY (goods_id) REFERENCES t_goods (id) ON DELETE RESTRICT
 ) ENGINE=InnoDB COMMENT='预约看货（UC-10；UC-27 凭手机号后四位查询）';
 
@@ -197,6 +217,7 @@ CREATE TABLE t_booking (
   goods_id     BIGINT UNSIGNED NOT NULL COMMENT '货品 -> t_goods',
   name         VARCHAR(64)  NOT NULL COMMENT '姓名',
   phone        VARCHAR(32)  NOT NULL COMMENT '手机号（3 次额度按此计）',
+  ip           VARCHAR(45)  NULL COMMENT '来源 IP（防刷限流，口径同预约）',
   customer_id  BIGINT UNSIGNED NULL COMMENT '客户 -> t_customer（已建档客户按手机号关联，散客可空）',
   submit_time  DATETIME     NOT NULL COMMENT '提交时间',
   contact_time DATETIME     NULL     COMMENT '联系时间（UC-28 标记已联系时写入）',
@@ -208,6 +229,8 @@ CREATE TABLE t_booking (
   KEY idx_booking_goods (goods_id),
   KEY idx_booking_phone (phone),
   KEY idx_booking_customer (customer_id),
+  KEY idx_booking_ip (ip),
+  UNIQUE KEY uk_booking_goods_active ((case when status in ('待到店','已联系') then goods_id end)),
   CONSTRAINT fk_booking_goods    FOREIGN KEY (goods_id)    REFERENCES t_goods (id)    ON DELETE RESTRICT,
   CONSTRAINT fk_booking_customer FOREIGN KEY (customer_id) REFERENCES t_customer (id) ON DELETE RESTRICT
 ) ENGINE=InnoDB COMMENT='预定记录（UC-13 预定、UC-28 到店跟进，状态机见规约；区别于 UC-01 规则③ 预留）';
@@ -337,6 +360,7 @@ CREATE TABLE t_transfer (
   UNIQUE KEY uk_transfer_no (record_no),
   KEY idx_transfer_merchant (merchant_id),
   KEY idx_transfer_goods (goods_id),
+  UNIQUE KEY uk_transfer_goods_open ((case when settled = '否' then goods_id end)),
   KEY idx_transfer_settled (settled),
   CONSTRAINT fk_transfer_merchant FOREIGN KEY (merchant_id) REFERENCES t_source_party (id) ON DELETE RESTRICT,
   CONSTRAINT fk_transfer_goods    FOREIGN KEY (goods_id)    REFERENCES t_goods (id)       ON DELETE RESTRICT
@@ -385,6 +409,8 @@ CREATE TABLE t_process_task (
   labor_fee     DECIMAL(12,2) NOT NULL COMMENT '工费',
   deadline      DATE         NOT NULL COMMENT '期限',
   status        VARCHAR(8)   NOT NULL DEFAULT '待加工' COMMENT '状态：待加工|在加工|待交付|已交付',
+  urge_count    INT          NOT NULL DEFAULT 0 COMMENT '门店催办次数（「逾期」为派生态：待加工/在加工且过期限，不落库）',
+  last_urge_at  DATETIME     NULL COMMENT '最近一次催办时间，师傅端据此提示',
   created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   updated_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (id),
@@ -417,7 +443,9 @@ CREATE TABLE t_visit_appt (
   appt_no      VARCHAR(32)  NOT NULL COMMENT '预约编号',
   appt_party   VARCHAR(128) NOT NULL COMMENT '预约方（供应商/加工师傅）',
   matter       VARCHAR(255) NOT NULL COMMENT '事项（上门交接内容）',
-  expect_slot  VARCHAR(64)  NOT NULL COMMENT '期望时段',
+  expect_date  DATE         NOT NULL COMMENT '期望上门日期（UC-15 规则②：原来是自由文本，无法判重与比对，2026-10-26 拆成结构化字段）',
+  start_time   TIME         NOT NULL COMMENT '期望时段起（10:00–19:00，半小时对齐）',
+  end_time     TIME         NOT NULL COMMENT '期望时段止（服务端按 start_time + 1 小时写入，不接受客户端传值）',
   submit_time  DATETIME     NOT NULL COMMENT '提交时间',
   status       VARCHAR(8)   NOT NULL DEFAULT '待上门' COMMENT '状态：待上门|已完成|已取消',
   transfer_apply_id BIGINT UNSIGNED NULL COMMENT '关联出让申请 -> t_transfer_apply（UC-15 规则①，二选一必有其一）',
@@ -425,7 +453,11 @@ CREATE TABLE t_visit_appt (
   created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   updated_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (id),
+  -- 同一时段只安排一次交接：整段完全相同的并发重复提交由这个函数唯一索引兜底，
+  -- 区间部分重叠（同日 10:00-11:00 与 10:30-11:30）索引表达不了，在服务层判重
+  UNIQUE KEY uk_visit_slot_open ((case when status = '待上门' then concat(expect_date, '#', start_time, '#', end_time) end)),
   UNIQUE KEY uk_visit_appt_no (appt_no),
+  KEY idx_visit_expect (expect_date, status),
   KEY idx_visit_transfer (transfer_apply_id),
   KEY idx_visit_delivery (delivery_apply_id),
   CONSTRAINT fk_visit_transfer FOREIGN KEY (transfer_apply_id) REFERENCES t_transfer_apply (id) ON DELETE RESTRICT,
@@ -582,6 +614,21 @@ CREATE TABLE t_delivery_image (
 ) ENGINE=InnoDB COMMENT='完工交付过程图（UC-17，原逗号分隔字段拆表）';
 
 -- 用户-角色（多对多拆表，组合外键非空）
+-- 操作日志（管理端留痕）：登录后的改操作由 AuthInterceptor 自动记录，公开匿名接口不记
+CREATE TABLE t_op_log (
+  id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '代理键',
+  user_id    BIGINT UNSIGNED NULL COMMENT '操作人 -> t_user',
+  username   VARCHAR(32)  NULL COMMENT '操作时账号快照',
+  method     VARCHAR(8)   NOT NULL COMMENT 'HTTP 方法',
+  path       VARCHAR(255) NOT NULL COMMENT '请求路径（含目标 id）',
+  query      VARCHAR(200) NULL COMMENT '查询串',
+  status     INT          NOT NULL COMMENT 'HTTP 状态码，4xx/5xx 即失败操作也留痕',
+  created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
+  PRIMARY KEY (id),
+  KEY idx_op_log_user (user_id),
+  KEY idx_op_log_time (created_at)
+) ENGINE=InnoDB COMMENT='操作日志（UC-12 查阅）';
+
 CREATE TABLE t_user_role (
   id      BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '代理键',
   user_id BIGINT UNSIGNED NOT NULL COMMENT '用户 -> t_user',
@@ -604,5 +651,5 @@ CREATE TABLE t_role_permission (
 ) ENGINE=InnoDB COMMENT='角色-权限（多对多拆表，一角色多权限）';
 
 -- =====================================================================
--- 结束。共 31 张表：基础参照 6 + 业务 19 + 拆表 6（多值属性 4 + 多对多 2）。
+-- 结束。共 32 张表：基础参照 6 + 业务 19 + 拆表 6（多值属性 4 + 多对多 2）+ 运维 1（t_op_log 操作留痕，2026-10-26 增，论文 ERD 未含）。
 -- =====================================================================

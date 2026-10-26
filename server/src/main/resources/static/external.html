@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>隆圭琢玉 · 外部协同</title>
+<link rel="icon" type="image/png" href="/logo.png?v=2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2322352F'/%3E%3Ctext x='16' y='23' font-size='19' fill='%23C6A560' text-anchor='middle' font-family='serif'%3E%E7%8F%8D%3C/text%3E%3C/svg%3E">
+<script src="lib/vue.js"></script>
+<style>
+  /* 与客户看板共用一套令牌：宣纸底 / 墨玉 / 哑金 / 朱砂 */
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --paper:#FBF7F0; --paper-2:#F4EEE3; --card:#FFFFFF;
+    --jade-900:#22352F; --jade-700:#2C4A41; --jade-300:#7C9A8E;
+    --gold:#A9843F; --gold-2:#8A6B2F; --gold-soft:#E8DCC4;
+    --cinnabar:#B23A2B;
+    --text:#2C3531; --text-2:#6B7772; --text-3:#8A948F;
+    --line:#E6DECF; --line-2:#F0E9DC;
+    --serif:"Songti SC","STSong","Source Han Serif SC","Noto Serif CJK SC","SimSun",serif;
+    --sans:"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Helvetica Neue",sans-serif;
+  }
+  html,body{margin:0;padding:0}
+  body{background:var(--paper);color:var(--text);font-family:var(--sans);font-size:14px;
+    -webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
+  a{color:inherit;text-decoration:none}
+  [v-cloak]{display:none}
+
+  .page{max-width:680px;margin:0 auto;min-height:100vh;background:var(--paper);position:relative}
+
+  /* 顶栏 */
+  .hd{position:sticky;top:0;z-index:10;background:var(--paper);padding:14px 16px 12px;
+    border-bottom:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+  .hd .t{margin:0;font-family:var(--serif);font-size:19px;font-weight:600;letter-spacing:2px;color:var(--jade-900)}
+  .hd .hd-brand{display:flex;align-items:center;gap:10px}
+  .hd .hd-brand .logo{width:36px;height:36px;border-radius:50%;display:block;
+    box-shadow:0 0 0 1px var(--gold-soft), 0 0 0 2px var(--paper), 0 0 0 3px var(--gold-soft)}
+  .hd .s{margin:5px 0 0;font-size:11.5px;color:var(--text-2)}
+  .hd a{font-size:12px;color:var(--gold-2);border-bottom:1px solid var(--gold-soft);padding-bottom:1px;flex:none}
+
+  .body{padding:16px}
+  .pad-nav{height:28px}
+
+  /* 登录 */
+  .login-note{margin:6px 0 18px;font-size:12.5px;line-height:1.9;color:var(--text-2)}
+  .field{background:var(--card);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .row{display:flex;align-items:center;gap:12px;padding:0 14px;height:52px;border-bottom:1px solid var(--line-2)}
+  .row:last-child{border-bottom:0}
+  .lb{width:64px;flex:none;font-size:13px;color:var(--text-2)}
+  .inp{flex:1;border:0;outline:0;background:transparent;font-size:15px;color:var(--text);
+    font-family:var(--sans);height:44px}
+  .inp::placeholder{color:#AEB6B1}
+
+  .btn{display:flex;align-items:center;justify-content:center;height:48px;border-radius:6px;
+    background:var(--jade-700);color:#F7F2E7;font-family:var(--serif);font-size:16px;letter-spacing:3px;
+    cursor:pointer;user-select:none;transition:.15s}
+  .btn:active{background:var(--jade-900)}
+  .btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold-2)}
+  .btn.disabled{opacity:.55;pointer-events:none}
+  .btn.sm{height:40px;font-size:14px;letter-spacing:2px}
+  .mt16{margin-top:16px}
+
+  .err{margin:12px 0 0;padding:10px 12px;border-radius:4px;background:#FBEDEA;color:var(--cinnabar);font-size:12.5px;line-height:1.7}
+  .ok{margin:12px 0 0;padding:10px 12px;border-radius:4px;background:#EDF5F0;color:#3C6B52;font-size:12.5px;line-height:1.7}
+
+  /* 工作台卡片 */
+  .cards{display:grid;gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px 16px;cursor:pointer;
+    transition:.15s;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .card:active{background:var(--paper-2)}
+  .card .n{font-family:var(--serif);font-size:17px;letter-spacing:1px;color:var(--jade-900)}
+  .card .d{margin-top:6px;font-size:12px;color:var(--text-2);line-height:1.6}
+  .card .arrow{color:var(--gold-2);font-size:18px;flex:none}
+
+  /* 标签页 */
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin:-16px -16px 16px;background:var(--card)}
+  .tab{flex:1;text-align:center;padding:14px 0;font-size:13.5px;color:var(--text-2);cursor:pointer;
+    border-bottom:2px solid transparent}
+  .tab.on{color:var(--jade-900);border-color:var(--gold);font-weight:600}
+
+  /* 列表 */
+  .rcard{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px;margin-bottom:10px}
+  .rcard .no{font-family:var(--serif);font-size:13px;color:var(--gold-2);letter-spacing:.5px}
+  .rcard .l{margin-top:6px;font-size:13.5px;line-height:1.7}
+  .rcard .g{color:var(--text-2);font-size:12.5px}
+  .rcard .st{margin-top:8px;display:inline-block;padding:2px 8px;border-radius:3px;font-size:11.5px;
+    background:var(--paper-2);color:var(--gold-2)}
+  .empty{padding:40px 0;text-align:center;color:var(--text-3);font-size:13px}
+
+  /* 商户价目 */
+  .pitem{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px;margin-bottom:10px}
+  .pitem img,.pitem .ph{width:78px;height:78px;border-radius:4px;object-fit:cover;background:var(--paper-2);flex:none;
+    display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:11px}
+  .pitem .info{flex:1;min-width:0}
+  .pitem .nm{font-family:var(--serif);font-size:15px;line-height:1.4}
+  .pitem .mt{margin-top:4px;font-size:12px;color:var(--text-2)}
+  .pitem .pr{margin-top:6px;font-family:var(--serif);font-size:15px;color:var(--cinnabar)}
+
+  /* 弹层 */
+  .mask{position:fixed;inset:0;background:rgba(34,53,47,.45);z-index:40}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--card);
+    border-top:1px solid var(--line);border-radius:12px 12px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));
+    max-width:680px;margin:0 auto}
+  .sheet .st{font-family:var(--serif);font-size:17px;letter-spacing:1px;color:var(--jade-900)}
+  .sheet .ss{margin-top:6px;font-size:12px;color:var(--text-2)}
+  .shots{display:flex;gap:10px;margin-top:16px}
+  .shot{position:relative;flex:1;aspect-ratio:1/1;border:1px dashed var(--line);border-radius:6px;
+    background:var(--paper-2);overflow:hidden;display:flex;align-items:center;justify-content:center;
+    font-size:12px;color:var(--gold-2);cursor:pointer}
+  .shot img{width:100%;height:100%;object-fit:cover}
+  .shot .tag{position:absolute;left:0;right:0;bottom:0;background:rgba(34,53,47,.55);color:#fff;
+    font-size:10.5px;text-align:center;padding:2px 0}
+  .sheet .inp2{width:100%;border:1px solid var(--line);border-radius:4px;height:44px;padding:0 12px;
+    font-size:14px;font-family:var(--sans);outline:0;margin-top:12px}
+
+  .scan-hint{margin-top:14px;font-size:12px;color:var(--text-3);line-height:1.8}
+</style>
+</head>
+<body>
+<div id="app" class="page" v-cloak>
+
+  <!-- 顶栏 -->
+  <div class="hd">
+    <div class="hd-brand">
+      <img class="logo" src="/logo.png?v=2" alt="隆圭琢玉">
+      <div>
+        <p class="t">{{ title }}</p>
+        <p class="s">{{ subtitle }}</p>
+      </div>
+    </div>
+    <a v-if="user" @click="logout">退出</a>
+    <a v-else href="/">回首页</a>
+  </div>
+
+  <div class="body">
+
+    <!-- 登录 -->
+    <template v-if="!user">
+      <p class="login-note">供应商、加工师傅、合作商户用门店开通的账号登录。<br>客户看货不需要登录，直接扫看板二维码。</p>
+      <div class="field">
+        <div class="row">
+          <span class="lb">账号</span>
+          <input class="inp" v-model.trim="form.username" placeholder="门店给你的账号" autocomplete="username">
+        </div>
+        <div class="row">
+          <span class="lb">口令</span>
+          <input class="inp" type="password" v-model="form.password" placeholder="初始口令由门店交付"
+                 autocomplete="current-password" @keyup.enter="submitLogin">
+        </div>
+      </div>
+      <div class="err" v-if="err">{{ err }}</div>
+      <div class="btn mt16" :class="{disabled:busy}" @click="submitLogin">{{ busy ? '登录中…' : '登录' }}</div>
+      <p class="scan-hint">账号由门店在柜台端「账号与角色」里开通并线下交付，忘记口令请联系门店。</p>
+    </template>
+
+    <!-- 工作台 -->
+    <template v-else-if="view==='home'">
+      <div class="cards">
+        <div class="card" v-for="c in cards" :key="c.v" @click="c.v && go(c.v)" :style="c.v ? '' : 'opacity:.7'">
+          <div>
+            <div class="n">{{ c.t }}</div>
+            <div class="d">{{ c.d }}</div>
+          </div>
+          <div class="arrow" v-if="c.v">›</div>
+        </div>
+      </div>
+      <p class="scan-hint">这里只显示{{ roleName }}相关的功能，需要别的权限请联系门店。</p>
+    </template>
+
+    <!-- 供应商：出让申请 -->
+    <template v-else-if="view==='supplier'">
+      <div class="tabs">
+        <div class="tab" :class="{on:supTab==='form'}" @click="supTab='form'">提交申请</div>
+        <div class="tab" :class="{on:supTab==='list'}" @click="openSupList">我的申请</div>
+      </div>
+
+      <template v-if="supTab==='form'">
+        <div class="field">
+          <div class="row">
+            <span class="lb">出让类型</span>
+            <select class="inp" v-model="sf.outType">
+              <option v-for="t in types" :key="t" :value="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="row"><span class="lb">品名</span>
+            <input class="inp" v-model.trim="sf.name" placeholder="例如 和田玉籽料原石"></div>
+          <div class="row"><span class="lb">数量</span>
+            <input class="inp" type="number" v-model="sf.quantity" placeholder="件"></div>
+          <div class="row"><span class="lb">期望价</span>
+            <input class="inp" type="number" v-model="sf.expectPrice" placeholder="元/件"></div>
+          <div class="row"><span class="lb">说明</span>
+            <input class="inp" v-model.trim="sf.description" placeholder="产地、成色、瑕疵等"></div>
+        </div>
+        <div class="err" v-if="err">{{ err }}</div>
+        <div class="ok" v-if="okMsg">{{ okMsg }}</div>
+        <div class="btn mt16" :class="{disabled:busy}" @click="submitApply">{{ busy ? '提交中…' : '提交出让申请' }}</div>
+        <p class="scan-hint">提交后为「待审核」，门店通过后才能预约上门。</p>
+      </template>
+
+      <template v-else>
+        <div class="rcard" v-for="a in applies" :key="a.id">
+          <div class="no">{{ a.applyNo }}</div>
+          <div class="l">{{ a.outType }} · {{ a.name }} · {{ a.quantity }} 件</div>
+          <div class="l g">期望价 {{ a.expectPrice }} 元</div>
+          <div class="st">{{ a.status }}</div>
+          <div class="l g" v-if="a.auditOpinion" style="margin-top:6px">审核意见：{{ a.auditOpinion }}</div>
+        </div>
+        <div class="empty" v-if="!loading && !applies.length">还没有提交过申请</div>
+        <div class="empty" v-if="loading">加载中…</div>
+      </template>
+    </template>
+
+    <!-- 师傅：加工任务 -->
+    <template v-else-if="view==='craftsman'">
+      <div class="rcard" v-for="t in tasks" :key="t.id">
+        <div class="no">{{ t.taskNo }}</div>
+        <div class="l">{{ t.goodsName }}</div>
+        <div class="l g" v-if="t.requirement">要求：{{ t.requirement }}</div>
+        <div class="l g">工费 {{ t.laborFee }} 元 · 期限 {{ t.deadline }}<span
+          v-if="t.overdue" style="color:#B23A2B">（逾期 {{ t.overdueDays }} 天）</span></div>
+        <div class="l" v-if="t.urgeCount" style="color:#B23A2B">门店已催办 {{ t.urgeCount }} 次<span
+          v-if="t.lastUrgeAt">（{{ String(t.lastUrgeAt).replace('T', ' ').slice(0, 16) }}）</span></div>
+        <div class="st">{{ t.status }}</div>
+        <div class="btn sm mt16" v-if="t.status==='在加工'" @click="openDelivery(t)">提交完工</div>
+      </div>
+      <div class="empty" v-if="!loading && !tasks.length">当前没有在加工的任务</div>
+      <div class="empty" v-if="loading">加载中…</div>
+      <div class="err" v-if="err && !dlg">{{ err }}</div>
+
+      <!-- 完工弹层 -->
+      <div class="mask" v-if="dlg" @click="dlg=null"></div>
+      <div class="sheet" v-if="dlg">
+        <div class="st">提交完工 · {{ dlg.taskNo }}</div>
+        <div class="ss">需上传加工前、加工中、完工三张照片</div>
+        <div class="shots">
+          <div class="shot" v-for="(s,i) in shots" :key="s.stage" @click="pick(i)">
+            <img v-if="s.path" :src="s.path" alt="">
+            <span v-else>+ {{ s.stage }}</span>
+            <span class="tag" v-if="s.path">{{ s.stage }}</span>
+          </div>
+        </div>
+        <input class="inp2" v-model.trim="note" placeholder="备注，可不填">
+        <div class="err" v-if="err">{{ err }}</div>
+        <div class="btn mt16" :class="{disabled:busy}" @click="submitDelivery">{{ busy ? '提交中…' : '提交完工申请' }}</div>
+        <div class="btn ghost mt16" @click="dlg=null">取消</div>
+      </div>
+      <input ref="file" type="file" accept="image/*" style="display:none" @change="onFile">
+    </template>
+
+    <!-- 商户：调货价目 -->
+    <template v-else-if="view==='merchant'">
+      <div class="pitem" v-for="g in prices" :key="g.goodsNo">
+        <img v-if="g.image" :src="g.image" alt="">
+        <div class="ph" v-else>无图</div>
+        <div class="info">
+          <div class="nm">{{ g.name }}</div>
+          <div class="mt">{{ g.shape || '—' }} · {{ g.weightG }}g<template v-if="g.size"> · {{ g.size }}</template></div>
+          <div class="pr">调货 {{ g.transferPrice }} 元</div>
+        </div>
+      </div>
+      <div class="empty" v-if="!loading && !prices.length">暂无可调货品</div>
+      <div class="empty" v-if="loading">加载中…</div>
+      <div class="btn ghost" v-if="prices.length < total" @click="loadMore">加载更多</div>
+      <div class="err" v-if="err">{{ err }}</div>
+    </template>
+
+    <!-- 上门预约 -->
+    <template v-else-if="view==='visit'">
+      <template v-if="role==='SUPPLIER'">
+        <div class="field">
+          <div class="row">
+            <span class="lb">对应申请</span>
+            <select class="inp" v-model="vf.applyId" v-if="visitApplies.length">
+              <option v-for="a in visitApplies" :key="a.id" :value="a.id">{{ a.applyNo }}（{{ a.name }}）</option>
+            </select>
+            <span class="inp" v-else style="color:var(--text-3)">暂无已通过的申请</span>
+          </div>
+          <div class="row"><span class="lb">日期</span>
+            <input class="inp" type="date" v-model="vf.date"></div>
+          <div class="row"><span class="lb">时段</span>
+            <input class="inp" type="time" step="1800" min="10:00" max="19:00" v-model="vf.time"></div>
+          <div class="row"><span class="lb">事项</span>
+            <input class="inp" v-model.trim="vf.matter" placeholder="可不填"></div>
+        </div>
+        <div class="err" v-if="err">{{ err }}</div>
+        <div class="ok" v-if="okMsg">{{ okMsg }}</div>
+        <div class="btn mt16" :class="{disabled:busy}" @click="submitVisit">{{ busy ? '提交中…' : '提交预约' }}</div>
+        <p class="scan-hint">门店确认后按时段上门，一次只接待一位。</p>
+      </template>
+      <template v-else-if="role==='CRAFTSMAN'">
+        <div class="field">
+          <div class="row">
+            <span class="lb">对应交付</span>
+            <select class="inp" v-model="vf.deliveryId" v-if="confirmedDeliveries.length">
+              <option v-for="d in confirmedDeliveries" :key="d.id" :value="d.id">{{ d.applyNo }}（{{ d.goodsName || d.taskNo }}）</option>
+            </select>
+            <span class="inp" v-else style="color:var(--text-3)">暂无已确认的完工申请</span>
+          </div>
+          <div class="row"><span class="lb">日期</span>
+            <input class="inp" type="date" v-model="vf.date"></div>
+          <div class="row"><span class="lb">时段</span>
+            <input class="inp" type="time" step="1800" min="10:00" max="19:00" v-model="vf.time"></div>
+          <div class="row"><span class="lb">事项</span>
+            <input class="inp" v-model.trim="vf.matter" placeholder="可不填"></div>
+        </div>
+        <div class="err" v-if="err">{{ err }}</div>
+        <div class="ok" v-if="okMsg">{{ okMsg }}</div>
+        <div class="btn mt16" :class="{disabled:busy}" @click="submitVisit">{{ busy ? '提交中…' : '提交预约' }}</div>
+        <p class="scan-hint">完工确认后按时段上门取件，一次只接待一位。</p>
+      </template>
+      <template v-else>
+        <p class="login-note">该功能对当前角色未开放。</p>
+      </template>
+    </template>
+
+    <div class="pad-nav"></div>
+  </div>
+</div>
+
+<script>
+const { createApp, reactive, ref, computed, onMounted } = Vue;
+
+const API = '';
+const TOKEN_KEY = 'jade_token';
+const USER_KEY = 'jade_user';
+
+function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+function setSession(t, u) {
+  localStorage.setItem(TOKEN_KEY, t || '');
+  localStorage.setItem(USER_KEY, JSON.stringify(u || null));
+}
+function getUser() {
+  try { return JSON.parse(localStorage.getItem(USER_KEY) || 'null'); } catch (e) { return null; }
+}
+function clearSession() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+}
+
+async function call(method, path, body) {
+  const opt = { method, headers: { 'Content-Type': 'application/json' } };
+  const t = getToken();
+  if (t) opt.headers.Authorization = 'Bearer ' + t;
+  if (body !== undefined) opt.body = JSON.stringify(body);
+  try {
+    const r = await fetch(API + path, opt);
+    const d = await r.json();
+    // 令牌过期或被停用：清掉本地登录态回登录页，不能带着失效令牌把列表显示成"没有提交过申请"
+    if (r.status === 401) {
+      clearSession();
+      location.reload();
+      return { code: 401, message: '登录已过期，请重新登录' };
+    }
+    return d;
+  } catch (e) {
+    return { code: -1, message: '网络异常，请稍后重试' };
+  }
+}
+
+createApp({
+  setup() {
+    const user = ref(getUser());
+    const view = ref('home');
+    const err = ref('');
+    const okMsg = ref('');
+    const busy = ref(false);
+    const loading = ref(false);
+
+    const form = reactive({ username: '', password: '' });
+    const types = ['玉料', '成品', '回流'];
+    const sf = reactive({ outType: '玉料', name: '', quantity: '', expectPrice: '', description: '' });
+    const supTab = ref('form');
+    const applies = ref([]);
+
+    const tasks = ref([]);
+    const dlg = ref(null);
+    const shots = ref([]);
+    const note = ref('');
+    const fileRef = ref(null);
+    let shotIdx = 0;
+
+    const prices = ref([]);
+    const total = ref(0);
+    let page = 1;
+
+    const vf = reactive({ applyId: '', deliveryId: '', date: '', time: '10:00', matter: '' });
+    const confirmedDeliveries = ref([]);
+    const visitApplies = ref([]);
+
+    const ROLE_NAME = { SUPPLIER: '供应商', CRAFTSMAN: '加工师傅', MERCHANT: '合作商户', BOSS: '老板', SALE: '销售' };
+    const role = computed(() => {
+      const u = user.value;
+      const roles = (u && u.roles) || [];
+      const order = ['SUPPLIER', 'CRAFTSMAN', 'MERCHANT', 'BOSS', 'SALE'];
+      for (const r of order) if (roles.some((x) => x && x.code === r)) return r;
+      return '';
+    });
+    const roleName = computed(() => ROLE_NAME[role.value] || '外部账号');
+
+    const title = computed(() => {
+      if (!user.value) return '外部账号登录';
+      if (view.value === 'home') return '工作台';
+      if (view.value === 'supplier') return '出让申请';
+      if (view.value === 'craftsman') return '加工任务';
+      if (view.value === 'merchant') return '调货价目';
+      if (view.value === 'visit') return '预约上门';
+      return '工作台';
+    });
+    const subtitle = computed(() => {
+      if (!user.value) return '供应商 · 加工师傅 · 合作商户';
+      return roleName.value;
+    });
+
+    const CARDS = {
+      SUPPLIER: [
+        { t: '提交出让申请', d: '玉料、成品、回流三类，等门店审核', v: 'supplier' },
+        { t: '预约上门', d: '申请通过后约上门时间', v: 'visit' }
+      ],
+      CRAFTSMAN: [
+        { t: '我的加工任务', d: '在加工与待交付，可提交完工', v: 'craftsman' },
+        { t: '预约上门', d: '交付确认后约上门时间', v: 'visit' }
+      ],
+      MERCHANT: [{ t: '调货价目', d: '在柜可调货品与调货价', v: 'merchant' }],
+      BOSS: [{ t: '经营数据在柜台端', d: '老板账号请用电脑端查看与操作', v: '' }],
+      SALE: [{ t: '销售操作在柜台端', d: '销售账号请用电脑端开单', v: '' }]
+    };
+    const cards = computed(() => CARDS[role.value] || []);
+
+    async function submitLogin() {
+      if (busy.value) return;
+      if (!form.username || !form.password) { err.value = '请输入账号与口令'; return; }
+      busy.value = true; err.value = '';
+      const r = await call('POST', '/api/auth/login', { username: form.username, password: form.password });
+      busy.value = false;
+      if (r.code !== 0) { err.value = r.message || '登录失败'; return; }
+      setSession(r.data.token, r.data.user);
+      user.value = r.data.user;
+      view.value = 'home';
+      form.password = '';
+    }
+
+    function logout() {
+      clearSession();
+      user.value = null;
+      view.value = 'home';
+      err.value = ''; okMsg.value = '';
+      applies.value = []; tasks.value = []; prices.value = [];
+    }
+
+    function go(v) { view.value = v; err.value = ''; okMsg.value = ''; if (v === 'supplier') loadApplies(); if (v === 'craftsman') loadTasks(); if (v === 'merchant') loadPrices(1); if (v === 'visit') loadVisitApplies(); }
+
+    /* 供应商 */
+    async function loadApplies() {
+      loading.value = true;
+      const r = await call('GET', '/api/supplier/applies');
+      loading.value = false;
+      if (r.code !== 0) { err.value = r.message; return; }
+      applies.value = r.data || [];
+    }
+    function openSupList() { supTab.value = 'list'; loadApplies(); }
+    async function submitApply() {
+      if (busy.value) return;
+      if (!sf.name) { err.value = '请填品名'; return; }
+      const q = Number(sf.quantity);
+      if (!q || q <= 0 || !Number.isInteger(q)) { err.value = '数量必须是大于 0 的整数'; return; }
+      if (!(Number(sf.expectPrice) >= 0)) { err.value = '请填期望出让价'; return; }
+      busy.value = true; err.value = ''; okMsg.value = '';
+      const r = await call('POST', '/api/supplier/applies', {
+        outType: sf.outType, name: sf.name, quantity: q,
+        expectPrice: Number(sf.expectPrice), description: sf.description
+      });
+      busy.value = false;
+      if (r.code !== 0) { err.value = r.message || '提交失败'; return; }
+      okMsg.value = '已提交，申请号 ' + r.data.applyNo + '，等门店审核';
+      sf.name = ''; sf.quantity = ''; sf.expectPrice = ''; sf.description = '';
+    }
+
+    /* 师傅 */
+    async function loadTasks() {
+      loading.value = true;
+      const r = await call('GET', '/api/craftsman/tasks?status=' + encodeURIComponent('在加工,待交付'));
+      loading.value = false;
+      if (r.code !== 0) { err.value = r.message; return; }
+      tasks.value = (r.data && r.data.items) || [];
+    }
+    function openDelivery(t) {
+      dlg.value = t; note.value = ''; err.value = '';
+      shots.value = ['加工前', '加工中', '完工'].map((s) => ({ stage: s, path: '' }));
+    }
+    function pick(i) { shotIdx = i; if (fileRef.value) fileRef.value.click(); }
+    async function onFile(e) {
+      const f = e.target.files && e.target.files[0];
+      e.target.value = '';
+      if (!f) return;
+      const data = await shrink(f);
+      const r = await call('POST', '/api/upload/base64', { name: f.name, data });
+      if (r.code !== 0) { err.value = r.message || '图片上传失败'; return; }
+      shots.value[shotIdx].path = r.data.path;
+      err.value = '';
+    }
+    /** 手机原图动辄几 MB，先压到长边 1280、JPEG 0.82，避免撑爆云函数 6MB 限制 */
+    function shrink(file) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          const max = 1280;
+          let w = img.width, h = img.height;
+          if (Math.max(w, h) > max) { const k = max / Math.max(w, h); w = Math.round(w * k); h = Math.round(h * k); }
+          const cv = document.createElement('canvas');
+          cv.width = w; cv.height = h;
+          cv.getContext('2d').drawImage(img, 0, 0, w, h);
+          URL.revokeObjectURL(url);
+          resolve(cv.toDataURL('image/jpeg', 0.82).split(',')[1]);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); resolve(''); };
+        img.src = url;
+      });
+    }
+    async function submitDelivery() {
+      const missing = shots.value.filter((s) => !s.path).map((s) => s.stage);
+      if (missing.length) { err.value = '还缺：' + missing.join('、') + ' 的照片'; return; }
+      if (busy.value) return;
+      busy.value = true; err.value = '';
+      const r = await call('POST', '/api/craftsman/tasks/' + dlg.value.id + '/delivery', {
+        note: note.value, images: shots.value.map((s) => ({ stage: s.stage, path: s.path }))
+      });
+      busy.value = false;
+      if (r.code !== 0) { err.value = r.message || '提交失败'; return; }
+      dlg.value = null;
+      okMsg.value = '已提交完工，申请号 ' + r.data.applyNo + '，等门店确认';
+      loadTasks();
+    }
+
+    /* 商户 */
+    let pricesLoading = false;
+    async function loadPrices(p) {
+      if (pricesLoading) return;
+      pricesLoading = true;
+      loading.value = true;
+      let r;
+      try {
+        r = await call('GET', '/api/merchant/price-list?page=' + p + '&size=20');
+      } finally {
+        // 请求失败也要复位，否则一次网络抖动就把「加载更多」永久锁死
+        loading.value = false;
+        pricesLoading = false;
+      }
+      if (r.code !== 0) { err.value = r.message; return; }
+      page = p;
+      total.value = r.data.total;
+      prices.value = p === 1 ? r.data.items : prices.value.concat(r.data.items);
+    }
+    function loadMore() { loadPrices(page + 1); }
+
+    /* 上门预约 */
+    async function loadVisitApplies() {
+      if (role.value === 'CRAFTSMAN') {
+        // 师傅按「已确认」的完工申请约上门取件（UC-15：交付确认后约时间）
+        const r = await call('GET', '/api/delivery-applies?status=' + encodeURIComponent('已确认'));
+        if (r.code !== 0) { err.value = r.message; return; }
+        confirmedDeliveries.value = r.data || [];
+        if (confirmedDeliveries.value.length && !vf.deliveryId) {
+          vf.deliveryId = confirmedDeliveries.value[0].id;
+        }
+        if (!vf.date) {
+          const d = new Date(Date.now() + 24 * 3600 * 1000);
+          vf.date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+        return;
+      }
+      if (role.value !== 'SUPPLIER') return;
+      const r = await call('GET', '/api/supplier/applies');
+      if (r.code !== 0) { err.value = r.message; return; }
+      visitApplies.value = (r.data || []).filter((a) => a.status === '已通过');
+      if (visitApplies.value.length) vf.applyId = visitApplies.value[0].id;
+      if (!vf.date) {
+        const d = new Date(Date.now() + 24 * 3600 * 1000);
+        vf.date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      }
+    }
+    async function submitVisit() {
+      if (busy.value) return;
+      if (role.value === 'CRAFTSMAN') {
+        if (!confirmedDeliveries.value.length) { err.value = '还没有「已确认」的完工申请，先在任务里提交完工等门店确认'; return; }
+        if (!vf.date || !vf.time) { err.value = '请选择上门日期与时间'; return; }
+        if (!/(^|:)(00|30)$/.test(vf.time) || vf.time < '10:00' || vf.time > '19:00') { err.value = '时段按半小时选，最早 10:00、最晚 19:00（一次占一小时）'; return; }
+        busy.value = true; err.value = ''; okMsg.value = '';
+        const d = confirmedDeliveries.value.find((x) => String(x.id) === String(vf.deliveryId));
+        const r = await call('POST', '/api/visit-appts', {
+          matter: vf.matter || ('上门取件 ' + (d ? d.applyNo : '')),
+          expectDate: vf.date, startTime: vf.time,
+          deliveryApplyId: d ? d.id : null
+        });
+        busy.value = false;
+        if (r.code !== 0) { err.value = r.message || '预约失败'; return; }
+        okMsg.value = '已预约 ' + vf.date + ' ' + vf.time + ' 起一小时，等门店确认';
+        vf.matter = '';
+        return;
+      }
+      if (!visitApplies.value.length) { err.value = '还没有「已通过」的出让申请，先提交申请等门店审核'; return; }
+      if (!vf.date || !vf.time) { err.value = '请选择上门日期与时间'; return; }
+      busy.value = true; err.value = ''; okMsg.value = '';
+      const a = visitApplies.value.find((x) => String(x.id) === String(vf.applyId));
+      const r = await call('POST', '/api/visit-appts', {
+        matter: vf.matter || ('上门办理 ' + (a ? a.applyNo : '交付')),
+        expectSlot: vf.date + ' ' + vf.time,
+        transferApplyId: a ? a.id : null
+      });
+      busy.value = false;
+      if (r.code !== 0) { err.value = r.message || '预约失败'; return; }
+      okMsg.value = '已预约 ' + vf.date + ' ' + vf.time + '，等门店确认';
+      vf.matter = '';
+    }
+
+    onMounted(() => {
+      if (user.value && !getToken()) user.value = null;
+      // 柜台端登录态存在同一组 localStorage 键里：老板/销售没有外部功能，
+      // 打开这个页时按未登录处理（不清 storage，别把柜台端的会话连带杀掉）
+      if (user.value && !['SUPPLIER', 'CRAFTSMAN', 'MERCHANT'].includes(role.value)) user.value = null;
+      if (user.value) view.value = 'home';
+    });
+
+    return {
+      user, view, err, okMsg, busy, loading, form, types, sf, supTab, applies,
+      tasks, dlg, shots, note, fileRef, prices, total, vf, visitApplies,
+      role, roleName, title, subtitle, cards,
+      submitLogin, logout, go, loadApplies, openSupList, submitApply,
+      loadTasks, openDelivery, pick, onFile, submitDelivery,
+      loadMore, loadVisitApplies, submitVisit
+    };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>

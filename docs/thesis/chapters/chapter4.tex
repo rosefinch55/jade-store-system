@@ -56,7 +56,7 @@
 状态与枚举字段用字符列存储，注释里列全取值。
 非规范化只用来微调性能，出现不可调和的性能问题才用。这里只留了一处：
 货品表里直接存了证书号，查证书时不用再联表。
-全部建表 DDL 见 \code{docs/schema.sql}，共 31 张表（基础参照 6 张 + 业务 19 张 + 拆表 6 张，其中多值属性拆表 4 张、多对多拆表 2 张）。
+全部建表 DDL 见 \code{docs/schema.sql}，共 32 张表（基础参照 6 张 + 业务 19 张 + 拆表 6 张 + 运维留痕 1 张，其中多值属性拆表 4 张、多对多拆表 2 张）。
 
 存储访问在表数据入口、行数据入口、活动记录、数据映射器四种方式中选定\textbf{数据映射器}：
 由 MyBatis-Plus 的 Mapper 承担对象与表之间的双向转换，领域层不感知 SQL 与表结构。
@@ -66,7 +66,8 @@
 
 分析实体类与数据表的对应关系见表~\ref{tab:class-table}：26 个实体类与 26 张表一一对应，其中寄售明细兼作多值拆分表、已计入这 26 张；
 此外还有 5 张不含实体类的拆表（多值属性 3 张：客户标签、出让申请图片、完工过程图；
-多对多 2 张：用户-角色、角色-权限），合计 31 张。
+多对多 2 张：用户-角色、角色-权限），另有 1 张不含实体类的运维表 \code{t\_op\_log}（接口调用留痕，供 UC-12 查阅），合计 32 张。
+分析模型只画业务实体，实体类图与类-表映射均不含这张运维表。
 26 张实体表中，来源方、鉴定机构、货品类别、用户、角色、权限 6 个基础参照类各对应一张参照表。
 分析模型里的四处组合，落到库上就是四个非空外键：\code{t\_goods.stock\_in\_id}、
 \code{t\_certificate.goods\_id}、\code{t\_delivery\_apply.task\_id}、\code{t\_consignment\_item.consignment\_id}；
@@ -173,16 +174,16 @@
 \end{tabularx}
 \end{table}
 
-31 张表的整体结构按用途分组列在表~\ref{tab:tables}，
+32 张表的整体结构按用途分组列在表~\ref{tab:tables}，
 每张表的字段名称、中文含义、数据类型和约束条件在下一节逐张说明。
 
 \subsection{表结构清单}
 
-31 张表按用途分组，清单见表~\ref{tab:tables}。
+32 张表按用途分组，清单见表~\ref{tab:tables}。
 
 \Needspace{6\baselineskip}
 \begin{longtable}{@{}L{3.2cm} L{2.4cm} L{5.4cm} L{3.5cm}@{}}
-\caption{数据表清单（共 31 张）}\label{tab:tables}\\
+\caption{数据表清单（共 32 张）}\label{tab:tables}\\
 \toprule
 表名 & 中文名 & 主要字段（列） & 对应用例 \\
 \midrule
@@ -204,7 +205,7 @@
 \code{t\_customer} & 客户 & customer\_no, name, phone, wechat, source\_channel, introducer\_id, pref\_category, pref\_size, pref\_budget, remark & UC-04 \\
 \code{t\_customer\_tag} & 客户标签 & customer\_id, tag & UC-04（多选属性拆表）\\
 
-\code{t\_reservation} & 预约看货 & resv\_no, goods\_id, name, phone, expect\_slot, status & UC-10/27（状态：待确认、已到店、已取消）\\
+\code{t\_reservation} & 预约看货 & resv\_no, goods\_id, name, phone, ip, expect\_slot, status, exempt & UC-10/27（状态：待确认、已失效）\\
 \code{t\_booking} & 预定记录 & booking\_no, goods\_id, name, phone, customer\_id, submit\_time, contact\_time, status & UC-13/28 \\
 \code{t\_inspection} & 送检记录 & insp\_time, goods\_id, org\_id, submitter\_id & UC-05 \\
 \code{t\_certificate} & 鉴定证书 & cert\_no, org\_id, insp\_id, goods\_id, conclusion, issue\_date, cert\_qrcode & UC-05 \\
@@ -214,8 +215,8 @@
 \code{t\_transfer\_apply} & 出让申请(含审核) & apply\_no, supplier\_id, out\_type, name, quantity, expect\_price, description, submit\_time, status, audit\_opinion, audit\_time, auditor\_id & UC-14/18 \\
 \code{t\_apply\_image} & 出让申请图片 & apply\_id, seq, image\_path & UC-14（多图属性拆表）\\
 
-\code{t\_visit\_appt} & 上门预约 & appt\_no, appt\_party, matter, expect\_slot, submit\_time, status & UC-15 \\
-\code{t\_process\_task} & 加工任务 & task\_no, goods\_id, craftsman\_id, requirement, labor\_fee, deadline, status & UC-16 \\
+\code{t\_visit\_appt} & 上门预约 & appt\_no, appt\_party, matter, expect\_date, start\_time, end\_time, submit\_time, status & UC-15 \\
+\code{t\_process\_task} & 加工任务 & task\_no, goods\_id, craftsman\_id, requirement, labor\_fee, deadline, status, urge\_count, last\_urge\_at & UC-16 \\
 \code{t\_delivery\_apply} & 完工交付申请 & apply\_no, task\_id, note, submit\_time, status & UC-17 \\
 \code{t\_delivery\_image} & 完工过程图 & apply\_id, stage, image\_path & UC-17（多图属性拆表）\\
 
@@ -227,6 +228,7 @@
 \code{t\_stock\_log} & 库存流水 & goods\_id, from\_status, to\_status, ref\_type, ref\_no, operator\_id, log\_time & UC-26 \\
 \code{t\_user\_role} & 用户-角色 & user\_id, role\_id & UC-12（多对多拆表）\\
 \code{t\_role\_permission} & 角色-权限 & role\_id, permission\_id & 权限矩阵（多对多拆表）\\
+\code{t\_op\_log} & 操作留痕 & user\_id, username, method, path, query, status, created\_at & UC-12（运维用，不参与业务规则）\\
 \end{longtable}
 
 \subsection{各表字段说明}
@@ -270,6 +272,7 @@
 \code{name} & 姓名 & \code{VARCHAR(64)} & 非空 \\
 \code{password\_hash} & 口令（加密保存，禁止明文） & \code{VARCHAR(128)} & 非空 \\
 \code{status} & 状态：启用、停用 & \code{VARCHAR(8)} & 非空 \\
+\code{party\_id} & 外部账号关联的往来方（供应商、加工师傅、同行商户）；内部账号为空 & \code{BIGINT UNSIGNED} & 可空、外键指向 \code{t\_source\_party} \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
@@ -411,7 +414,8 @@
 \code{transfer\_price} & 调货价（UC-11 商户端调货价目，在柜时维护） & \code{DECIMAL(12,2)} & 可空 \\
 \code{in\_time} & 入库时间（系统时间） & \code{DATETIME} & 非空 \\
 \code{stock\_in\_id} & 入库批次，指向 t\_stock\_in（货品清单成员） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方，组合）、禁止删除 \\
-\code{status} & 状态：在柜、已送检、预留、已售、已订、已调出、代销中、待处理 & \code{VARCHAR(16)} & 非空 \\
+\code{status} & 状态：在柜、已送检、预留、已售、已订、代销中、待处理 & \code{VARCHAR(16)} & 非空 \\
+\code{is\_featured} & 是否精选上柜（门户与客户看板的推荐位，不影响能否浏览） & \code{TINYINT} & 非空、默认 0 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
@@ -462,8 +466,12 @@
 \code{goods\_id} & 货品，指向 t\_goods（预约查看的目标） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{name} & 姓名 & \code{VARCHAR(64)} & 非空 \\
 \code{phone} & 手机号 & \code{VARCHAR(32)} & 非空 \\
-\code{expect\_slot} & 期望到店时段 & \code{VARCHAR(64)} & 非空 \\
-\code{status} & 状态：待确认、已到店、已取消 & \code{VARCHAR(16)} & 非空 \\
+\code{ip} & 提交来源 IP（限流与审计） & \code{VARCHAR(45)} & 可空 \\
+\code{expect\_slot} & 到店时间（半小时对齐） & \code{DATETIME} & 非空、索引 \\
+\code{status} & 状态：待确认、已失效 & \code{VARCHAR(16)} & 非空 \\
+\code{exempt} & 违约是否已豁免 & \code{TINYINT} & 非空、默认 0 \\
+\code{exempt\_by} & 解除操作人，指向 t\_user & \code{BIGINT UNSIGNED} & 可空 \\
+\code{exempt\_at} & 解除时间 & \code{DATETIME} & 可空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
@@ -660,7 +668,9 @@
 \code{appt\_no} & 预约编号 & \code{VARCHAR(32)} & 唯一、非空 \\
 \code{appt\_party} & 预约方（供应商/加工师傅） & \code{VARCHAR(128)} & 非空 \\
 \code{matter} & 事项（上门交接内容） & \code{VARCHAR(255)} & 非空 \\
-\code{expect\_slot} & 期望时段 & \code{VARCHAR(64)} & 非空 \\
+\code{expect\_date} & 期望上门日期 & \code{DATE} & 非空、索引 \\
+\code{start\_time} & 期望时段起（10:00--19:00，整点或半点） & \code{TIME} & 非空 \\
+\code{end\_time} & 期望时段止（起 + 1 小时，服务端写入） & \code{TIME} & 非空 \\
 \code{submit\_time} & 提交时间 & \code{DATETIME} & 非空 \\
 \code{status} & 状态：待上门、已完成、已取消 & \code{VARCHAR(8)} & 非空 \\
 \code{transfer\_apply\_id} & 关联出让申请，指向 t\_transfer\_apply（UC-15 规则①，二选一必有其一） & \code{BIGINT UNSIGNED} & 外键（非 1 方）、禁止删除 \\
@@ -690,6 +700,8 @@
 \code{labor\_fee} & 工费 & \code{DECIMAL(12,2)} & 非空 \\
 \code{deadline} & 期限 & \code{DATE} & 非空 \\
 \code{status} & 状态：待加工、在加工、待交付、已交付 & \code{VARCHAR(8)} & 非空 \\
+\code{urge\_count} & 门店催办次数（「逾期」为派生态：待加工/在加工且过期限，只有催办动作落库） & \code{INT} & 非空、默认 0 \\
+\code{last\_urge\_at} & 最近一次催办时间 & \code{DATETIME} & 可空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
 \end{longtable}
@@ -816,9 +828,9 @@
 \code{consign\_no} & 合同编号 & \code{VARCHAR(32)} & 唯一、非空 \\
 \code{supplier\_id} & 寄售供应商，指向 t\_source\_party（类别=供应商） & \code{BIGINT UNSIGNED} & 非空、外键（非 1 方）、禁止删除 \\
 \code{sign\_time} & 签订时间 & \code{DATETIME} & 非空 \\
-\code{expire\_date} & 到期日（到期未终止即置已到期） & \code{DATE} & 非空 \\
+\code{expire\_date} & 到期日（到期不自动改状态，由老板人工终止） & \code{DATE} & 非空 \\
 \code{settle\_cycle} & 结算方式：售出即结、按月结算 & \code{VARCHAR(16)} & 非空 \\
-\code{status} & 状态：生效、已终止、已到期（状态机见 07e） & \code{VARCHAR(8)} & 非空 \\
+\code{status} & 状态：生效、已终止（状态机见 07e） & \code{VARCHAR(8)} & 非空 \\
 \code{remark} & 备注 & \code{VARCHAR(255)} & 可空 \\
 \code{created\_at} & 创建时间 & \code{DATETIME} & 非空 \\
 \code{updated\_at} & 更新时间 & \code{DATETIME} & 非空 \\
@@ -959,7 +971,7 @@
 
 \subsection{建表 SQL}
 
-31 张表的完整建表语句（含字段注释、唯一索引、外键约束）见 \code{docs/schema.sql}。
+32 张表的完整建表语句（含字段注释、唯一索引、外键约束）见 \code{docs/schema.sql}。
 设计要点：建库统一 \code{utf8mb4} 字符集；每张表以自增 \code{id} 为代理键；
 业务编码列（goods\_no、sale\_no 等）加唯一索引；外键集中在非 1 方，
 常规业务行 \code{ON DELETE RESTRICT}，多值属性拆表与多对多拆表 \code{ON DELETE CASCADE}，客户介绍人 \code{ON DELETE SET NULL}；
@@ -1005,6 +1017,13 @@ AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & 
 \bottomrule
 \end{tabularx}
 \end{table}
+
+实现说明：落地时为避免空壳层，没有按上表逐项拆出独立服务——业务规则写在各自的 Controller 内，
+鉴权由 \code{AuthInterceptor} 统一拦截，只有登录与账号相关逻辑独立成 \code{AuthService}；
+模块边界与 Mapper 的划分仍按上表执行，上表表达的是职责归属的设计意图。
+
+接口路径按资源复数命名（如 \code{/api/sales}、\code{/api/visit-appts}），分析阶段的序列图沿用单数示意，
+以接口清单为准；登录态与权限由拦截器统一处理，控制器不再重复判权。
 
 以登记成交为例，请求自表现层经 Axios 到达 \code{SaleController}，
 \code{SaleService} 校验货品处于“在柜”、成交价不低于最低售价，
@@ -1130,7 +1149,7 @@ AuthService & 登录鉴权、角色与外部账户开通、权限矩阵校验 & 
 用例（权限） & 老板 & 销售 & 合作商户 & 供应商 & 加工师傅 \\
 \midrule
 UC-01 登记成交 / UC-03 登记退货 & √ & √ & — & — & — \\
-UC-02 登记货品入库 & √ & √ & — & — & — \\
+UC-02 登记货品入库 & √ & — & — & — & — \\
 UC-04 维护客户信息 & √ & √ & — & — & — \\
 UC-05 登记送检与证书 & √ & √ & — & — & — \\
 UC-06 查看销售与周转统计 & √ & — & — & — & — \\
@@ -1139,7 +1158,7 @@ UC-09 浏览货品／UC-10 预约看货／\newline UC-13 预定商品 & — & �
 UC-11 查看调货价格 & — & — & √ & — & — \\
 UC-12 开通外部账户 & √ & — & — & — & — \\
 UC-14 提交货品出让申请 & — & — & — & √ & — \\
-UC-15 预约上门时间 & — & — & — & √ & √ \\
+UC-15 预约上门时间 & √ & — & — & √ & √ \\
 UC-16 查看加工任务 / UC-17 提交完工交付申请 & — & — & — & — & √ \\
 UC-18 审核出让申请 & √ & — & — & — & — \\
 UC-19 登记货款记录 & √ & — & — & — & — \\
@@ -1154,9 +1173,13 @@ UC-28 跟进预定到店 & √ & √ & — & — & — \\
 \end{tabularx}
 \end{table}
 
-注：老板在销售端用例行的 √ 与销售在 UC-02 行的 √ 均为代执行权限，不改变 B 段规约的主执行者；UC-08 登录是身份验证的前置（权限在登录成功后才按角色汇总），故不作为功能权限列出；UC-09/10/13/27 由小程序客户使用，不占用五个角色的授权，故记作“—”。
+注：老板在销售端用例行（UC-01/03/04/05/19/21/23/24/28 等）的 √ 属代执行权限，不改变 B 段规约的主执行者；UC-08 登录是身份验证的前置（权限在登录成功后才按角色汇总），故不作为功能权限列出；UC-09/10/13/27 由小程序客户使用，不占用五个角色的授权，故记作“—”。
 
 矩阵落在库上就是 \code{t\_role\_permission} 的种子数据：每行一个角色对一条权限的授权，
 老板持有全部权限，外部三角色只持各自提交与查询类权限。
+同一来源反复预约又不到店的，配额用尽后会被锁定；解除动作挂在账号管理（UC-12）下，由老板操作并留痕。
 权限校验在业务层 AuthService 收口，表示层按同一矩阵控制菜单与按钮的置灰，
 两层读的是同一份数据，不会出现界面放行而接口拒绝之外的口径差。
+
+两处与常规授权不同，按代执行处理：UC-02 的“开始加工／确认完工”只给老板，销售不再代劳；
+UC-15 的“确认上门”由老板执行，预约动作本身仍由供应商与师傅发起，故矩阵中老板一列标 √ 而非计为常规授权。

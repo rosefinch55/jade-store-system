@@ -1,0 +1,5 @@
+# 隆圭琢玉 · 数据库备份定时：每 7 天一次（每周日 04:30）。改节奏就改这一行。
+# 装法：cp jade-backup /etc/cron.d/jade-backup && chmod 644 /etc/cron.d/jade-backup
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+30 4 * * 0 root bash /opt/jade/backup-db.sh >> /opt/jade/backup/backup.log 2>&1

@@ -23,3 +23,10 @@ desktop.ini
 
 # 改文件前的备份目录（含本地绝对路径，不上传）
 docs/_backup-*/
+
+# 前端依赖与构建
+node_modules/
+target/
+
+# 本地数据
+uploads/
