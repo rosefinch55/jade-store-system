@@ -73,8 +73,10 @@
   .kv{display:flex;padding:11px 0;border-bottom:1px solid var(--line-2);font-size:13px}
   .kv span:first-child{width:76px;color:var(--text-2);flex:none}
   .bottom{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--card);
-    border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:10px;z-index:20}
-  .bottom .btn{flex:1}
+    border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:10px;z-index:20;
+    justify-content:flex-end}
+  /* 只剩一个按钮后不再撑满：靠右，宽度按内容给足 */
+  .bottom .btn{flex:none;min-width:156px;padding:0 22px}
   .nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--card);
     border-top:1px solid var(--line);display:flex;z-index:20}
   .nav div{flex:1;text-align:center;padding:10px 0 9px;font-size:11px;color:var(--text-2)}
