@@ -86,6 +86,8 @@
   .rcard .st{margin-top:8px;display:inline-block;padding:2px 8px;border-radius:3px;font-size:11.5px;
     background:var(--paper-2);color:var(--gold-2)}
   .empty{padding:40px 0;text-align:center;color:var(--text-3);font-size:13px}
+  .note{margin:0 0 14px;padding:10px 12px;border-radius:4px;background:var(--paper-2,#F6F1E6);
+    color:var(--text-2);font-size:12.5px;line-height:1.7}
 
   /* 商户价目 */
   .pitem{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px;margin-bottom:10px}
@@ -249,6 +251,7 @@
 
     <!-- 商户：调货价目 -->
     <template v-else-if="view==='merchant'">
+      <p class="note">调货由门店登记，选定货品后前往门店调取。</p>
       <div class="pitem" v-for="g in prices" :key="g.goodsNo">
         <img v-if="g.image" :src="g.image" alt="">
         <div class="ph" v-else>无图</div>
