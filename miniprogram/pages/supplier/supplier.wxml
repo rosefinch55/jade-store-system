@@ -1,0 +1,59 @@
+<view>
+  <view class="tabs">
+    <view class="tab {{ tab === 'form' ? 'on' : '' }}" data-tab="form" bindtap="switchTab">提交申请</view>
+    <view class="tab {{ tab === 'list' ? 'on' : '' }}" data-tab="list" bindtap="switchTab">我的申请</view>
+  </view>
+
+  <block wx:if="{{ tab === 'form' }}">
+    <view class="field" style="margin-top:20rpx">
+      <view class="row">
+        <view class="lb">出让类型</view>
+        <picker mode="selector" range="{{ types }}" bindchange="pickType" style="flex:1">
+          <view class="val">{{ f.outType }}</view>
+        </picker>
+      </view>
+      <view class="row">
+        <view class="lb">品名</view>
+        <input class="val" value="{{ f.name }}" placeholder="例如 和田玉籽料原石" data-k="name" bindinput="onInput" />
+      </view>
+      <view class="row">
+        <view class="lb">数量</view>
+        <input class="val" type="number" value="{{ f.quantity }}" placeholder="件" data-k="quantity" bindinput="onInput" />
+      </view>
+      <view class="row">
+        <view class="lb">期望价</view>
+        <input class="val" type="digit" value="{{ f.expectPrice }}" placeholder="元/件" data-k="expectPrice" bindinput="onInput" />
+      </view>
+      <view class="row" style="align-items:flex-start;padding:20rpx 0">
+        <view class="lb" style="padding-top:6rpx">说明</view>
+        <textarea class="val" value="{{ f.description }}" placeholder="产地、成色、瑕疵等" data-k="description"
+                  bindinput="onInput" maxlength="200"
+                  style="height:120rpx;line-height:1.6" />
+      </view>
+    </view>
+
+    <view class="err" wx:if="{{ err }}">{{ err }}</view>
+    <view class="hint" wx:if="{{ okMsg }}" style="color:#4E8A6B">{{ okMsg }}</view>
+
+    <view class="form-actions">
+      <view class="btn {{ busy ? 'disabled' : '' }}" bindtap="submit">{{ busy ? '提交中…' : '提交出让申请' }}</view>
+    </view>
+    <view class="hint">提交后进入「待审核」，门店通过后才能预约上门。</view>
+  </block>
+
+  <block wx:else>
+    <view class="rlist">
+      <view class="rcard" wx:for="{{ list }}" wx:key="id">
+        <view class="rno">{{ item.applyNo }}</view>
+        <view class="rline">{{ item.outType }} · {{ item.name }} · {{ item.quantity }} 件</view>
+        <view class="rline gray">期望价 {{ item.expectPrice }} 元 · {{ item.status }}</view>
+        <view class="rline gray" wx:if="{{ item.auditOpinion }}">审核意见：{{ item.auditOpinion }}</view>
+      </view>
+      <view class="empty" wx:if="{{ !loading && !list.length }}">还没有提交过申请</view>
+      <view class="empty" wx:if="{{ loading }}">加载中…</view>
+      <view class="err" wx:if="{{ err }}">{{ err }}</view>
+    </view>
+  </block>
+
+  <view class="pad-nav"></view>
+</view>

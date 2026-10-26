@@ -1,0 +1,50 @@
+<view>
+  <view class="hd">
+    <view class="hd-t">我的加工任务</view>
+    <view class="hd-s">只显示在加工与待交付，按期限排序</view>
+  </view>
+
+  <view class="rlist">
+    <view class="rcard" wx:for="{{ list }}" wx:key="id">
+      <view class="rno">{{ item.taskNo }}</view>
+      <view class="rline">{{ item.goodsName }}</view>
+      <view class="rline gray" wx:if="{{ item.requirement }}">要求：{{ item.requirement }}</view>
+      <view class="rline gray">工费 {{ item.laborFee }} 元 · 期限 {{ item.deadline }}</view>
+      <view class="rline" style="color:#8A6B2F">{{ item.status }}</view>
+      <view class="btn" style="margin-top:20rpx;font-size:26rpx;padding:16rpx 0"
+            data-id="{{ item.id }}" bindtap="open" wx:if="{{ item.status === '在加工' }}">提交完工</view>
+    </view>
+
+    <view class="empty" wx:if="{{ !loading && !list.length }}">当前没有在加工的任务</view>
+    <view class="empty" wx:if="{{ loading }}">加载中…</view>
+    <view class="err" wx:if="{{ err && !showDialog }}">{{ err }}</view>
+  </view>
+
+  <!-- 完工提交：三个阶段各一张 -->
+  <view class="mask" wx:if="{{ showDialog }}" bindtap="close"></view>
+  <view class="sheet" wx:if="{{ showDialog }}">
+    <view class="sheet-t">提交完工 · {{ cur.taskNo }}</view>
+    <view class="sheet-s">需上传加工前、加工中、完工三张照片</view>
+
+    <view class="shots">
+      <view class="shot" wx:for="{{ shots }}" wx:key="stage" data-idx="{{ index }}" bindtap="pick">
+        <image wx:if="{{ item.path }}" src="{{ item.path }}" mode="aspectFill" class="shot-img" />
+        <view wx:else class="shot-ph">+ {{ item.stage }}</view>
+        <view class="shot-lb" wx:if="{{ item.path }}">{{ item.stage }}</view>
+      </view>
+    </view>
+
+    <view class="row" style="border-bottom:0;margin-top:10rpx">
+      <view class="lb">备注</view>
+      <input class="val" value="{{ note }}" placeholder="可不填" bindinput="onNote" />
+    </view>
+
+    <view class="err" wx:if="{{ err }}">{{ err }}</view>
+
+    <view class="form-actions" style="padding:24rpx 0 0">
+      <view class="btn {{ busy ? 'disabled' : '' }}" bindtap="submit">{{ busy ? '提交中…' : '提交完工申请' }}</view>
+    </view>
+  </view>
+
+  <view class="pad-nav"></view>
+</view>

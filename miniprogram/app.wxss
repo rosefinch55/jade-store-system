@@ -1,0 +1,544 @@
+/* 玉器门店视觉规范（小程序）
+   宣纸底 #FBF7F0 · 墨玉 #22352F / #2C4A41 · 哑金 #A9843F · 朱砂 #B23A2B
+   标题衬线（宋体系），正文无衬线；圆角 8rpx；分隔线 #E6DECF */
+page {
+  background: #fbf7f0;
+  color: #2c3531;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 28rpx;
+}
+
+.hd {
+  background: #fbf7f0;
+  border-bottom: 1rpx solid #e6decf;
+  padding: 28rpx 32rpx 24rpx;
+}
+
+.hd-t {
+  font-family: "Songti SC", "STSong", "Source Han Serif SC", "SimSun", serif;
+  font-size: 38rpx;
+  font-weight: 600;
+  letter-spacing: 4rpx;
+  color: #22352f;
+}
+
+.hd-s {
+  font-size: 22rpx;
+  color: #6b7772;
+  margin-top: 10rpx;
+  letter-spacing: 1rpx;
+}
+
+.tabs {
+  display: flex;
+  background: #ffffff;
+  border-bottom: 1rpx solid #e6decf;
+}
+
+.tabs .tab {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: 28rpx;
+  letter-spacing: 2rpx;
+  color: #6b7772;
+  position: relative;
+}
+
+.tabs .tab.on {
+  color: #22352f;
+  font-weight: 600;
+}
+
+.tabs .tab.on::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 56rpx;
+  height: 3rpx;
+  background: #a9843f;
+}
+
+.sec {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 32rpx 16rpx;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: 26rpx;
+  letter-spacing: 2rpx;
+  color: #6b7772;
+}
+
+.sec .more {
+  color: #8a6b2f;
+  font-size: 24rpx;
+  letter-spacing: 0;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 24rpx;
+}
+
+.card {
+  width: 339rpx;
+  margin: 0 6rpx 16rpx;
+  background: #ffffff;
+  border: 1rpx solid #e6decf;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.card .pic {
+  width: 339rpx;
+  height: 339rpx;
+  background: #f4eee3;
+  display: block;
+}
+
+.card .ph {
+  width: 339rpx;
+  height: 339rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8a948f;
+  font-size: 24rpx;
+  background: #f4eee3;
+}
+
+.card .info {
+  padding: 18rpx 20rpx 22rpx;
+}
+
+.card .nm {
+  font-family: "Songti SC", "STSong", "Source Han Serif SC", "SimSun", serif;
+  font-size: 28rpx;
+  line-height: 1.5;
+  letter-spacing: 1rpx;
+  height: 84rpx;
+  overflow: hidden;
+}
+
+.card .mt {
+  font-size: 22rpx;
+  color: #6b7772;
+  margin-top: 8rpx;
+}
+
+.card .pr {
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: 30rpx;
+  color: #b23a2b;
+  font-weight: 600;
+  margin-top: 10rpx;
+  letter-spacing: 1rpx;
+}
+
+.badge {
+  display: inline-block;
+  border: 1rpx solid #a9843f;
+  color: #8a6b2f;
+  font-size: 20rpx;
+  padding: 0 8rpx;
+  border-radius: 4rpx;
+  margin-right: 8rpx;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+}
+
+.scroll-x {
+  white-space: nowrap;
+  padding: 0 24rpx;
+}
+
+.scroll-x .card {
+  display: inline-block;
+  width: 260rpx;
+  margin-right: 16rpx;
+  border-top: 3rpx solid #a9843f;
+}
+
+.scroll-x .card .pic,
+.scroll-x .card .ph {
+  width: 260rpx;
+  height: 260rpx;
+}
+
+.hint {
+  padding: 18rpx 32rpx;
+  font-size: 22rpx;
+  color: #6b7772;
+  line-height: 1.8;
+}
+
+.empty {
+  padding: 100rpx 40rpx;
+  text-align: center;
+  color: #8a948f;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: 26rpx;
+  letter-spacing: 2rpx;
+}
+
+.btn {
+  background: #2c4a41;
+  color: #ffffff;
+  border-radius: 6rpx;
+  font-size: 30rpx;
+  padding: 22rpx 0;
+  text-align: center;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  letter-spacing: 4rpx;
+}
+
+.btn.ghost {
+  background: #ffffff;
+  color: #2c4a41;
+  border: 1rpx solid #2c4a41;
+}
+
+.btn.disabled {
+  background: #c8d2cc;
+  color: #ffffff;
+}
+
+.nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  background: #ffffff;
+  border-top: 1rpx solid #e6decf;
+  z-index: 20;
+}
+
+.nav .item {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0 18rpx;
+  font-size: 22rpx;
+  color: #6b7772;
+}
+
+.nav .item.on {
+  color: #22352f;
+  font-weight: 600;
+}
+
+.nav .item .ico {
+  display: block;
+  font-size: 32rpx;
+  line-height: 1.3;
+  color: #a9843f;
+}
+
+.pad-nav {
+  height: 120rpx;
+}
+
+.field {
+  background: #ffffff;
+  padding: 0 32rpx;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  min-height: 104rpx;
+  border-bottom: 1rpx solid #f0e9dc;
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row .lb {
+  width: 160rpx;
+  color: #6b7772;
+  font-size: 28rpx;
+  flex: none;
+}
+
+.row .val {
+  flex: 1;
+  font-size: 28rpx;
+}
+
+.row .val.ph {
+  color: #8a948f;
+}
+
+.row input {
+  flex: 1;
+  font-size: 28rpx;
+}
+
+.form-actions {
+  padding: 40rpx 32rpx;
+}
+
+.err {
+  color: #b23a2b;
+  font-size: 24rpx;
+  padding: 16rpx 32rpx;
+}
+
+/* 类别筛选 */
+.cats {
+  white-space: nowrap;
+  background: #ffffff;
+  padding: 16rpx 24rpx;
+  border-bottom: 1rpx solid #e6decf;
+}
+
+.cats .chip {
+  display: inline-block;
+  padding: 10rpx 24rpx;
+  margin-right: 12rpx;
+  border-radius: 4rpx;
+  border: 1rpx solid #e0d8c9;
+  background: #ffffff;
+  color: #6b7772;
+  font-size: 24rpx;
+}
+
+.cats .chip.on {
+  background: #2c4a41;
+  border-color: #2c4a41;
+  color: #ffffff;
+}
+
+.more-wrap {
+  padding: 16rpx 32rpx 8rpx;
+}
+
+/* 详情 */
+.dpic {
+  width: 750rpx;
+  height: 750rpx;
+  background: #f4eee3;
+  display: block;
+}
+
+.dpic-ph {
+  width: 750rpx;
+  height: 750rpx;
+  background: #f4eee3;
+  color: #8a948f;
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dbody {
+  padding: 30rpx 32rpx 8rpx;
+  background: #ffffff;
+}
+
+.dt {
+  font-family: "Songti SC", "STSong", "Source Han Serif SC", "SimSun", serif;
+  font-size: 36rpx;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: 2rpx;
+}
+
+.dsub {
+  font-size: 24rpx;
+  color: #6b7772;
+  margin-top: 10rpx;
+  margin-bottom: 12rpx;
+}
+
+.kv {
+  display: flex;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid #f0e9dc;
+  font-size: 26rpx;
+}
+
+.kv .k {
+  width: 150rpx;
+  color: #6b7772;
+  flex: none;
+}
+
+.kv .v {
+  flex: 1;
+}
+
+.dhint {
+  padding: 24rpx 0 8rpx;
+  font-size: 22rpx;
+  color: #6b7772;
+  line-height: 1.8;
+}
+
+.dbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  background: #ffffff;
+  border-top: 1rpx solid #e6decf;
+  padding: 16rpx 24rpx 24rpx;
+  z-index: 20;
+}
+
+.dbar {
+  justify-content: flex-end;
+}
+
+.dbar .btn {
+  flex: none;
+  min-width: 240rpx;
+  padding: 0 32rpx;
+  margin: 0 8rpx;
+}
+
+.dbar-pad {
+  height: 150rpx;
+}
+
+/* 查预约 */
+.qbar {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #e6decf;
+}
+
+.qinput {
+  flex: 1;
+  height: 76rpx;
+  background: #f7f3ea;
+  border: 1rpx solid #e0d8c9;
+  border-radius: 6rpx;
+  padding: 0 22rpx;
+  font-size: 28rpx;
+}
+
+.qbtn {
+  width: 150rpx;
+  height: 76rpx;
+  line-height: 76rpx;
+  text-align: center;
+  background: #2c4a41;
+  color: #ffffff;
+  border-radius: 6rpx;
+  font-size: 28rpx;
+  margin-left: 16rpx;
+}
+
+.rlist {
+  padding: 24rpx;
+}
+
+.rcard {
+  background: #ffffff;
+  border: 1rpx solid #e6decf;
+  border-radius: 8rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.rno {
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: 28rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+.rline {
+  font-size: 24rpx;
+  margin-top: 10rpx;
+}
+
+.rline.gray {
+  color: #6b7772;
+}
+
+/* 完工提交弹层 */
+.mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(34, 53, 47, 0.45);
+  z-index: 40;
+}
+
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 41;
+  background: #ffffff;
+  border-top: 1rpx solid #e6decf;
+  border-radius: 12rpx 12rpx 0 0;
+  padding: 32rpx 32rpx 40rpx;
+}
+
+.sheet-t {
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: 32rpx;
+  letter-spacing: 2rpx;
+  color: #22352f;
+}
+
+.sheet-s {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #6b7772;
+}
+
+.shots {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.shot {
+  position: relative;
+  width: 206rpx;
+  height: 206rpx;
+  border: 1rpx dashed #d8cfbb;
+  border-radius: 6rpx;
+  background: #fbf7f0;
+  overflow: hidden;
+}
+
+.shot-img {
+  width: 206rpx;
+  height: 206rpx;
+}
+
+.shot-ph {
+  width: 206rpx;
+  height: 206rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #8a6b2f;
+}
+
+.shot-lb {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(34, 53, 47, 0.55);
+  color: #fff;
+  font-size: 20rpx;
+  text-align: center;
+  padding: 4rpx 0;
+}

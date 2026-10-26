@@ -1,0 +1,63 @@
+<view>
+  <view class="hd">
+    <view class="hd-t">{{ shopName }} · 在售</view>
+    <view class="hd-s">{{ notice }}</view>
+  </view>
+
+  <view class="sec">
+    <text>精选上柜</text>
+  </view>
+
+  <scroll-view class="scroll-x" scroll-x="true" wx:if="{{ featured.length }}">
+    <view class="card" wx:for="{{ featured }}" wx:key="goodsNo" data-no="{{ item.goodsNo }}" bindtap="goDetail">
+      <image wx:if="{{ item.imgUrl }}" class="pic" src="{{ item.imgUrl }}" mode="aspectFill"
+             data-idx="{{ index }}" data-key="featured" binderror="onImgErr" />
+      <view wx:else class="ph">暂无图片</view>
+      <view class="info">
+        <view class="nm">{{ item.name }}</view>
+        <view class="mt">{{ item.categoryName }} · {{ item.weightG }}g</view>
+        <view class="pr" wx:if="{{ item.priceText }}">{{ item.priceText }} 以内</view>
+      </view>
+    </view>
+  </scroll-view>
+  <view wx:else class="empty">暂无推荐货品</view>
+
+  <view class="sec">
+    <text>全部在售</text>
+    <text class="more" bindtap="goAll">查看全部 ›</text>
+  </view>
+
+  <view class="grid">
+    <view class="card" wx:for="{{ latest }}" wx:key="goodsNo" data-no="{{ item.goodsNo }}" bindtap="goDetail">
+      <image wx:if="{{ item.imgUrl }}" class="pic" src="{{ item.imgUrl }}" mode="aspectFill"
+             data-idx="{{ index }}" data-key="latest" binderror="onImgErr" />
+      <view wx:else class="ph">暂无图片</view>
+      <view class="info">
+        <view class="nm">
+          <text wx:if="{{ item.featured }}" class="badge">荐</text>{{ item.name }}
+        </view>
+        <view class="mt">{{ item.categoryName }} · {{ item.weightG }}g</view>
+        <view class="pr" wx:if="{{ item.priceText }}">{{ item.priceText }} 以内</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{ loading }}">加载中…</view>
+  <view class="err" wx:if="{{ err }}">{{ err }}</view>
+
+  <view class="pad-nav"></view>
+  <view class="nav">
+    <view class="item on">
+      <text class="ico">◈</text>推荐
+    </view>
+    <view class="item" bindtap="goAll">
+      <text class="ico">▤</text>全部
+    </view>
+    <view class="item" bindtap="goMine">
+      <text class="ico">⌕</text>查预约
+    </view>
+    <view class="item" bindtap="goWork">
+      <text class="ico">☴</text>我的
+    </view>
+  </view>
+</view>

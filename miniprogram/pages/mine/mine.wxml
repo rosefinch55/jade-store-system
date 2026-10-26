@@ -1,0 +1,37 @@
+<view>
+  <view class="hd">
+    <view class="hd-t">查预约</view>
+    <view class="hd-s">输入提交预约时用的手机号后四位</view>
+  </view>
+
+  <view class="qbar">
+    <input class="qinput" placeholder="手机号后四位" type="number" maxlength="4"
+           value="{{ tail }}" bindinput="onTail" />
+    <view class="qbtn" bindtap="query">{{ loading ? '查询中' : '查询' }}</view>
+  </view>
+
+  <view class="err" wx:if="{{ err }}">{{ err }}</view>
+
+  <view wx:if="{{ queried && !results.length }}" class="empty">没有找到待确认的预约</view>
+
+  <view class="rlist">
+    <view class="rcard" wx:for="{{ results }}" wx:key="resvNo">
+      <view class="rno">{{ item.resvNo }}</view>
+      <view class="rline">{{ item.goodsName }}</view>
+      <view class="rline gray">到店时间：{{ item.expectSlot }}</view>
+    </view>
+  </view>
+
+  <view class="pad-nav"></view>
+  <view class="nav">
+    <view class="item" bindtap="goHome">
+      <text class="ico">◈</text>推荐
+    </view>
+    <view class="item" bindtap="goAll">
+      <text class="ico">▤</text>全部
+    </view>
+    <view class="item on">
+      <text class="ico">⌕</text>查预约
+    </view>
+  </view>
+</view>

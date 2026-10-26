@@ -1,0 +1,52 @@
+<view>
+  <view class="hd">
+    <view class="hd-t">预约上门</view>
+    <view class="hd-s">门店确认后按时段上门，一次只接待一位</view>
+  </view>
+
+  <!-- 供应商：选一张已通过的申请 -->
+  <block wx:if="{{ role === 'SUPPLIER' }}">
+    <view class="field" style="margin-top:20rpx">
+      <view class="row">
+        <view class="lb">对应申请</view>
+        <picker mode="selector" range="{{ applies }}" range-key="applyNo" bindchange="pickApply" style="flex:1"
+                wx:if="{{ applies.length }}">
+          <view class="val">{{ applies[applyIdx].applyNo }}（{{ applies[applyIdx].name }}）</view>
+        </picker>
+        <view class="val ph" wx:else>暂无已通过的申请</view>
+      </view>
+      <view class="row">
+        <view class="lb">上门日期</view>
+        <picker mode="date" value="{{ date }}" bindchange="onDate" style="flex:1">
+          <view class="val">{{ date }}</view>
+        </picker>
+      </view>
+      <view class="row">
+        <view class="lb">时段</view>
+        <picker mode="time" value="{{ time }}" bindchange="onTime" style="flex:1">
+          <view class="val">{{ time }}</view>
+        </picker>
+      </view>
+      <view class="row">
+        <view class="lb">事项</view>
+        <input class="val" value="{{ matter }}" placeholder="可不填，默认按申请说明" bindinput="onMatter" />
+      </view>
+    </view>
+  </block>
+
+  <!-- 师傅：完工确认后才可约上门交付 -->
+  <block wx:else>
+    <view class="hint" style="padding-top:30rpx">
+      上门交付要等门店确认完工申请之后再约。先去「我的加工任务」里提交完工。
+    </view>
+  </block>
+
+  <view class="err" wx:if="{{ err }}">{{ err }}</view>
+  <view class="hint" wx:if="{{ okMsg }}" style="color:#4E8A6B">{{ okMsg }}</view>
+
+  <view class="form-actions" wx:if="{{ role === 'SUPPLIER' }}">
+    <view class="btn {{ busy ? 'disabled' : '' }}" bindtap="submit">{{ busy ? '提交中…' : '提交预约' }}</view>
+  </view>
+
+  <view class="pad-nav"></view>
+</view>

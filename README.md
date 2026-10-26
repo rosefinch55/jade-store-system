@@ -1,19 +1,25 @@
 # 玉器门店顾客服务与经营管理系统
 
-> 报告 PDF 在仓库根目录，GitHub 页面里可能报红框，点下面的链接用浏览器自带阅读器打开。
-
-| 文档 | 在线打开 | 直接下载 |
-|---|---|---|
-| 分析设计报告（142 页） | [点击打开](https://raw.githubusercontent.com/rosefinch55/jade-store-system/main/analysis-design-document.pdf) | [下载](https://github.com/rosefinch55/jade-store-system/raw/main/analysis-design-document.pdf) |
-| ERD（数据表关系） | [点击打开](https://raw.githubusercontent.com/rosefinch55/jade-store-system/main/ERD.pdf) | [下载](https://github.com/rosefinch55/jade-store-system/raw/main/ERD.pdf) |
-| 需求调研报告 | [点击打开](https://raw.githubusercontent.com/rosefinch55/jade-store-system/main/docs/research-report.pdf) | [下载](https://github.com/rosefinch55/jade-store-system/raw/main/docs/research-report.pdf) |
-
 面向单店玉器零售的经营管理系统。柜台端给老板与销售用，外部协同端（客户、供应商、加工师傅、合作商户）用手机打开同一个地址即可。
 
-**入口页**：`https://203.0.113.10:8080`（门户页）
-**管理端**：`https://203.0.113.10:8080/index.html`
-**客户侧**：`https://203.0.113.10:8080/mini.html`
-**外部协同**：`https://203.0.113.10:8080/external.html`（供应商 / 加工师傅 / 合作商户登录）
+## 线上入口
+
+门户：<https://jade-store.serveousercontent.com>
+
+**顾客看货**（免登录）
+<https://jade-store.serveousercontent.com/mini.html>
+
+**供应商 / 师傅 / 商户登录**
+<https://jade-store.serveousercontent.com/external.html>
+账号：`yizhuoyimo`（一琢一磨 · 供应商）、`lishifuyudiao`（李师傅玉雕 · 加工师傅）、`shinian`（十年 · 合作商户）
+口令：`123456`
+
+**店内管理端**（首次打开需点“高级 → 继续前往”）
+<https://120.26.19.193:8080/index.html>
+账号：`admin`（老板：张三）、`sale01`（销售：李四）
+口令：`123456`
+
+管理端为什么不用隧道：页面要加载 Element Plus（约 1 MB），serveo 免费隧道传大文件中途会断；直连 IP 约 0.3 秒。
 
 演示账号：
 
@@ -21,15 +27,17 @@
 |---|---|---|---|
 | `admin` | `123456` | 老板 | 18 项权限，全部经营功能 |
 | `sale01` | `123456` | 销售 | 开单、退货、分期收款 |
-| `supplier` | `123456` | 供应商（一琢一磨） | 提交出让申请、预约上门 |
-| `craftsman` | `123456` | 加工师傅（李师傅玉雕） | 查看加工任务、提交完工 |
-| `merchant` | `123456` | 合作商户（十年） | 查看调货价目 |
+| `yizhuoyimo` | `123456` | 供应商（一琢一磨） | 提交出让申请、预约上门 |
+| `lishifuyudiao` | `123456` | 加工师傅（李师傅玉雕） | 查看加工任务、提交完工 |
+| `shinian` | `123456` | 合作商户（十年） | 查看调货价目、查看货品详情 |
 
 外部账号的用户名形如 `t_user.party_id` 记录账号属于哪个往来方；老账号没有该字段时，按用户名下划线后的数字兜底。
 
 ## 关于微信小程序
 
-设计文档把外部协同端定为微信小程序，代码在 `miniprogram/`，九个界面（浏览货品、预约看货、查看调货价、预定、出让申请、预约上门、加工任务、提交完工、查询预约）都已实现。但**它无法直接交给别人扫码使用**，原因有两条，都不是代码问题：
+设计文档把外部协同端定为微信小程序。**小程序代码已经写好，放在 `miniprogram/`，页面与交互和 H5 版一致**（首页与在售、货品详情、预约看货、查预约，以及供应商出让申请、加工任务、调货价目、预约上门、完工提交），导入微信开发者工具即可运行。
+
+对外演示暂时用 H5（`mini.html`、`external.html`）代替，不是功能没做，而是**小程序上线要先过主体备案**：
 
 1. **没有备案域名**。小程序线上版只允许请求已备案的 HTTPS 域名，不能是 IP 加端口。服务器现在用公网 IP 直连，微信的域名校验这一关就过不去。
 2. **证书不受信任**。服务器用的是自签证书（无域名时无法申请免费受信任证书），微信内置浏览器会直接拦截，连“继续访问”都不给点。
@@ -67,6 +75,8 @@
 │   ├── demo-business.sql      来源方/调货/寄售/加工/客户
 │   ├── demo-images/           359 张商品图
 │   └── clean-*.sql            测试数据清理脚本
+├── miniprogram/               小程序端源码（首页/在售/详情/预约/查预约 + 外部四角色页面）
+├── miniprogram-cloud/         云函数（请求代理）
 ├── specs/                     规格说明书（7 个 feature × 4 份 + 2 份汇总）
 ├── server/                    后端工程
 │   └── src/main/

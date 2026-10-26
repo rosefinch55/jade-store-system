@@ -1,0 +1,25 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/goods/goods",
+    "pages/detail/detail",
+    "pages/reserve/reserve",
+    "pages/mine/mine",
+    "pages/login/login",
+    "pages/work/work",
+    "pages/supplier/supplier",
+    "pages/craftsman/craftsman",
+    "pages/merchant/merchant",
+    "pages/visit/visit"
+  ],
+  "window": {
+    "navigationBarTitleText": "玉器门店",
+    "navigationBarBackgroundColor": "#fbf7f0",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#fbf7f0",
+    "enablePullDownRefresh": false
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

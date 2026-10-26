@@ -1,0 +1,33 @@
+<view wx:if="{{ g }}">
+  <image wx:if="{{ g.imgUrl }}" class="dpic" src="{{ g.imgUrl }}" mode="aspectFit" binderror="onImgErr" />
+  <view wx:else class="dpic-ph">暂无图片</view>
+
+  <view class="dbody">
+    <view class="dt">
+      <text wx:if="{{ g.featured }}" class="badge">精选</text>{{ g.name }}
+    </view>
+    <view class="dsub">{{ g.goodsNo }}</view>
+
+    <view class="kv"><text class="k">类别</text><text class="v">{{ g.categoryName || '—' }}</text></view>
+    <view class="kv"><text class="k">料种</text><text class="v">{{ g.material || '—' }}</text></view>
+    <view class="kv"><text class="k">产地</text><text class="v">{{ g.origin || '—' }}</text></view>
+    <view class="kv"><text class="k">器型</text><text class="v">{{ g.shape || '—' }}</text></view>
+    <view class="kv"><text class="k">产状</text><text class="v">{{ g.form || '—' }}</text></view>
+    <view class="kv"><text class="k">克重</text><text class="v">{{ g.weightG }} g</text></view>
+    <view class="kv"><text class="k">尺寸</text><text class="v">{{ g.size || '—' }}</text></view>
+    <view class="kv" wx:if="{{ g.priceText }}"><text class="k">参考价</text><text class="v">不超过 {{ g.priceText }}</text></view>
+    <view class="kv" wx:if="{{ g.certNo }}"><text class="k">证书号</text><text class="v">{{ g.certNo }}</text></view>
+
+    <view class="dhint danger" wx:if="{{ g.reservable === false }}">该货品已被预约，暂不可约。若您是同一手机号，可在预约页把时间改早。</view>
+    <view class="dhint">参考价为对外报价上界，实际成交以到店面谈为准。</view>
+    <view class="dhint">如需预留请联系店员，货品将保留三天。</view>
+  </view>
+
+  <view class="dbar">
+    <view class="btn ghost {{ g.reservable === false ? 'disabled' : '' }}" bindtap="{{ g.reservable === false ? 'noop' : 'goReserve' }}">预约看货</view>
+  </view>
+  <view class="dbar-pad"></view>
+</view>
+
+<view class="empty" wx:if="{{ loading }}">加载中…</view>
+<view class="empty" wx:if="{{ err }}">{{ err }}</view>

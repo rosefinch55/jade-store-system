@@ -1,0 +1,49 @@
+<view>
+  <view class="hd">
+    <view class="hd-t">全部在售</view>
+    <view class="hd-s">共 {{ total }} 件 · 一物一码</view>
+  </view>
+
+  <scroll-view class="cats" scroll-x="true">
+    <view class="chip {{ catId === 0 ? 'on' : '' }}" data-id="{{ 0 }}" bindtap="pickCat">全部</view>
+    <view class="chip {{ catId === item.id ? 'on' : '' }}" wx:for="{{ cats }}" wx:key="id"
+          data-id="{{ item.id }}" bindtap="pickCat">{{ item.name }}</view>
+  </scroll-view>
+
+  <view class="grid" wx:if="{{ items.length }}">
+    <view class="card" wx:for="{{ items }}" wx:key="goodsNo" data-no="{{ item.goodsNo }}" bindtap="goDetail">
+      <image wx:if="{{ item.imgUrl }}" class="pic" src="{{ item.imgUrl }}" mode="aspectFill"
+             data-idx="{{ index }}" binderror="onImgErr" />
+      <view wx:else class="ph">暂无图片</view>
+      <view class="info">
+        <view class="nm">
+          <text wx:if="{{ item.featured }}" class="badge">荐</text>{{ item.name }}
+        </view>
+        <view class="mt">{{ item.categoryName }} · {{ item.weightG }}g</view>
+        <view class="pr" wx:if="{{ item.priceText }}">{{ item.priceText }} 以内</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{ !items.length && !loading }}">没有符合条件的货品</view>
+  <view class="empty" wx:if="{{ loading && !items.length }}">加载中…</view>
+  <view class="err" wx:if="{{ err }}">{{ err }}</view>
+
+  <view class="more-wrap" wx:if="{{ hasMore && items.length }}">
+    <view class="btn ghost" bindtap="loadMore">{{ loading ? '加载中…' : '加载更多' }}</view>
+  </view>
+  <view class="empty" wx:if="{{ !hasMore && items.length }}">已经到底了</view>
+
+  <view class="pad-nav"></view>
+  <view class="nav">
+    <view class="item" bindtap="goHome">
+      <text class="ico">◈</text>推荐
+    </view>
+    <view class="item on">
+      <text class="ico">▤</text>全部
+    </view>
+    <view class="item" bindtap="goMine">
+      <text class="ico">⌕</text>查预约
+    </view>
+  </view>
+</view>

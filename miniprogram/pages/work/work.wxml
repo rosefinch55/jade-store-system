@@ -1,0 +1,23 @@
+<view>
+  <view class="hd">
+    <view class="hd-t">{{ user.name || '工作台' }}</view>
+    <view class="hd-s">{{ roleName }} · {{ user.username }}，登录后只显示与你相关的功能</view>
+  </view>
+
+  <view class="grid" style="padding-top:24rpx">
+    <view class="card" style="width:702rpx;margin:0 0 20rpx" wx:for="{{ cards }}" wx:key="t"
+          data-url="{{ item.url }}" bindtap="open">
+      <view class="info" style="padding:30rpx 28rpx">
+        <view class="nm" style="font-size:32rpx;height:auto">{{ item.t }}</view>
+        <view class="mt" style="font-size:24rpx;margin-top:10rpx">{{ item.d }}</view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{ !cards.length }}">这个账号还没有开放的功能，请联系门店</view>
+  </view>
+
+  <view class="form-actions">
+    <view class="btn ghost" bindtap="browse">去看在售货品</view>
+    <view class="btn ghost" style="margin-top:20rpx" bindtap="logout">退出登录</view>
+  </view>
+  <view class="pad-nav"></view>
+</view>

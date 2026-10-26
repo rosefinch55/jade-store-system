@@ -1,0 +1,28 @@
+<view>
+  <view class="hd">
+    <view class="hd-t">调货价目</view>
+    <view class="hd-s">在柜可调货品与调货价，共 {{ total }} 件</view>
+  </view>
+
+  <view class="grid" style="padding-top:24rpx">
+    <view class="card" wx:for="{{ list }}" wx:key="goodsNo">
+      <image wx:if="{{ item.image }}" class="pic" src="{{ item.image }}" mode="aspectFill" />
+      <view wx:else class="ph">暂无图片</view>
+      <view class="info">
+        <view class="nm">{{ item.name }}</view>
+        <view class="mt">{{ item.shape || '—' }} · {{ item.weightG }}g</view>
+        <view class="pr">调货 {{ item.transferPrice }} 元</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{ !loading && !list.length }}">暂无可调货品</view>
+  <view class="empty" wx:if="{{ loading }}">加载中…</view>
+  <view class="err" wx:if="{{ err }}">{{ err }}</view>
+
+  <view class="more-wrap" wx:if="{{ list.length < total }}">
+    <view class="btn ghost" bindtap="more">加载更多</view>
+  </view>
+
+  <view class="pad-nav"></view>
+</view>

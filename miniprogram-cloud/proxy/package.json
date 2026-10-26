@@ -1,0 +1,7 @@
+{
+  "name": "proxy",
+  "version": "1.0.0",
+  "description": "把小程序请求转发到门店服务器的云函数",
+  "main": "index.js",
+  "dependencies": {}
+}

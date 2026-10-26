@@ -1,0 +1,24 @@
+<view>
+  <view class="hd">
+    <view class="hd-t">登录</view>
+    <view class="hd-s">供应商、加工师傅、合作商户用门店开通的账号</view>
+  </view>
+
+  <view class="field" style="margin-top:20rpx">
+    <view class="row">
+      <view class="lb">账号</view>
+      <input class="val" value="{{ username }}" placeholder="门店给你的账号" bindinput="onUser" />
+    </view>
+    <view class="row">
+      <view class="lb">口令</view>
+      <input class="val" password="{{ true }}" value="{{ password }}" placeholder="初始口令由门店交付" bindinput="onPwd" />
+    </view>
+  </view>
+
+  <view class="err" wx:if="{{ err }}">{{ err }}</view>
+
+  <view class="form-actions">
+    <view class="btn {{ busy ? 'disabled' : '' }}" bindtap="submit">{{ busy ? '登录中…' : '登录' }}</view>
+    <view class="btn ghost" style="margin-top:20rpx" bindtap="back">先随便看看</view>
+  </view>
+</view>

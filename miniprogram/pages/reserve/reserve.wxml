@@ -1,0 +1,35 @@
+<view class="hd">
+  <view class="hd-t">预约看货</view>
+  <view class="hd-s">提交后拿到预约编号，到店报编号即可</view>
+</view>
+
+<view class="field">
+  <view class="row">
+    <text class="lb">姓名</text>
+    <input placeholder="怎么称呼" value="{{ name }}" bindinput="onName" maxlength="20" />
+  </view>
+  <view class="row">
+    <text class="lb">手机号</text>
+    <input placeholder="11 位手机号" value="{{ phone }}" bindinput="onPhone" type="number" maxlength="11" />
+  </view>
+  <view class="row">
+    <text class="lb">到店日期</text>
+    <picker mode="date" start="{{ minDate }}" end="{{ maxDate }}" value="{{ date }}" bindchange="onDate">
+      <view class="val">{{ date }}</view>
+    </picker>
+  </view>
+  <view class="row">
+    <text class="lb">到店时间</text>
+    <picker mode="selector" range="{{ slots }}" value="{{ slotIndex }}" bindchange="onSlot">
+      <view class="val">{{ time ? time : '请选择时段' }}</view>
+    </picker>
+  </view>
+</view>
+
+<view class="hint">可约范围：{{ minText }} 至 {{ maxText }}（两小时内不接单，最长 3 天，半小时一档）。</view>
+<view class="hint">同一件货同一时段只能约一次；同一手机号可把时间改早，改晚请联系门店。</view>
+<view class="err" wx:if="{{ err }}">{{ err }}</view>
+
+<view class="form-actions">
+  <view class="btn {{ submitting ? 'disabled' : '' }}" bindtap="submit">{{ submitting ? '提交中…' : '提交预约' }}</view>
+</view>
