@@ -70,8 +70,16 @@
   .login-card .tip{margin-top:18px;font-size:12px;color:var(--text-2);text-align:center}
 
   /* ---------- 侧栏 ---------- */
-  .side{background:var(--jade-900);position:relative}
-  .side .el-menu{border-right:none;background:transparent}
+  /* 侧栏纵向三段：品牌 / 可滚动菜单 / 页脚。原来页脚用绝对定位压在菜单上，窗口一矮就叠字 */
+  .side{background:var(--jade-900);display:flex;flex-direction:column;overflow:hidden}
+  .side .brandbar{flex:none}
+  .side-foot{flex:none;padding:10px 0 12px;text-align:center;font-size:11px;color:#6E857B;letter-spacing:1px}
+  /* 菜单被裁剪时给个渐隐，避免出现半行文字贴住页脚 */
+  .side .el-menu{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 18px),transparent);
+    mask-image:linear-gradient(to bottom,#000 calc(100% - 18px),transparent)}
+  /* 窗口矮的时候菜单本来就放不下，页脚让位给菜单 */
+  @media (max-height: 820px){ .side-foot{display:none} }
+  .side .el-menu{border-right:none;background:transparent;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
   .side .el-menu-item{color:#C6D2CC;height:42px;line-height:42px;font-size:13.5px;margin:1px 8px;border-radius:3px}
   .side .el-menu-item:hover{background:rgba(255,255,255,.06);color:#F1EBDF}
   .side .el-menu-item.is-active{background:rgba(255,255,255,.08)!important;color:#F7F2E7;font-weight:600}
@@ -1820,7 +1828,7 @@ const Layout = {
           <el-menu-item v-for="k in g.keys" :key="k" :index="k">{{ pages[k].label }}</el-menu-item>
         </el-menu-item-group>
       </el-menu>
-      <div style="position:absolute;bottom:12px;left:0;width:208px;text-align:center;font-size:11px;color:#6E857B">隆圭琢玉</div>
+      <div class="side-foot">隆圭琢玉</div>
     </el-aside>
     <el-container>
       <el-header class="topbar" height="60px">
