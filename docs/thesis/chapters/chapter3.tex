@@ -168,7 +168,7 @@
 \subsection{货品生命周期（八状态，分三张给出）}
 
 货品是全系统流转最频繁的对象，状态取自 UC-01 的枚举：在柜、已订、已售、预留、已送检、已调出、代销中、待处理，共八态。调出后货权仍归本店，与寄卖在结算前同样由本店承担，两态分别记录。
-状态之间的迁移共 18 条，总体结构见图~\ref{fig:07a-goods-state}；
+状态之间的迁移共 17 条，总体结构见图~\ref{fig:07a-goods-state}；
 再按业务主题分三张细化：售出与预留（图~\ref{fig:07a1-goods-sale}）、
 调货与代销（图~\ref{fig:07a2-goods-transfer}）、送检与处置（图~\ref{fig:07a3-goods-inspect}）。
 各迁移及其规约来源见表~\ref{tab:goods-transitions}。
@@ -197,8 +197,6 @@ $[*]\rightarrow$在柜 & 入库建档（采购/回收/调货/加工完工/寄售
 已订 $\rightarrow$ 已售 & 尾款付清并交付出库 & UC-01 规则④ \\
 在柜 $\rightarrow$ 已调出 & 调出给合作商户 & UC-20 \\
 已调出 $\rightarrow$ 代销中 & 合作商户上架代销 & UC-20 \\
-
-
 在柜 $\rightarrow$ 代销中 & 寄卖在同行处 & UC-01 规则⑤ \\
 代销中 $\rightarrow$ 已售 & 同行售出、与同行结算 & UC-01 规则⑤ \\
 在柜 $\rightarrow$ 已送检 & 送检 & UC-05 \\
