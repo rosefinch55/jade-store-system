@@ -57,7 +57,7 @@
 | 层 | 选型 |
 |---|---|
 | 后端 | SpringBoot 3.2.5 + MyBatis-Plus 3.5.5 |
-| 数据库 | MySQL 8.0，31 张表 |
+| 数据库 | MySQL 8.0，32 张表 |
 | 鉴权 | JWT（无状态），接口级权限点对应分析文档的用例编号 |
 | 前端 | Vue 3 + Element Plus，单页应用，依赖本地化不连外网 CDN |
 | 部署 | Docker，应用与数据库各一个容器，`--network host` |
@@ -68,7 +68,7 @@
 玉器门店系统/
 ├── docs/                      分析与设计文档
 │   ├── thesis/                报告正文（6 章 + 附录）
-│   ├── schema.sql             31 张表的建表语句
+│   ├── schema.sql             32 张表的建表语句
 │   ├── demo-goods.sql         679 件货品
 │   ├── demo-goods-image.sql   货品配图 + 精选标记
 │   ├── demo-sales.sql         演示成交/退货/分期
